@@ -11,7 +11,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Caddx Security System</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.gmail.donhoffman.indigoplugin.caddx</string>
+	<string>com.ians.caddx</string>
 	<key>CFBundleVersion</key>
 	<string>1.0.0</string>
 	<key>CFBundleURLTypes</key>

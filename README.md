@@ -10,6 +10,6 @@ This should work with the Caddx NX-584 RS-232 Gateway Interface for the Caddx NX
 
 TBD
 
-## Ussage
+## Usage
 
 TBD

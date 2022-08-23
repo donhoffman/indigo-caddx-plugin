@@ -301,8 +301,8 @@
 			</State>
             <State id="setClockCalenderCommand">
 				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Set Clock Calender Command</TriggerLabel>
-				<ControlPageLabel>Set Clock Calender Command</ControlPageLabel>
+				<TriggerLabel>Set Clock Calendar Command</TriggerLabel>
+				<ControlPageLabel>Set Clock Calendar Command</ControlPageLabel>
 			</State>
             <State id="primaryKeypadFunctionWithPin">
 				<ValueType>Boolean</ValueType>
@@ -1306,7 +1306,7 @@
             
             <Field id="sep1" type="separator"/>
             
-            <!-- Select Kaypads -->
+            <!-- Select Keypads -->
             
             <Field id="address" type="menu" defaultValue="1">
                 <Label>Keypad Address:</Label>
@@ -1536,7 +1536,7 @@
                     <Option value="zoneTypeGasDetector">Gas Detector</Option>
                     <Option value="zoneTypeHighTemp">High Temp Sensor</Option>
                     <Option value="zoneTypeLowTemp">Low Temp Sensor</Option>
-                    <Option value="zoneTypeWaterLeck">Water Leck Detector</Option>
+                    <Option value="zoneTypeWaterLeak">Water Leak Detector</Option>
                     <Option value="zoneTypeEntryGuard">Entry Guard</Option>                    
                 </List>               
             </Field>
@@ -1576,7 +1576,7 @@
                 <Label>Fire:</Label>
             </Field>
             <Field id="in24HourFormat" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>In 24 Hour Format:</Label>
+                <Label>In 24-Hour Format:</Label>
             </Field>
             <Field id="keySwitch" type="checkbox" readOnly = "YES" defaultValue="false">
                 <Label>Key Switch:</Label>
@@ -1662,7 +1662,7 @@
             <Field id="swingerShutdown" type="checkbox" readOnly = "YES" defaultValue="false">
                 <Label>Swinger Shutdown:</Label>
             </Field>
-            <Field id="restoreable" type="checkbox" readOnly = "YES" defaultValue="false">
+            <Field id="restorable" type="checkbox" readOnly = "YES" defaultValue="false">
                 <Label>Restorable:</Label>
             </Field>
             <Field id="listenIn" type="checkbox" readOnly = "YES" defaultValue="false">

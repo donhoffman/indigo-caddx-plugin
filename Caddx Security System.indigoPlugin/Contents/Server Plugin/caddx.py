@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 ################################################################################
-# This is an Indigo 7+ plugin to support the "Caddx NetworX NX-8e Alarm System"
-# Written 2011 by Ian Sibley
-# Ported to Python 3 2022 by Don Hoffman
+# This is an Indigo 2022.1+ plugin to support the "Caddx NetworX NX-8e Alarm System"
+# Original 2011 by Ian Sibley
+# Ported to Python 3 + Refactor 2022 by Don Hoffman
 ################################################################################
 
 ################################################################################
@@ -11,16 +11,12 @@
 ################################################################################
 import logging
 import time
-import re
-import queue		# Was Queue in python 2
-# noinspection PyUnresolvedReferences
-import serial
-import binascii
-import indigo
+import queue
 
 ################################################################################
 # Local Imports
 ################################################################################
+import indigo
 
 ################################################################################
 # Globals
@@ -29,44 +25,45 @@ panelFirmware = ""						# used as a comm alive flag on initiate comms
 keypadDisplayName = " "					# used to store temporary zoneDisplayName for Keypad Display Name used in creating zone devices
 
 # Simple Requests and Commands		message format[0x7e, msg_length, msg_number, {msg_contents}, checksum1, checksum2,]
-ACK = b"\x01\x1d"
-NAK = b"\x01\x1e"
-CAN = b"\x01\x1f"
+ACK = "011d"
+NAK = "011e"
+CAN = "011f"
 
 # Keypad Commands
-cmdArmStay = b"\x04\xbd\x03\x01\x01"
-cmdArmAway = b"\x04\xbd\x02\x01\x01"
-cmdDisarm = b"\x04\xbd\x01\x01\x01"
-cmdFirePanic = b"\x03\xbe\x04\x01"
-cmdMedicalPanic = b"\x03\xbe\x05\x01"
-cmdPolicePanic = b"\x03\xbe\x06\x01"
-cmdTurnOffSounderOrAlarm = b"\x04\xbd\x00\x01\x01"
-cmdCancel = b"\x04\xbd\x04\x01\x01"
-cmdInitiateAutoArm = b"\x04\xbd\x05\x01\x01"
-cmdStartWalkTestMode = b"\x04\xbd\x06\x01\x01"
-cmdStopWalkTestMode = b"\x04\xbd\x07\x01\x01"
-cmdStay1ButtonArmToggleInteriors = b"\x03\xbe\x00\x01"
-cmdChimeToggleChimeMode = b"\x03\xbe\x01\x01"
-cmdExitButtonArmToggleInstant = b"\x03\xbe\x02\x01"
-cmdBypassInteriors = b"\x03\xbe\x03\x01"
-cmdSmokeDetectorReset = b"\x03\xbe\x07\x01"
-cmdAutoCallbackDownload = b"\x03\xbe\x08\x01"
-cmdManualPickupDownload = b"\x03\xbe\x09\x01"
-cmdEnableSilentExitForThisArmCycle = b"\x03\xbe\x0a\x01"
-cmdPerformTest = b"\x03\xbe\x0b\x01"
-cmdGroupBypass = b"\x03\xbe\x0c\x01"
-cmdAuxiliaryFunction1 = b"\x03\xbe\x0d\x01"
-cmdAuxiliaryFunction2 = b"\x03\xbe\x0e\x01"
-cmdStartKeypadSounder = b"\x03\xbe\x0f\x01"
-cmdInterfaceConfigurationRequest = b"\x01\x21"
-cmdZoneNameRequest = b"\x02\x23"
-cmdZoneStatusRequest = b"\x02\x24"
-cmdZonesSnapshotRequest = b"\x02\x25"
-cmdPartitionStatusRequest = b"\x02\x26"
-cmdPartitionSnapshotRequest = b"\x01\x27"
-cmdSystemStatusRequest = b"\x01\x28"
-cmdUserInformationRequestWithoutPin = b"\x02\x33"
-cmdZoneBypassToggle = b"\x02\xbf"
+cmdArmStay = "04bd030101"
+cmdArmAway = "04bd020101"
+cmdDisarm = "04bd010101"
+cmdFirePanic = "03be0401"
+cmdMedicalPanic = "03be0501"
+cmdPolicePanic = "03be0601"
+cmdTurnOffSounderOrAlarm = "04bd000101"
+cmdCancel = "04bd040101"
+cmdInitiateAutoArm = "04bd050101"
+cmdStartWalkTestMode = "04bd060101"
+cmdStopWalkTestMode = "04bd070101"
+cmdStay1ButtonArmToggleInteriors = "03be0001"
+cmdChimeToggleChimeMode = "03be0101"
+cmdExitButtonArmToggleInstant = "03be0201"
+cmdBypassInteriors = "03be0301"
+cmdSmokeDetectorReset = "03be0701"
+cmdAutoCallbackDownload = "03be0801"
+cmdManualPickupDownload = "03be0901"
+cmdEnableSilentExitForThisArmCycle = "03be0a01"
+cmdPerformTest = "03be0b01"
+cmdGroupBypass = "03be0c01"
+cmdAuxiliaryFunction1 = "03be0d01"
+cmdAuxiliaryFunction2 = "03be0e01"
+cmdStartKeypadSounder = "03be0f01"
+cmdInterfaceConfigurationRequest = "0121"
+cmdZoneNameRequest = "0223"
+cmdZoneStatusRequest = "0224"
+cmdZonesSnapshotRequest = "0225"
+cmdPartitionStatusRequest = "0226"
+cmdPartitionSnapshotRequest = "0127"
+cmdSystemStatusRequest = "0128"
+cmdUserInformationRequestWithoutPin = "0233"
+cmdZoneBypassToggle = "02bf"
+cmdSetClockCalendar = "073b"
 
 # Spoken Text Comments
 sayArmingStay = "Alarm system arming in Stay Mode"
@@ -81,6 +78,18 @@ sayZoneTripped = "Intruder Alert, sensor tripped in"
 sayActivateFire = "The fire alarm has been activated. Please evacuate the building immediately"
 sayActivateMedical = "A medical emergency has been activated. An Ambulance has been called"
 sayActivatePolice = "A duress alert has been activated. The police have been called"
+
+
+class CaddxException(Exception):
+	pass
+
+
+class CaddxShutdown(CaddxException):
+	pass
+
+
+class CaddxProgramError(CaddxException):
+	pass
 
 
 class Caddx(object):
@@ -213,7 +222,7 @@ class Caddx(object):
 			self.sendMsgToQueue(cmdAuxiliaryFunction2)
 		elif action == "Start Keypad Sounder":
 			logPrintMessage = "execute action:        Start Keypad Sounder"
-			self.sendMsgToQueue(cmdStartKeypadSounder)			
+			self.sendMsgToQueue(cmdStartKeypadSounder)
 		else:
 			logPrintMessage = "execute action:        Requested Action %s not defined." % action
 		if self.plugin.commandActInfo or self.plugin.debug:
@@ -228,40 +237,32 @@ class Caddx(object):
 			logPrintMessage = "execute action:        Interface Configuration Request"
 			self.sendMsgToQueue(cmdInterfaceConfigurationRequest)
 		elif action == "Zone Name Request":
-			value = int(pluginAction.props["zone"])
-			kmessagestart = binascii.b2a_hex(cmdZoneNameRequest)
-			kzone = self.convertDecToHex(int(value - 1))		# 0 = zone 1
-			kzoneNameRequest = kmessagestart + kzone
-			zoneNameRequest = binascii.a2b_hex(kzoneNameRequest)
+			value = int(pluginAction.props["zone"]) - 1  # 0 = zone 1
+			zone = f"{value:02x}"
+			zoneNameRequest = cmdZoneNameRequest + zone
 			logPrintMessage = "execute action:        Zone Name Request,  zone: %s" % value
 			self.sendMsgToQueue(zoneNameRequest)
 		elif action == "Zone Status Request":
-			value = int(pluginAction.props["zone"])
-			kmessagestart = binascii.b2a_hex(cmdZoneStatusRequest)
-			kzone = self.convertDecToHex(int(value - 1))		# 0 = zone 1
-			kzoneStatusRequest = kmessagestart + kzone
-			zoneStatusRequest = binascii.a2b_hex(kzoneStatusRequest)
+			value = int(pluginAction.props["zone"]) - 1  # 0 = zone 1
+			zone = f"{value:02x}"
+			zoneStatusRequest = cmdZoneStatusRequest + zone
 			logPrintMessage = "execute action:        Zone Status Request,  zone: %s" % value
 			self.sendMsgToQueue(zoneStatusRequest)
 		elif action == "Zones Snapshot Request":
 			value = int(pluginAction.props["zoneOffset"])
-			kmessagestart = binascii.b2a_hex(cmdZonesSnapshotRequest)
-			kzoneOffSet = self.convertDecToHex(int(value))	
-			kzonesSnapshotRequest = kmessagestart + kzoneOffSet
-			zonesSnapshotRequest = binascii.a2b_hex(kzonesSnapshotRequest)
+			kzoneOffSet = f"{value:02x}"
+			zonesSnapshotRequest = cmdZonesSnapshotRequest + kzoneOffSet
 			logPrintMessage = "execute action:        Zones Snapshot Request,  block address: %s" % value
 			self.sendMsgToQueue(zonesSnapshotRequest)
 		elif action == "Partition Status Request":
-			value = int(pluginAction.props["partition"])
-			kmessagestart = binascii.b2a_hex(cmdPartitionStatusRequest)
-			kpartition = self.convertDecToHex(int(value - 1))		# 0 = partition 1
-			kpartitionStatusRequest = kmessagestart + kpartition
-			partitionStatusRequest = binascii.a2b_hex(kpartitionStatusRequest)
+			value = int(pluginAction.props["partition"]) - 1  # 0 = partition 1
+			kpartition = f"{value:02x}"
+			partitionStatusRequest = cmdPartitionStatusRequest + kpartition
 			logPrintMessage = "execute action:        Partition Status Request,  partition: %s" % value
 			self.sendMsgToQueue(partitionStatusRequest)
 		elif action == "Partition Snapshot Request":
 			logPrintMessage = "execute action:        Partition Snapshot Request"
-			self.sendMsgToQueue(cmdPartitionSnapshotRequest)					
+			self.sendMsgToQueue(cmdPartitionSnapshotRequest)
 		elif action == "System Status Request":
 			logPrintMessage = "execute action:        System Status Request"
 			self.sendMsgToQueue(cmdSystemStatusRequest)
@@ -289,10 +290,8 @@ class Caddx(object):
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		elif action == "User Information Request without Pin":
 			value = int(pluginAction.props["user"])
-			kmessagestart = binascii.b2a_hex(cmdUserInformationRequestWithoutPin)
-			kuser = self.convertDecToHex(int(value))	
-			kuserInformationRequestWithoutPin = kmessagestart + kuser
-			userInformationRequestWithoutPin = binascii.a2b_hex(kuserInformationRequestWithoutPin)
+			kuser = f"{value:02x}"
+			userInformationRequestWithoutPin = cmdUserInformationRequestWithoutPin + kuser
 			logPrintMessage = "execute action:        User Information Request without Pin,  user: %s" % value
 			self.sendMsgToQueue(userInformationRequestWithoutPin)
 		# Todo: Incomplete implementation?
@@ -311,17 +310,15 @@ class Caddx(object):
 		# elif action == "Store Communication Event Command":
 		# 	logPrintMessage = "execute action:        Store Communication Event Command"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
-		# elif action == "Set Clock and Calender":
-		# 	logPrintMessage = "execute action:        Set Clock and Calender"
-		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
+		elif action == "Set Clock and Calender":
+			logPrintMessage = "execute action:        Set Clock and Calender"
+			self.actionSetClockCalenderCommand(action="")
 		elif action == "Zone Bypass toggle":
-			value = int(pluginAction.props["bypassZone"])
-			kmessagestart = binascii.b2a_hex(cmdZoneBypassToggle)
-			kzone = self.convertDecToHex(int(value - 1))		# 0 = zone 1
-			kzoneBypassToggle = kmessagestart + kzone
-			zoneBypassToggle = binascii.a2b_hex(kzoneBypassToggle)
+			value = int(pluginAction.props["bypassZone"]) - 1  # 0 = zone 1
+			zone = f"{value:02x}"
+			zoneBypassToggle = cmdZoneBypassToggle + zone
 			logPrintMessage = "execute action:        Zone Bypass Toggle: zone %s: " % value
-			self.sendMsgToQueue(zoneBypassToggle)	
+			self.sendMsgToQueue(zoneBypassToggle)
 		else:
 			logPrintMessage = "execute action:        Requested Action: \"%s\" is not defined." % action
 		if self.plugin.commandActInfo or self.plugin.debug:
@@ -340,45 +337,37 @@ class Caddx(object):
 		
 	def actionZoneNameRequest(self, action):
 		for key in range(0, action):
-			kmessagestart = binascii.b2a_hex(cmdZoneNameRequest)
-			kzone = self.convertDecToHex(int(key))		# 0 = zone 1
-			kzoneNameRequest = kmessagestart + kzone
-			zoneNameRequest = binascii.a2b_hex(kzoneNameRequest)
+			zone = f"{key:02x}"  # 0 = zone 1
+			zoneNameRequest = cmdZoneNameRequest + zone
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Zone Name Request: %s,   %s  (zone %s)" % (kzone, kzoneNameRequest, (key + 1)))
+				indigo.server.log("execute action:        Zone Name Request: %s,   %s  (zone %s)" % (zone, zoneNameRequest, (key + 1)))
 			self.sendMsgToQueue(zoneNameRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 
 	def actionZoneStatusRequest(self, action):
 		for key in range(0, action):
-			kmessagestart = binascii.b2a_hex(cmdZoneStatusRequest)
-			kzone = self.convertDecToHex(int(key))		# 0 = zone 1
-			kzoneStatusRequest = kmessagestart + kzone
-			zoneStatusRequest = binascii.a2b_hex(kzoneStatusRequest)
+			zone = f"{key:02x}"  # 0 = zone 1
+			zoneStatusRequest = cmdZoneStatusRequest + zone
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Zone Status Request: %s,  %s  (zone %s)" % (kzone, kzoneStatusRequest, (key + 1)))
+				indigo.server.log("execute action:        Zone Status Request: %s,  %s  (zone %s)" % (zone, zoneStatusRequest, (key + 1)))
 			self.sendMsgToQueue(zoneStatusRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 									
 	def actionZonesSnapshotRequest(self, action):
 		for key in range(0, action):
-			kmessagestart = binascii.b2a_hex(cmdZonesSnapshotRequest)
-			kzoneOffSet = self.convertDecToHex(int(key))	
-			kzonesSnapshotRequest = kmessagestart + kzoneOffSet
-			zonesSnapshotRequest = binascii.a2b_hex(kzonesSnapshotRequest)
+			kzoneOffSet = f"{key:02x}"
+			zonesSnapshotRequest = cmdZonesSnapshotRequest + kzoneOffSet
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Zones Snapshot Request: %s,  %s  (block %s)" % (kzoneOffSet, kzonesSnapshotRequest, key))
+				indigo.server.log("execute action:        Zones Snapshot Request: %s,  %s  (block %s)" % (kzoneOffSet, zonesSnapshotRequest, key))
 			self.sendMsgToQueue(zonesSnapshotRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 		
 	def actionPartitionStatusRequest(self, action):
 		for key in range(0, action):
-			kmessagestart = binascii.b2a_hex(cmdPartitionStatusRequest)
-			kpartition = self.convertDecToHex(int(key))		# 0 = partition 1
-			kpartitionStatusRequest = kmessagestart + kpartition
-			partitionStatusRequest = binascii.a2b_hex(kpartitionStatusRequest)
+			kpartition = f"{key:02x}"		# 0 = partition 1
+			partitionStatusRequest = cmdPartitionStatusRequest + kpartition
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Partition Status Request: %s  %s  (partition %s)" % (kpartition, kpartitionStatusRequest, (key + 1)))
+				indigo.server.log("execute action:        Partition Status Request: %s  %s  (partition %s)" % (kpartition, partitionStatusRequest, (key + 1)))
 			self.sendMsgToQueue(partitionStatusRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 
@@ -401,51 +390,41 @@ class Caddx(object):
 		action = 25
 		for key in range(0, action):
 			kmessagestart = "022a"
-			keventNumber = self.convertDecToHex(int(key + 1))	
-			klogEventRequest = kmessagestart + keventNumber
-			logEventRequest = binascii.a2b_hex(klogEventRequest)
+			keventNumber = f"{key+1:02x}"
+			logEventRequest = kmessagestart + keventNumber
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Log Event Request: %s,  %s" % (keventNumber, klogEventRequest))
+				indigo.server.log("execute action:        Log Event Request: %s,  %s" % (keventNumber, logEventRequest))
 			self.sendMsgToQueue(logEventRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 		
 	def actionUserInformationRequestWithoutPin(self, action):
 		for key in range(0, action):
-			kmessagestart = "0233"
-			kuser = self.convertDecToHex(int(key + 1))	
-			kuserInformationRequestWithoutPin = kmessagestart + kuser
-			userInformationRequestWithoutPin = binascii.a2b_hex(kuserInformationRequestWithoutPin)
+			user = f"{key+1:02x}"
+			userInformationRequestWithoutPin = cmdUserInformationRequestWithoutPin + user
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        User Information Request without Pin: %s,  %s  (user %s)" % (kuser, kuserInformationRequestWithoutPin, (key + 1)))
+				indigo.server.log("execute action:        User Information Request without Pin: %s,  %s  (user %s)" % (user, userInformationRequestWithoutPin, (key + 1)))
 			self.sendMsgToQueue(userInformationRequestWithoutPin)
 			time.sleep(self.plugin.sleepBetweenComm)					
 
 	# noinspection PyUnusedLocal
 	def actionSetClockCalenderCommand(self, action):
-		# kmessagestart = binascii.b2a_hex(b'\x07\x3b')
-		kmessagestart = "073b"
 		timeStamp = time.localtime(time.time())
-		kyear = timeStamp.tm_year - 2000
-		kdate = self.convertDecToHex(kyear) + self.convertDecToHex(int(timeStamp.tm_mon)) + self.convertDecToHex(int(timeStamp.tm_mday))
-		ktime = self.convertDecToHex(int(timeStamp.tm_hour)) + self.convertDecToHex(int(timeStamp.tm_min))
-		day = timeStamp.tm_wday - 1
-		# Todo: The following looks wrong.  Should be 2,3,4,5,6,7,1 if panel starts with 1 per docs?
-		correctWeekdayList = ['3', '4', '5', '6', '7', '1', '2']		# correct timeStamp (1 = Tuesday) where as alarm panel (1 = Sunday)
-		cday = correctWeekdayList[day]
-		kday = self.convertDecToHex(int(cday))
-		kSetClockCalenderCommand = kmessagestart + kdate + ktime + kday
-		SetClockCalenderCommand = binascii.a2b_hex(kSetClockCalenderCommand)
-		self.sendMsgToQueue(SetClockCalenderCommand)
+		kyear = timeStamp.tm_year - 2000  # Even in this day and age, only two digit years accepted by panel.
+		kdate = f"{kyear:02x}" + f"{timeStamp.tm_mon:02x}" + f"{timeStamp.tm_mday:02x}"
+		ktime = f"{timeStamp.tm_hour:02x}" + f"{timeStamp.tm_min:02x}"
+		correctedWDay = [2, 3, 4, 5, 6, 7, 1][timeStamp.tm_wday]  # Correct for offset between time.localtime() and what panels expects.
+		kday = f"{correctedWDay:02x}"
+		kSetClockCalenderCommand = cmdSetClockCalendar + kdate + ktime + kday
+		self.sendMsgToQueue(kSetClockCalenderCommand)
 		time.sleep(self.plugin.sleepBetweenComm)
 
 	# Poll each zone for Keypad Display Name to use in Create Zone Device name
-	def singleZoneNameRequest(self, action):
-		key = action
-		kmessagestart = "0223"
-		kzone = self.convertDecToHex(int(key))		# 0 = zone 1
-		kzoneNameRequest = kmessagestart + kzone
-		zoneNameRequest = binascii.a2b_hex(kzoneNameRequest)
-		self.plugin.debugLog("execute action:        Zone Name Request: %s,  %s  (zone %s)" % (kzone, kzoneNameRequest, (key + 1)))
+	# Todo: singleZoneNameRequest() is used incorrectly by callers.  Figure out what to do?
+	def singleZoneNameRequest(self, zoneKey: int) -> None:
+		messageStart = "0223"
+		zone = f"{zoneKey:02x}"  # 0 = zone 1
+		zoneNameRequest = messageStart + zone
+		self.plugin.debugLog("execute action:        Zone Name Request: %s,  %s" % (zone, zoneNameRequest))
 		self.sendMsgDirect(zoneNameRequest)
 		time.sleep(self.plugin.sleepBetweenCreateZone)
 											
@@ -523,8 +502,12 @@ class Caddx(object):
 	# Communication Start and Stop methods
 	#######################################
 	
-	# Start Communication method
-	def startComm(self):	
+	def startComm(self) -> None:
+		"""
+		Activates activeCommLoop()
+
+		:return: None.  Does not return until activeCommLoop() returns.
+		"""
 		self.plugin.debugLog("startComm:        entering process")
 		
 		devicePort = self.plugin.devicePort
@@ -542,13 +525,16 @@ class Caddx(object):
 			self.conn = conn
 			commandQueue = queue.Queue()
 			self.commandQueue = commandQueue
-			self.plugin.debugLog("startComm:        connection: %s  commandQueue: %s" % (devicePort, commandQueue))
+			self.plugin.debugLog(f"startComm: connection: {devicePort}")
 			self.activeCommLoop(devicePort, conn, commandQueue)
 		else:
-			self.plugin.errorLog("startComm:        connection attempt failure to Caddx NetworX Security device on %s" % devicePort)	
-	
-	# Stop Communication method
-	def stopComm(self):	
+			self.plugin.errorLog(f"startComm: connection failure to Caddx NetworX Security device on {devicePort}")
+
+	def stopComm(self) -> None:
+		"""
+		Sends termination command to activeCommLoop.  Shuts down all panel message handling.
+		:return: None
+		"""
 		self.plugin.debugLog("stopComm:        entering process")
 		self.plugin.debugLog("stopComm:        initiating stop looping communication to device %s" % self.devicePort)
 		commandQueue = self.commandQueue
@@ -559,349 +545,259 @@ class Caddx(object):
 			self.plugin.debugLog("stopComm:        command Queue contains: %s" % command)
 		commandQueue.put("stopSerialCommunication")
 		del commandQueue
-	
-	########################################
-	# Communication Process method
-	#######################################
 
-	def activeCommLoop(self, devicePort, conn, commandQueue):
+	def activeCommLoop(self, devicePort: str, conn, commandQueue: queue) -> None:
+		"""
+		Primary worker loop for handling events and commands
+
+		:param devicePort: Serial device string.  Used only for logging
+		:param conn: The pyserial connection object.  Used for all I/O operations on comm port
+		:param commandQueue: The queue used to contain commands for execution.
+		:return: None
+		"""
 		try:
-			indigo.server.log("starting looping communication to caddx security devices.")
-			self.suspendInterfaceConfigMessageDisplay = False							# allow interface configuration print to log for the first initialise
-			# noinspection PyUnusedLocal
-			messageDict = {}	
-			action = ""
-			indigo.server.log("set security system date / time to %s. " % self.getCurrentDate())
-			self.actionSetClockCalenderCommand(action)									# set current time and date
-			
-			# start active serial communication looping
+			indigo.server.log("Starting Caddx security device communications loop.")
+
+			# allow interface configuration print to log for the first initialise
+			self.suspendInterfaceConfigMessageDisplay = False
+			self.flushCommPort(conn)
+
+			# Start things rolling.
+			self.actionSystemStatusRequest("")
+			self.sendMsgToQueue(cmdInterfaceConfigurationRequest)
+
+			# Start active serial communication loop
+			# Todo: Exit activeCommLoop() using boolean rather than exception.
 			while True:
-				self.readCommPort(conn)	
-				
+				# trigger to periodically poll data and keep alive
+				self.commContinuityCheck()
+
+				# These messages are usually async events from panel.  Request/response handled below.
+				receivedMessageDict = self.readMsg(conn)
+				if receivedMessageDict:
+					self.decodeReceivedData(receivedMessageDict, 0)
+
 				while not commandQueue.empty():
 					lenQueue = commandQueue.qsize()
 					self.plugin.debugLog("activeCommLoop:        || queue has %s command(s) waiting." % str(lenQueue))
-					command = commandQueue.get()
-							
+					command = str(commandQueue.get())
+
 					if command == "stopSerialCommunication":
-						indigo.server.log("raising exception \"self.shutdown\" to stop conn communication.")
-						raise self.shutdown
+						indigo.server.log("raising exception 'CaddxShutdown' to stop communication with panel.")
+						raise CaddxShutdown
 							
 					self.plugin.debugLog("activeCommLoop:        || processing command: %s" % command)		
-					self.sendCommPort(conn, command)	
+					if not self.processMessageFromQueue(conn, command):
+						self.plugin.errorLog("activeCommLoop: Message send failed.  Retrying")
+						continue
 					self.plugin.debugLog("activeCommLoop:        || command completed: %s" % command)
-					self.commandQueue.task_done()	
-				time.sleep(self.plugin.sleepBetweenIdlePoll)							# sleep between read cycles to reduce CPU load			
-				
-				# trigger to periodically poll data and keep alive (at least 15 minute intervals)
-				timeNow = time.time()													# timeNow to current time
-				self.commContinuityCheck(timeNow)
+					self.commandQueue.task_done()
 
-		except self.shutdown:
+				time.sleep(self.plugin.sleepBetweenIdlePoll)
+
+		except CaddxShutdown:
 			indigo.server.log("closing connection to conn device %s (shutdown process)." % devicePort)
-			pass																		# silently fall into finally: section below
-		# noinspection PyUnusedLocal
-		except Exception as e:
-			self.plugin.exceptionLog()
-		except:
-			self.plugin.exceptionLog()
+
 		finally:
 			indigo.server.log("closed connection to conn device %s (finally)." % devicePort)
 			conn.close()	
 			pass																		# finally, exit thread.
-	
-	################################################################################
-	# Routines for Communication Protocol methods (communication message validation and checksum)
-	################################################################################
-	
-	#######################################
-	# Add new command to queue, which is polled and emptied by concurrentSerialThread function
-	#######################################
-	
-	def sendMsgToQueue(self, transmitData):
-		commandQueue = self.commandQueue
-		
-		messageStartFlag = '7e'											# assemble transmit message
-		messageNumber = binascii.b2a_hex(transmitData[1])
+
+	def compute_fletcher16(self, data: bytearray) -> int:
+		"""
+		Returns the Fletcher16 checksum value in integer format.
+		Eight-bit implementation.
+
+		:param data: The data message to be checksummed.
+		:return: 16-bit checksum.
+		"""
+
+		sum1, sum2 = int(), int()
+		for index in range(len(data)):
+			sum1 = (sum1 + data[index]) % 255
+			sum2 = (sum2 + sum1) % 255
+		return (sum2 << 8) | sum1
+
+	def sendMsgToQueue(self, transmitDataAscii: str) -> None:
+		"""
+		Add new command to queue, which is polled and emptied by activeCommLoop() and passed to processMessageFromQueue()
+
+		:param transmitDataAscii: The command message in hex-encoded ASCII.
+		:return: None.
+		"""
+		messageNumber = transmitDataAscii[2:4]
 		alarmMessage = self.messageAlarmDict(messageNumber)
-		transmitDataAscii = binascii.b2a_hex(transmitData)
-		checksum = self.generateChecksum(transmitDataAscii)
-		transmitDataAscii += checksum
-		transmitDataAscii = self.insertBitStuffing(transmitDataAscii)   # substitute '7e' or '7d' within the transmit data stream
-		transmitDataAscii = messageStartFlag + transmitDataAscii		# insert message start flag
-		if self.messageACK:												# send transmit message data
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("sendCmdToQueue:          || queue send message: %s  " % str(transmitDataAscii))
-			commandQueue.put(transmitDataAscii)
-		partition = 1													# update partition device state - lastFunction with the last transmitted message
+		if self.plugin.messageActInfo or self.plugin.debug:
+			indigo.server.log("sendCmdToQueue:          || queue send message: %s  " % str(transmitDataAscii))
+		self.commandQueue.put(transmitDataAscii)
+
+		partition = 1  # update partition device state - lastFunction with the last transmitted message
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
 			dev.updateStateOnServer(key="lastFunction", value="%r  >> %r  ** %s  " % (alarmMessage, messageNumber, self.timestamp()))
-		variableID = "sendingMessage"									# update indigo variable "caddx.sendMsgToQueue" with last transmitted message
-		sendMessageVariable = (" >> %s --  %s     %r  " % (messageNumber, alarmMessage, transmitDataAscii))
-		self.updateVariable(variableID, sendMessageVariable)		
-		
-	#######################################
-	# Send queued command to serial port, then read reply.
-	#######################################
-	
-	def sendCommPort(self, conn, transmitDataAscii):
+		self.updateVariable("sendingMessage", (" >> %s --  %s     %r  " % (messageNumber, alarmMessage, transmitDataAscii)))
+
+	def processMessageFromQueue(self, conn, transmitDataAscii: str) -> bool:
+		"""Send a message in binary format. Wait for reply if necessary.
+
+		:param conn: Handle for serial port.
+		:param transmitDataAscii: Message in hex formatted ASCII.
+		:return: True if message sent and reply received.  False otherwise.
+		"""
+		transmitMessage = bytearray()
+		for i in bytes.fromhex(transmitDataAscii):
+			if i == '0x7e':
+				transmitMessage.extend(b"\x7d\x5e")
+			elif i == '0x7d':
+				transmitMessage.extend(b"\x7d\x5d")
+			else:
+				transmitMessage.append(i)
+		checksum = self.compute_fletcher16(transmitMessage)
+		transmitMessage.extend(checksum.to_bytes(2, byteorder="little"))
+		transmitMessage[0:0] = b'\x7e'
 		if self.plugin.messageActInfo or self.plugin.debug:
-			indigo.server.log("sendCommPort:            >> sending message: %s" % str(transmitDataAscii))
-		transmitMessageHex = binascii.a2b_hex(transmitDataAscii)	
-		conn.write(transmitMessageHex)
-		self.waitForResponse(conn, False)
-		
+			indigo.server.log("processMessageFromQueue:            >> sending message: %s" % str(transmitDataAscii))
+		conn.write(transmitMessage)
+
+		requestMessageType = transmitMessage[2]
+		return self.waitForResponse(conn, requestMessageType)
+
 	#######################################
 	# Check to see if serial port has any incoming information.
 	#######################################
 	
-	def readCommPort(self, conn):
-		receivedData = conn.read(25)
-		if len(receivedData) != 0:
-			receivedDataAscii = binascii.b2a_hex(receivedData)	
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("readCommPort:            << receive message: %s" % receivedDataAscii)
-			self.processReceivedData(receivedDataAscii)		
-			
-	#######################################
-	# Wait for reply to sent queued command to serial port.	
-	#######################################
+	def readMsg(self, conn) -> None | list[str]:
+		startCharacter = conn.read()
+		if not len(startCharacter):
+			# Nothing for us now.
+			return None
+		if startCharacter != b'\x7e':
+			self.plugin.errorLog("readMsg: Message buffer out of sync.  Missing start character.  Flushing and discarding.")
+			self.flushCommPort(conn)
+			return None
+		msgLengthByte = conn.read()
+		if not msgLengthByte:
+			self.plugin.errorLog("readMsg: Missing length.  Flushing and discarding.")
+			self.flushCommPort(conn)
+			return None
+		msgData = bytearray()
+		msgData.extend(msgLengthByte)
+		msgLength = int.from_bytes(msgLengthByte, "little")
+		for i in range(msgLength):
+			nextChar = conn.read()
+			if nextChar == b'\x7d':
+				nextChar = conn.read()
+				if nextChar == b'\x5e':
+					self.plugin.debugLog("readMsg: Escape sequence 0x7d5e")
+					nextChar = b'\x7e'
+				elif nextChar == b'\x5d':
+					self.plugin.debugLog("readMsg: Escape sequence 0x7d5d")
+					nextChar = b'\x7d'
+				else:
+					self.plugin.errorLog("readMsg: Bad byte stuffing. Flushing and discarding.")
+					self.flushCommPort(conn)
+					return None
+			msgData.extend(nextChar)
+		if len(msgData) != (msgLength + 1):  # The actual data plus the message length byte.
+			self.plugin.errorLog(f"readMsg: Message data wrong length ({len(msgData)} != {msgLength + 1}). Flushing and discarding.")
+			self.flushCommPort(conn)
+			return None
 
-	# noinspection PyUnusedLocal
-	def waitForResponse(self, conn, response):
-		listenSerialReceiveCount = 5
-			
-		while listenSerialReceiveCount != 0:
-			receivedData = conn.read(25)
-			if len(receivedData) != 0:
-				receivedDataAscii = binascii.b2a_hex(receivedData)	
-				if self.plugin.messageActInfo or self.plugin.debug:
-					indigo.server.log("waitForResponse:         << receive message: %s" % receivedDataAscii)
-				self.processReceivedData(receivedDataAscii)
-				return
+		checksumStr = conn.read(2)
+		if len(checksumStr) != 2:
+			self.plugin.errorLog("readMsg: Checksum missing.  Flushing and discarding.")
+			self.flushCommPort(conn)
+			return None
+		offeredChecksum = int.from_bytes(checksumStr, byteorder="little")
+		computedChecksum = self.compute_fletcher16(msgData)
+		self.plugin.debugLog(f"Checksums - offered: {offeredChecksum}, computed: {computedChecksum}")
+		if offeredChecksum != computedChecksum:
+			self.plugin.errorLog("readMsg: Checksum failed.  Discarding.")
+			# return None
+
+		# Convert to the ASCII message list used by upstream parsing.
+		messageList = []
+		for i in msgData:
+			messageList.append(f"{i:02x}")
+		return messageList
+
+	def flushCommPort(self, conn) -> None:
+		"""
+		Flush any data in comm port buffer.
+
+		:param conn: pySerial object.  Used for all serial I/O
+		:return: None
+		"""
+		while len(conn.read(100)):
+			self.plugin.debugLog("flushCommPort: throwing away data.")
+		conn.reset_input_buffer()
+
+	def waitForResponse(self, conn, requestMessageType: int) -> bool:
+		"""
+		Wait for reply to sent queued command.
+
+		:param conn: pySerial object.  Used for all serial I/O
+		:param requestMessageType: Command/message type of original message.  Used to determine correct reply.
+		:return: True if correct reply received.  False otherwise.
+		"""
+		# Todo: Return appropriate response status
+		result = True
+		for i in range(5):
+			responseMessage = self.readMsg(conn)
+			if responseMessage:
+				self.decodeReceivedData(responseMessage, requestMessageType)
+				break
 			else:
-				time.sleep(self.plugin.sleepBetweenIdlePoll)	
-				listenSerialReceiveCount -= 1	
-				
+				time.sleep(self.plugin.sleepBetweenIdlePoll)
+		return result
+
 	#######################################
 	# Send command directly to serial port, and bypass the command queue.
 	#######################################
-				
-	def sendMsgDirect(self, transmitData):
-		messageStartFlag = '7e'															# assemble transmit message
-		messageNumber = binascii.b2a_hex(transmitData[1])
-		alarmMessage = self.messageAlarmDict(messageNumber)
-		transmitDataAscii = binascii.b2a_hex(transmitData)
-		checksum = self.generateChecksum(transmitDataAscii)
-		transmitDataAscii += checksum
-		transmitDataAscii = self.insertBitStuffing(transmitDataAscii)					# substitute '7e' or '7d' within the transmit data stream
-		transmitDataAscii = messageStartFlag + transmitDataAscii						# insert message start flag
-		if self.messageACK:																# send transmit message data
-			transmitMessage = binascii.a2b_hex(transmitDataAscii)		
-			self.plugin.debugLog("sendMsgDirect:           >> sending message: %s,  %s,  %s" % (messageNumber, alarmMessage, transmitDataAscii))
-			self.conn.write(transmitMessage)			
-				
-	########################################
-	# Process and validate received message
-	########################################
-	
-	def processReceivedData(self, receivedDataAscii):
-		self.plugin.debugLog("processReceivedData(): --  receive data: %s: " % receivedDataAscii)
-		# verify valid message
-		if re.match('7e', receivedDataAscii): 									# test for start of message flag '7e'
-			receivedDataAscii = self.removeBitStuffing(receivedDataAscii)		# test and remove bit stuffing from the received data stream
-			messageDict = self.verifyChecksum(receivedDataAscii)				# test for valid message (correct message length and valid checksum)
-			# noinspection PyUnusedLocal
-			messageLength = messageDict[0]										# read alarm message length
-			messageNumber = messageDict[1]										# read alarm message type
-			alarmMessage = self.messageAlarmDict(messageNumber)					# convert message number to message description
-			if self.receivedValidMessage:										# valid message received; process received message
-				self.messageACK = True
-				if self.plugin.messageActInfo or self.plugin.debug:
-					indigo.server.log("processReceivedData:     || message: %s,  %s: %s" % (messageNumber, alarmMessage, receivedDataAscii))					
-				self.decodeReceivedData(messageNumber, messageDict)				# decode and process valid alarm message
-		else:
-			self.plugin.errorLog("processReceivedData:     || invalid or incomplete message received.")
-			self.sendMsgDirect(NAK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: NAK")			
-	
-	########################################
-	# Generate Checksum for outgoing message
-	########################################
-	
-	def generateChecksum(self, transmitData):
-		messageStart = 0													# extract message length
-		messageLength = transmitData[messageStart:(messageStart+2)]
-		dmessageLength = self.convertHexToDec(messageLength)				# determine start and end of message
-		kmessageLength = (dmessageLength + 1)								# offset required to verify checksum (includes message length in calc)
-		messageEnd = (messageStart + (2 * kmessageLength))
-		message = transmitData[messageStart:messageEnd]
-		messageDict = self.convertMessageToByteDict(kmessageLength, message)  # convert ascii message string into hex format dictionary
-		self.plugin.debugLog("generateChecksum:        || message dictionary: %s" % messageDict)
-		sum1 = 0															# 16 bit Fletcher checksum algorithm
-		sum2 = 0
-		for i in range(0, len(messageDict)):
-			dByte = self.convertHexToDec(messageDict[i])
-			sum1 = (sum1 + dByte) % 255
-			sum2 = (sum2 + sum1) % 255
-		calcSum = self.convertDecToHex(sum1) + self.convertDecToHex(sum2)
-		self.plugin.debugLog("generateChecksum:        || transmit data: %s,  checksum: %s,  length: %s,  dictionary: %s" % (transmitData, calcSum, dmessageLength, messageDict))
-		return calcSum
-		
-	########################################
-	# Validate received message length and message checksum
-	########################################
-	
-	def verifyChecksum(self, receivedData):
-		messageNumber = receivedData[4:6]
-		alarmMessage = self.messageAlarmDict(messageNumber)
-		partition = 1																	# update partition device state - statusLastFunction with the last received message
-		if partition in self.partitionList.keys():
-			dev = self.partitionList[partition]
-			dev.updateStateOnServer(key="statusLastFunction", value="%r  <<  %r  ** %r  " % (alarmMessage, messageNumber, self.timestamp()))
-		variableID = "receiveMessage"													# update indigo variable "caddx.receiveMessage" with last received message
-		receiveMessageVariable = (" << %s -- %s     %r  " % (messageNumber, alarmMessage, receivedData))
-		self.updateVariable(variableID, receiveMessageVariable)
-		self.receivedValidMessage = False
-		messageStart = 2																# extract message length
-		messageLength = receivedData[messageStart:(messageStart+2)]
-		dmessageLength = self.convertHexToDec(messageLength)
-		self.plugin.debugLog("verifyChecksum:          || message length: %s  (decimal)" % dmessageLength)
-		kmessageLength = (dmessageLength + 1)											# offset required to verify checksum (includes message length in calc)
-		messageEnd = (messageStart + (2 * kmessageLength))								# determine start and end of message
-		message = receivedData[messageStart:messageEnd]
-		self.plugin.debugLog("verifyChecksum:          || message: %s" % message)
-		messageChecksum1 = receivedData[messageEnd:(messageEnd + 2)]					# extract message checksum1 and checksum2 values
-		messageChecksum2 = receivedData[(messageEnd + 2):(messageEnd + 4)]
-		messageDict = self.convertMessageToByteDict(kmessageLength, message)			# convert ascii message string into hex format dictionary
-		self.plugin.debugLog("verifyChecksum:          || message dictionary: %s" % messageDict)
-		sum1 = 0																		# 16 bit Fletcher checksum algorithm
-		sum2 = 0
-		for i in range(0, len(messageDict)):
-			dByte = self.convertHexToDec(messageDict[i])
-			sum1 = (sum1 + dByte) % 255
-			sum2 = (sum2 + sum1) % 255
-		if sum1 == self.convertHexToDec(messageChecksum1) and sum2 == self.convertHexToDec(messageChecksum2):
-			self.receivedValidMessage = True
-			self.plugin.debugLog("verifyChecksum:          || received; valid message.")
-		else:
-			self.receivedValidMessage = False	
-			indigo.server.log("verifyChecksum:          || received; invalid message.")
-		return messageDict
-		
-	########################################
-	# insert Bit Stuffing to Transmit message 
-	########################################
-	
-	def insertBitStuffing(self, dataStream):
-		messageStart = 0														# dataStream has no '7e' start message flag
-		messageLength = dataStream[messageStart:(messageStart+2)]
-		dmessageLength = self.convertHexToDec(messageLength)
-		self.plugin.debugLog("insertBitStuffing:       || message length: %s  (decimal)" % dmessageLength)
-		kmessageLength = (dmessageLength + 3)									# offset required to include checksum and message length in calc
-		messageEnd = (messageStart + (2 * kmessageLength))						# determine start and end of message
-		message = dataStream[messageStart:messageEnd]
-		self.plugin.debugLog("insertBitStuffing:       || message: %s" % message)
-		messageDict = self.convertMessageToByteDict(kmessageLength, message)    # convert ascii message string into hex format dictionary
-		self.plugin.debugLog("insertBitStuffing:       || message dictionary: %s" % messageDict)
-		dataStreamDict = {}														# loop through data stream for '7e' or '7d' and replace with '7d5e' or 7d5d' respectively
-		for key in messageDict:
-			if messageDict[key] == '7e':
-				dataStreamDict[key] = '7d5e'
-			elif messageDict[key] == '7d':	
-				dataStreamDict[key] = '7d5d'
+
+	def sendMsgDirect(self, transmitDataAscii: str) -> None:
+		transmitMessage = bytearray()
+		for i in bytes.fromhex(transmitDataAscii):
+			if i == '0x7e':
+				transmitMessage.extend(b"\x7d\x5e")
+			elif i == '0x7d':
+				transmitMessage.extend(b"\x7d\x5d")
 			else:
-				dataStreamDict[key] = messageDict[key]
-		self.plugin.debugLog("insertBitStuffing:       || bit stuffed dataStream dictionary: %s" % dataStreamDict)
-		dataStream = ""															# reassemble data stream
-		for key in dataStreamDict:
-			dataStream += dataStreamDict[key]
-		return dataStream
+				transmitMessage.append(i)
+		checksum = self.compute_fletcher16(transmitMessage)
+		transmitMessage.extend(checksum.to_bytes(2, byteorder="little"))
+		transmitMessage[0:0] = b'\x7e'
+		self.conn.write(transmitMessage)
+
+		messageNumber = transmitDataAscii[2:4]
+		alarmMessage = self.messageAlarmDict(messageNumber)
+		self.plugin.debugLog("sendMsgDirect:           >> sent message: %s,  %s,  %r" % (messageNumber, alarmMessage, transmitMessage))
+
+	def timestamp(self) -> str:
+		"""
+		Create a friendly-formatted current timestamp for event logging and device status event updates.
 		
-	########################################
-	# Remove Stuffed Bits from  Received message
-	########################################
-	
-	def removeBitStuffing(self, dataStream):
-		if re.search('7d5e', dataStream):
-			# Todo: Refactor loop
-			for m in re.finditer('7d5e', dataStream):
-				dataStream = re.sub('7d5e', '7e', dataStream)
-			self.plugin.debugLog("removeBitStuffing:        || remove /'7d5e/' from data receive data stream: %s" % dataStream)
-		if re.search('7d5d', dataStream):
-			# Todo: Refactor loop
-			for m in re.finditer('7d5d', dataStream):
-				dataStream = re.sub('7d5d', '7d', dataStream)
-			self.plugin.debugLog("removeBitStuffing:        || remove /'7d5d/' from data receive data stream: %s" % dataStream)
-		return dataStream	
-					
-	########################################
-	# Create Byte message dictionary for Transmit and Receive message processing
-	########################################
-	
-	def convertMessageToByteDict(self, msgLength, message):
-		byteDict = {}		
-		byteLocation = 0	
-		byte1Location = 0
-		byte2Location = 1
-		for i in range(0, msgLength):
-			byte1 = message[byte1Location]
-			byte2 = message[byte2Location]
-			byteDict[byteLocation] = byte1 + byte2
-			byteLocation += 1
-			byte1Location += 2
-			byte2Location += 2
-		return byteDict
-		
-	########################################
-	# create Date/Time stamp for log event  message processing
-	########################################
-	
-	def getCurrentDate(self):
-		currentDate = time.asctime(time.localtime(time.time()))
-		return currentDate
-		
-	########################################
-	# returns a friendly formatted current timestamp for event logging and device status event updates
-	########################################
-	
-	def timestamp(self):	
+		:return: Timestamp string.
+		"""
 		timeLogged = time.localtime(time.time())
 		timeLogEvent = "%r/%r/%r   %02d:%02d:%02d" % (
-			timeLogged.tm_mday, timeLogged.tm_mon, timeLogged.tm_year, timeLogged.tm_hour, timeLogged.tm_min,
+			timeLogged.tm_mon, timeLogged.tm_mday, timeLogged.tm_year, timeLogged.tm_hour, timeLogged.tm_min,
 			timeLogged.tm_sec)
-		return timeLogEvent		
+		return timeLogEvent
 
-	########################################
-	# convert Hexadecimal value to a single Byte
-	########################################
-				
-	def HexToByte(self, hexStr):
-		byteList = []
-		hexStr = ''.join(hexStr.split(" "))
-		for i in range(0, len(hexStr), 2):
-			byteList.append(chr(int(hexStr[i:i+2], 16)))
-		return ' '.join(byteList)
-		
-	########################################
-	# Convert a single Byte string to Hexadecimal value
-	########################################
-	
-	def ByteToHex(self, byteStr):
-		return ' '.join(["%02X" % ord(x) for x in byteStr])
-		
 	################################################################################
-	# Routines for Keypad Display Processing methods (decode partition snapshot status for LCD display messages)
-	################################################################################
-	
-	########################################
-	# Update Alarm Display from received "Partition Snapshot Message" method
-	########################################
+	# Routines for Keypad Display Processing methods (decode partition snapshot status for LCD messages)
+	###############################################################################
 
 	# noinspection PyUnusedLocal
-	def updateAlarmDisplay(self, varList, newByte):
+	def updateAlarmDisplay(self, varList, newByte) -> None:
+		"""
+		Update Alarm Display from received "Partition Snapshot Message" method
+
+		:param varList: ???
+		:param newByte: ???
+		:return: None
+		"""
 		partition = 1								# assumes control keypad is always in partition 1
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
@@ -1082,7 +978,14 @@ class Caddx(object):
 	# update Breached Zone for Alarm Display from received "Log Event Message" method 
 	########################################
 			
-	def updateAlarmDisplayZoneBreached(self, partition, zoneBreached):
+	def updateAlarmDisplayZoneBreached(self, partition, zoneBreached) -> None:
+		"""
+		Update breached zone for alarm display from received "Log Event Message" method
+
+		:param partition: Partition associated with breached zone.
+		:param zoneBreached: Zone number of breached zone.
+		:return: None
+		"""
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
 			keypad = int(dev.pluginProps['associatedKeypad'])
@@ -1102,7 +1005,13 @@ class Caddx(object):
 	# update Breached Zone Name for Alarm Display from device config ui "Zone Name" method
 	########################################
 
-	def updateZoneNameBreached(self, zone):
+	def updateZoneNameBreached(self, zone) -> str:
+		"""
+		Update breached zone name for alarm display from device config ui "Zone Name" method
+
+		:param zone: Zone for which to get name.
+		:return: Zone name.
+		"""
 		zoneDisplayName = ""		
 		if zone in self.zoneList.keys():
 			dev = self.zoneList[zone]
@@ -1116,11 +1025,13 @@ class Caddx(object):
 	# Routines for Zone Group Type Processing methods (decode zone group type configuration and add zone description)
 	################################################################################
 	
-	########################################
-	# determine the zone group type number	
-	########################################
-	
-	def zoneGroupType(self, zoneTypeDict):
+	def zoneGroupType(self, zoneTypeDict: str) -> str:
+		"""
+		Determine the zone group type number.
+
+		:param zoneTypeDict: ???
+		:return: The zone group type in string format.
+		"""
 		if zoneTypeDict == '000000000001001111110100':
 			zoneType = '01'
 		elif zoneTypeDict == '000000100001001111000000':
@@ -1184,102 +1095,103 @@ class Caddx(object):
 		else:
 			zoneType = 'no zone group match'	
 		return zoneType
-	
-	########################################
-	# determine the zone group type description label	
-	########################################
 
-	# noinspection PyUnusedLocal
-	def zoneGroupDescription(self, zoneTypeDict):
+	def zoneGroupDescription(self, zoneTypeDict: str) -> str:
+		"""
+		Determine the zone group type description label
+
+		:param zoneTypeDict: ???
+		:return: The zone type description in string format.
+		"""
 		if zoneTypeDict == '000000000001001111110100':
-			zoneType = '01'
+			# zoneType = '01'
 			zoneDescription = 'Day/Night Alarm'
 		elif zoneTypeDict == '000000100001001111000000':
-			zoneType = '02'	
+			# zoneType = '02'
 			zoneDescription = 'Panic Alarm'	
 		elif zoneTypeDict == '000100000001101111110000':
-			zoneType = '03'	
+			# zoneType = '03'
 			zoneDescription = 'Entry/Exit (delay1)'
 		elif zoneTypeDict == '000110000001001111110000':
-			zoneType = '04'	
+			# zoneType = '04'
 			zoneDescription = 'Interior Alarm'	
 		elif zoneTypeDict == '010110000001001111110000':
-			zoneType = '05'	
+			# zoneType = '05'
 			zoneDescription = 'Interior Alarm'
 		elif zoneTypeDict == '000000000001101111110000':
-			zoneType = '06'	
+			# zoneType = '06'
 			zoneDescription = 'Perimeter Alarm'	
 		elif zoneTypeDict == '000000100000000011000000':
-			zoneType = '07'
+			# zoneType = '07'
 			zoneDescription = 'Silent Panic'	
 		elif zoneTypeDict == '000000010000010111000100':
-			zoneType = '08'	
+			# zoneType = '08'
 			zoneDescription = 'Fire Alarm'	
 		elif zoneTypeDict == '001000000001101111110000':
-			zoneType = '09'	
+			# zoneType = '09'
 			zoneDescription = 'Entry/Exit (delay2)'
 		elif zoneTypeDict == '000010100001000011000000':
-			zoneType = '10'	
+			# zoneType = '10'
 			zoneDescription = 'Tamper Alarm'	
 		elif zoneTypeDict == '000001000000000000000000':
-			zoneType = '11'	
+			# zoneType = '11'
 			zoneDescription = 'Arm/Disarm (momentary keyswitch)'	
 		elif zoneTypeDict == '010110000001001111111000':
-			zoneType = '12'	
+			# zoneType = '12'
 			zoneDescription = 'Interior Alarm (cross zone)'	
 		elif zoneTypeDict == '000000001001101111110000':
-			zoneType = '13'
+			# zoneType = '13'
 			zoneDescription = 'Perimeter Alarm (entry guard)'
 		elif zoneTypeDict == '000100000011101111110000':
-			zoneType = '14'	
+			# zoneType = '14'
 			zoneDescription = 'Entry/Exit (delay1, group bypass)'
 		elif zoneTypeDict == '010110000011001111110000':
-			zoneType = '15'	
+			# zoneType = '15'
 			zoneDescription = 'Interior Alarm (group bypass)'	
 		elif zoneTypeDict == '000000000011101111110000':
-			zoneType = '16'	
+			# zoneType = '16'
 			zoneDescription = 'Perimeter Alarm (group bypass)'	
 		elif zoneTypeDict == '000100000001101111110010':
-			zoneType = '17'	
+			# zoneType = '17'
 			zoneDescription = 'Arm/Disarm (maintained keyswitch)'
 		elif zoneTypeDict == '010110000001001111110010':
-			zoneType = '18'	
+			# zoneType = '18'
 			zoneDescription = 'Entry/Exit (delay1, force armable)'
 		elif zoneTypeDict == '000000000001101111110010':
-			zoneType = '19'
+			# zoneType = '19'
 			zoneDescription = 'Entry/Exit (delay2, force armable)'
 		elif zoneTypeDict == '001000000001101111110010':
-			zoneType = '20'	
+			# zoneType = '20'
 			zoneDescription = 'Entry/Exit (delay2, chime enabled)'	
 		elif zoneTypeDict == '000010100001000111000000':
-			zoneType = '21"'	
+			# zoneType = '21"'
 			zoneDescription = 'Gas Detected or Low/High Temp'	
 		elif zoneTypeDict == '000010100001000111000000':
-			zoneType = '22'	
+			# zoneType = '22'
 			zoneDescription = 'Freeze Alarm'	
 		elif zoneTypeDict == '000010100001000111000000':
-			zoneType = '23'
+			# zoneType = '23'
 			zoneDescription = 'Interior Alarm'
 		elif zoneTypeDict == '000000010000010111000100':
-			zoneType = '24'	
+			# zoneType = '24'
 			zoneDescription = 'Perimeter Alarm'	
 		elif zoneTypeDict == '100010100001100000000000':
-			zoneType = '25'
+			# zoneType = '25'
 			zoneDescription = 'Interior Alarm'	
 		elif zoneTypeDict == '011010000001001111110000':
-			zoneType = '26'	
+			# zoneType = '26'
 			zoneDescription = 'Burglary Alarm (supervised local)'
 		elif zoneTypeDict == '010110000101001111110000':
-			zoneType = '27'
+			# zoneType = '27'
 			zoneDescription = 'Perimeter Alarm (activity monitor)'		
 		elif zoneTypeDict == '001000000101101111110000':
-			zoneType = '28'	
+			# zoneType = '28'
 			zoneDescription = 'Perimeter Alarm (request to exit)'
 		elif zoneTypeDict == '010110000001001111110000':
-			zoneType = '29'
+			# zoneType = '29'
 			zoneDescription = 'Interior Alarm (request access to entry)'	
 		elif zoneTypeDict == '000100000001101111110000':
-			zoneType = '30'
+			# zoneType = '30'
 			zoneDescription = 'Medical Alarm'
 		else:
 			zoneDescription = 'no zone group match'	
@@ -1289,20 +1201,23 @@ class Caddx(object):
 	# Routines for Zone State Update method  (update zoneState value condition from received "Zone Status Message")
 	################################################################################
 	
-	########################################
-	# determine and update zoneState value condition 
-	########################################
-	
-	def updateZoneStateCondition(self, dev, zoneNum, zoneCondition):
+	def updateZoneStateCondition(self, dev, zoneNum, zoneCondition) -> None:
+		"""
+		Determine and update zoneState value condition
+
+		:param dev: ???
+		:param zoneNum: ???
+		:param zoneCondition: ???
+		:return: None
+		"""
 		
 		# test if zoneDisplayName exists in pluginProps dictionary
-		zone = self.adjustZoneNumberDigits(zoneNum)
+		zone = f"{zoneNum:03}"
 		if dev.pluginProps['zoneDisplayName']:
 			zoneName = dev.pluginProps['zoneDisplayName']
 		else:
 			zoneName = "Zone " + zone
-		# noinspection PyUnusedLocal
-		newByte = zoneCondition
+		# bitList = zoneCondition
 				
 		# test for condition of zoneState device state for Group Trigger Plugin
 		if zoneCondition == '00000001':
@@ -1361,21 +1276,18 @@ class Caddx(object):
 	# Routines for Communication Status Update methods (update comm status in plugin config preferences)
 	################################################################################
 
-	########################################
-	# update: comm state active 
-	########################################
-	
-	def commStatusUp(self):
-		self.plugin.pluginPrefs['portStatus'] = 'Port (opened)'
+	def commStatusUp(self) -> None:
+		"""
+		Set comm state to active.
+
+		:return: None
+		"""
+		self.plugin.pluginPrefs['portStatus'] = "Port (opened)"
 		self.plugin.pluginPrefs['communicationFailure'] = False	
 		self.plugin.pluginPrefs['activeCommunication'] = True	
-		self.plugin.pluginPrefs['panelStatus'] = "Connected  ** %s" % self.timestamp()
-		variableID = "portStatus"
-		portStatusVariable = "Port (opened)"
-		self.updateVariable(variableID, portStatusVariable)
-		variableID = "panelStatus"
-		panelStatusVariable = ("Connected  ** %s " % self.timestamp())
-		self.updateVariable(variableID, panelStatusVariable)
+		self.plugin.pluginPrefs['panelStatus'] = f"Connected  ** {self.timestamp()}"
+		self.updateVariable("portStatus", "Port (opened)")
+		self.updateVariable("panelStatus", f"Connected  ** {self.timestamp()}")
 		partition = 1												# update partition status variables config ui and device state
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
@@ -1388,12 +1300,13 @@ class Caddx(object):
 			variableID = "lastStateChange"
 			lastStateChangeVariable = ("Partition 1  Connected  ** %s" % self.timestamp())
 			self.updateVariable(variableID, lastStateChangeVariable)
-		
-	########################################
-	# update: comm state down  	
-	########################################
-	
-	def commStatusDown(self):
+
+	def commStatusDown(self) -> None:
+		"""
+		Set comm state to inactive.
+
+		:return: None
+		"""
 		self.plugin.pluginPrefs['portStatus'] = 'Port(closed)'
 		self.plugin.pluginPrefs['communicationFailure'] = True
 		self.plugin.pluginPrefs['lastFailureTime'] = "Failed ** %s" % self.timestamp()	
@@ -1418,59 +1331,33 @@ class Caddx(object):
 			variableID = "lastStateChange"
 			lastStateChangeVariable = ("Partition 1  Disconnected  ** %s" % self.timestamp())
 			self.updateVariable(variableID, lastStateChangeVariable)
-	
-	########################################
-	# update: periodic test with comm continuity check to security system
-	########################################
-	
-	def commContinuityCheck(self, timeNow):
-		if self.plugin.watchdogTimerPeriod != 0:										# test if watchdog timer disabled
+
+	def commContinuityCheck(self) -> None:
+		"""
+		Periodic test with comm continuity check to security system.
+
+		:return: None
+		"""
+		timeNow = time.time()
+		if self.plugin.watchdogTimerPeriod > 0:								# test if watchdog timer disabled
 			if not self.plugin.pluginPrefs['isSynchronising']:					# abort if Synchronising Database process running
-				if timeNow >= self.watchdogTimer:										# test if watchdog timer expired
+				if timeNow >= self.watchdogTimer:								# test if watchdog timer expired
 					if self.plugin.messageProcessInfo or self.plugin.debug:
 						indigo.server.log("watchdog timer triggered:        Interface Configuration Message: %s" % timeNow)
-					if self.plugin.pluginPrefs['firmware'] == '*****':					# test for communication failure, update plugin prefs
+					if self.plugin.pluginPrefs['firmware'] == '*****':			# test for communication failure, update plugin prefs
 						self.plugin.pluginPrefs['portStatus'] = "Port (open failure)"
 						self.plugin.pluginPrefs['communicationFailure'] = True
 						self.plugin.pluginPrefs['lastFailureTime'] = "Failed ** %s" % self.timestamp()
-						self.errorCountComm += 1										# if error , increment counter
+						self.errorCountComm += 1								# if error , increment counter
 						indigo.server.log("error: communication continuity test FAILURE to Caddx Security System, error count %s" % self.errorCountComm)
-					self.watchdogTimer = timeNow + self.plugin.watchdogTimerPeriod		# reset watchdog timer
-					self.plugin.pluginPrefs['firmware'] = '*****'						# reset firmware to test communication loop
-					self.sendMsgToQueue(cmdInterfaceConfigurationRequest)						# command action: Interface Configuration Request
+					self.watchdogTimer = timeNow + self.plugin.watchdogTimerPeriod  # reset watchdog timer
+					self.plugin.pluginPrefs['firmware'] = '*****'				# reset firmware to test communication loop
+					self.sendMsgToQueue(cmdInterfaceConfigurationRequest)	 # command action: Interface Configuration Request
 			else:
 				return
 		else:
 			return		
-			
-	########################################
-	# adjust the log event number to 3 digits 	
-	########################################
-	
-	def adjustLogEventNumberDigits(self, logEventNum):
-		key = int(logEventNum)
-		if key <= 9:
-			logEventNum = "00" + str(key)
-		elif key <= 99:
-			logEventNum = "0" + str(key)
-		else:	
-			logEventNum = str(key)
-		return logEventNum
-			
-	########################################
-	# adjust the zone number to 2 digits   	
-	########################################
-			
-	def adjustZoneNumberDigits(self, zone):		
-		key = int(zone)
-		if key <= 9:
-			zone = "00" + str(key)
-		elif key <= 99:
-			zone = "0" + str(key)	
-		else:
-			zone = str(key)
-		return zone
-	
+
 	################################################################################
 	# Routines for Received Message Processing method (decode Received messages and call update process)
 	################################################################################
@@ -1478,104 +1365,74 @@ class Caddx(object):
 	########################################
 	# process received messages and call associated decode and update method
 	########################################
-	
-	def decodeReceivedData(self, messageNumber, messageDict):
-		if messageNumber == "01":												# Interface Configuration Message
-			self._interfaceConfigurationMessage(messageDict)
-		elif messageNumber == "03":												# Zone Name Message
-			self._zoneNameMessage(messageDict)				
-		elif messageNumber == "04":												# Zone Status Message
-			self._zoneStatusMessage(messageDict)
-		elif messageNumber == "05":												# Zone Snapshot Message
-			self._zoneSnapshotMessage(messageDict)
-		elif messageNumber == "06":												# Partition Status Message
-			self._partitionStatusMessage(messageDict)
-		elif messageNumber == "07":												# Partition Snapshot Message
-			self._partitionSnapshotMessage(messageDict)
-		elif messageNumber == "08":												# System Status Message
-			self._systemStatusMessage(messageDict)
-		elif messageNumber == "09":												# X-10 Message Received
-			self._x10MessageReceived(messageDict)
-		elif messageNumber == "0a":												# Log Event Message
-			self._logEventMessage(messageDict)
-		elif messageNumber == "0b":												# Keypad Message Received
-			self._keypadMessageReceived(messageDict)
-		elif messageNumber == "10":												# Program Data Reply
-			self._programDataReply(messageDict)
-		elif messageNumber == "12":												# User Information Reply
-			self._userInformationReply(messageDict)	
-		elif messageNumber == "1c":												# Command / Request Failed
-			pass
-		elif messageNumber == "1d":												# Positive Acknowledge
-			pass
-		elif messageNumber == "1e":												# Negative Acknowledge
-			pass
-		elif messageNumber == "1f":												# Message Rejected
-			pass
-		elif messageNumber == "81":												# Interface Configuration Message (with acknowledge request)
+
+	# noinspection PyUnusedLocal
+	def decodeReceivedData(self, messageDict: list[str], reqMessageType: int) -> None:
+		"""
+		Process received messages and call associated decode and update method.
+
+		:param messageDict: A hex-formatted message dictionary.
+		:param reqMessageType: The type of message that triggered the received data.
+		:return: None.  (TBD: bool)
+		"""
+		# Todo: validate received data was proper response for reqMessageType
+		messageNumber = int(messageDict[1], 16)
+		ackRequested = bool(messageNumber & 0x80)
+		messageNumber = messageNumber & ~0xc0  # Use only bottom 6 bits.
+
+		match messageNumber:
+			case 0x01:											# Interface Configuration Message
+				self._interfaceConfigurationMessage(messageDict)
+			case 0x03:											# Zone Name Message
+				self._zoneNameMessage(messageDict)
+			case 0x04:											# Zone Status Message
+				self._zoneStatusMessage(messageDict)
+			case 0x05:											# Zone Snapshot Message
+				self._zoneSnapshotMessage(messageDict)
+			case 0x06:											# Partition Status Message
+				self._partitionStatusMessage(messageDict)
+			case 0x07:											# Partition Snapshot Message
+				self._partitionSnapshotMessage(messageDict)
+			case 0x08:											# System Status Message
+				self._systemStatusMessage(messageDict)
+			case 0x09:											# X-10 Message Received
+				self._x10MessageReceived(messageDict)
+			case 0x0a:											# Log Event Message
+				self._logEventMessage(messageDict)
+			case 0x0b:											# Keypad Message Received
+				self._keypadMessageReceived(messageDict)
+			case 0x10:											# Program Data Reply
+				self._programDataReply(messageDict)
+			case 0x12:											# User Information Reply
+				self._userInformationReply(messageDict)
+			case 0x1c:											# Command / Request Failed
+				self.plugin.debugLog("decodeReceivedData: Got 'Command/Request Failed'")
+				pass
+			case 0x1d:											# Positive Acknowledge
+				self.plugin.debugLog("decodeReceivedData: Got 'ACK'")
+				pass
+			case 0x1e:											# Negative Acknowledge
+				self.plugin.debugLog("decodeReceivedData: Got 'NAK'")
+				pass
+			case 0x1f:											# Message Rejected
+				self.plugin.debugLog("decodeReceivedData: Got 'Message Rejected'")
+				pass
+			case _:
+				self.sendMsgDirect(CAN)
+				indigo.plugin.errorLog(f"decodeReceivedData: Invalid or not supported message type. Type: '{messageNumber:02x}'")
+		if ackRequested:
 			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._interfaceConfigurationMessage(messageDict)
-		elif messageNumber == "83":												# Zone Name Message (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._zoneNameMessage(messageDict)				
-		elif messageNumber == "84":												# Zone Status Message (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._zoneStatusMessage(messageDict)
-		elif messageNumber == "85":												# Zone Snapshot Message (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._zoneSnapshotMessage(messageDict)
-		elif messageNumber == "86":												# Partition Status Message (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._partitionStatusMessage(messageDict)
-		elif messageNumber == "87":												# Partition Snapshot Message (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._partitionSnapshotMessage(messageDict)
-		elif messageNumber == "88":												# System Status Message (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._systemStatusMessage(messageDict)
-		elif messageNumber == "89":												# X-10 Message Received (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._x10MessageReceived(messageDict)
-		elif messageNumber == "8a":												# Log Event Message (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._logEventMessage(messageDict)
-		elif messageNumber == "8b":												# Keypad Message Received (with acknowledge request)
-			self.sendMsgDirect(ACK)
-			if self.plugin.messageActInfo or self.plugin.debug:
-				indigo.server.log("decodeReceivedData:      >> sending message: ACK")
-			self._keypadMessageReceived(messageDict)
-		else:
-			self.sendMsgDirect(CAN)
-			indigo.server.log("startComm:        error received message number: %r,  (not valid or not supported)." % messageNumber)
-		
+
 	########################################
 	# process "Interface Configuration Message"
 	########################################
 	
-	def _interfaceConfigurationMessage(self, dataDict):
+	def _interfaceConfigurationMessage(self, dataDict: list[str]):
 		# extract each ASCII word from the system status message
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
-		bmessageLength = self.convertHexToDec(kmessageLength)							# convert message length from hex to dec
+		bmessageLength = int(kmessageLength, 16)										# convert message length from hex to dec
 		
 		panel = int(self.systemId)														# system panel type number for updating state values
 		messageStart = 6																# start pointer for valid message data (exclude message length and message number)
@@ -1585,14 +1442,14 @@ class Caddx(object):
 			indigo.server.log("processing message:         %s,  system model: %s,  length: %r" % (kalarmMessage, self.model, bmessageLength))
 
 		# convert hex to binary map
-		dmessageLength = int(self.convertHexToDec(kmessageLength) - 5)					# valid data message length
+		dmessageLength = bmessageLength - 5
 		binterfaceConfigurationMessageDict = self.convertByteDictToBinaryMap(messageStart, dmessageLength, dataDict)
 		
 		# convert hex to ascii
-		# Todo:  Added "global"  Was this the intent?
+		# Fixme:  Added "global"  Was this the intent?
 		global panelFirmware
-		panelFirmware = "%s%s%s%s" % (binascii.a2b_hex(dataDict[2]), binascii.a2b_hex(dataDict[3]), binascii.a2b_hex(dataDict[4]), binascii.a2b_hex(dataDict[5]))
-	
+		panelFirmware = chr(int(dataDict[2], 16)) + chr(int(dataDict[3], 16)) + chr(int(dataDict[4], 16)) + chr(int(dataDict[5], 16))
+
 		# verify message word value and binary mapping
 		self.plugin.debugLog("interfaceConfigurationMessage:        interface configuration message dictionary: %r" % dataDict)
 		self.plugin.debugLog("interfaceConfigurationMessage:        interface configuration message bit map dictionary: %r" % binterfaceConfigurationMessageDict)
@@ -1651,14 +1508,12 @@ class Caddx(object):
 					"partitionStatusMessage", "partitionSnapshotMessage",
 					"systemStatusMessage", "receivedX10Message", "logEventReceived", "keypadMessageReceived"
 				]
-				item = 0
-				# Todo: Refactor loop
-				for i in prefsInterfaceConfigList:
-					var = localPrefsCopy[prefsInterfaceConfigList[item]]
+				# Display enabled broadcast messages.
+				for item in prefsInterfaceConfigList:
+					var = localPrefsCopy[item]
 					if var == '1':
-						indigo.server.log("    . . %s " % prefsInterfaceConfigList[item])
-					item += 1
-				
+						indigo.server.log(f"  - {item}")
+
 				# copy "Command / Request" message state values that are currently "enabled" to Indigo Log	
 				indigo.server.log("")
 				indigo.server.log("Command / Request messages currently enabled: ")
@@ -1673,17 +1528,16 @@ class Caddx(object):
 					"setClockCalenderCommand", "primaryKeypadFunctionWithPin",
 					"primaryKeypadFunctionWithoutPin", "secondaryKeypadFunction", "zoneBypassToggle"
 				]
-				item = 0
-				# Todo: refactor loop
-				for i in prefsInterfaceConfigList:
-					var = localPrefsCopy[prefsInterfaceConfigList[item]]
+				# Display enabled commands.
+				for item in prefsInterfaceConfigList:
+					var = localPrefsCopy[item]
 					if var == '1':
-						indigo.server.log("    . . %s " % prefsInterfaceConfigList[item])
-					item += 1		
+						indigo.server.log(f"  - {item}")
 				self.suspendInterfaceConfigMessageDisplay = True
 	
 		# update Interface Configuration Status States from received "Interface Configuration Message"
 		if binterfaceConfigurationMessageDict is not None:
+			# Fixme:  The panel device was never created, so following if will always fail.  Intent?
 			if panel in self.panelList.keys():
 				dev = self.panelList[panel]
 				dev.updateStateOnServer(key='firmware', value=panelFirmware)
@@ -1704,27 +1558,25 @@ class Caddx(object):
 	# process "Zone Name Message"
 	########################################
 	
-	def _zoneNameMessage(self, dataDict):
-		# extract each ASCII word from the system status message
-		kmessageLength = dataDict[0]
+	def _zoneNameMessage(self, dataDict: list[str]):
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
-		# noinspection PyUnusedLocal
-		bmessageLength = self.convertHexToDec(kmessageLength)							# convert message length from hex to dec
-		
+
 		kzoneNumber = dataDict[2]
-		kzoneName1 = dataDict[3] + dataDict[4] + dataDict[5] + dataDict[6] + dataDict[7] + dataDict[8] + dataDict[9] + dataDict[10]
-		kzoneName2 = dataDict[11] + dataDict[12] + dataDict[13] + dataDict[14] + dataDict[15] + dataDict[16] + dataDict[17] + dataDict[18]
-		kzoneName = kzoneName1 + kzoneName2
-		dzoneNumber = self.convertHexToDec(kzoneNumber)									# convert zone number from hex to dec for indexing
-		dzoneNumber = (int(dzoneNumber) + 1)											# zone numbers start from 0 ie.(0 = zone 1)
-		
-		# convert hex to ascii
-		displayName = binascii.a2b_hex(kzoneName)
-		
+		dzoneNumber = int(kzoneNumber, 16) + 1 	# zone numbers start from 0 ie.(0 = zone 1)
+
+		kzoneNameHex = ""
+		for i in range(3, 19):
+			kzoneNameHex += dataDict[i]
+		displayName = bytearray.fromhex(kzoneNameHex).decode("utf-8").rstrip()
+
+		# kzoneName1 = dataDict[3] + dataDict[4] + dataDict[5] + dataDict[6] + dataDict[7] + dataDict[8] + dataDict[9] + dataDict[10]
+		# kzoneName2 = dataDict[11] + dataDict[12] + dataDict[13] + dataDict[14] + dataDict[15] + dataDict[16] + dataDict[17] + dataDict[18]
+		# kzoneName = kzoneName1 + kzoneName2
+
 		# verified message being processed notice
 		if self.plugin.messageProcessInfo or self.plugin.debug:
-			indigo.server.log("processing message:         %s,  zone: %r,  {%s}" % (kalarmMessage, dzoneNumber, displayName))
+			indigo.server.log(f"processing message:         {kalarmMessage},  zone: {dzoneNumber},  {displayName}")
 		
 		# verify message word value and binary mapping
 		self.plugin.debugLog("zoneNameMessage:        zone name message dictionary: %r" % dataDict)
@@ -1739,7 +1591,7 @@ class Caddx(object):
 				dev.replacePluginPropsOnServer(localPropsCopy)
 				# dev.updateStateOnServer(key="zoneDisplayName", value=displayName)
 				if self.plugin.messageProcessInfo or self.plugin.debug:
-					indigo.server.log("update zone name:        device configuration ui and device state records successfully updated with zone: %r,  {%s}" % (dzoneNumber, displayName))	
+					indigo.server.log("update zone name:        device configuration ui and device state records successfully updated with zone: %r, '%s'" % (dzoneNumber, displayName))
 			else:
 				self.plugin.debugLog("update zone name:        no record in indigo database (device) for zone: %r" % dzoneNumber)
 		else:
@@ -1750,16 +1602,16 @@ class Caddx(object):
 	# process "Zone Status Message"
 	########################################
 		
-	def _zoneStatusMessage(self, dataDict):
+	def _zoneStatusMessage(self, dataDict: list[str]):
 		# extract each ASCII word from the system status message
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
-		bmessageLength = self.convertHexToDec(kmessageLength)							# convert message length from hex to dec
+		bmessageLength = int(kmessageLength, 16)							# convert message length from hex to dec
 				
 		kzoneNumber = dataDict[2]
-		dzoneNumber = self.convertHexToDec(kzoneNumber)									# convert zone number from hex to dec for indexing
-		dzoneNumber = (int(dzoneNumber) + 1)											# zone numbers start from 0 ie.(0 = zone 1)
+		dzoneNumber = int(kzoneNumber, 16)									# convert zone number from hex to dec for indexing
+		dzoneNumber = dzoneNumber + 1											# zone numbers start from 0 ie.(0 = zone 1)
 
 		messageStart = 3
 		
@@ -1768,7 +1620,7 @@ class Caddx(object):
 			indigo.server.log("processing message:         %s,  zone: %r,  length: %r" % (kalarmMessage, dzoneNumber, bmessageLength))
 		
 		# convert hex to binary map
-		dmessageLength = int(self.convertHexToDec(kmessageLength) - 2)	 # valid data message length
+		dmessageLength = int(kmessageLength, 16) - 2	 # valid data message length
 		bzoneStatusMessageDict = self.convertByteDictToBinaryMap(messageStart, dmessageLength, dataDict)
 		
 		# verify message word value and binary mapping
@@ -1863,16 +1715,16 @@ class Caddx(object):
 	# process "Zones Snapshot Message"
 	########################################
 	
-	def _zoneSnapshotMessage(self, dataDict):
+	def _zoneSnapshotMessage(self, dataDict: list[str]):
 		# extract each ASCII word from the system status message
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
 		# noinspection PyUnusedLocal
-		bmessageLength = self.convertHexToDec(kmessageLength)							# convert message length from hex to dec
+		bmessageLength = int(kmessageLength, 16)							# convert message length from hex to dec
 			
 		kzoneOffset = dataDict[2]
-		bzoneOffset = self.convertHexToDec(kzoneOffset)									# convert hex to binary map for zone blocks 1 - 16 + (offset)
+		bzoneOffset = int(kzoneOffset, 16)									# convert hex to binary map for zone blocks 1 - 16 + (offset, 16)
 		
 		messageStart = 3
 		zoneGroups = {
@@ -1887,7 +1739,7 @@ class Caddx(object):
 			indigo.server.log("processing message:         %s,  block address: %r,  group: %s" % (kalarmMessage, bzoneOffset, zoneGroups[bzoneOffset]))		
 		
 		# convert hex to binary map
-		dmessageLength = int(self.convertHexToDec(kmessageLength) - 2)					# valid data message length
+		dmessageLength = int(kmessageLength, 16) - 2				# valid data message length
 		bzoneSnapshotMessageDict = self.convertByteDictToBinaryMap(messageStart, dmessageLength, dataDict)
 		
 		# verify binary mapping 
@@ -1900,7 +1752,7 @@ class Caddx(object):
 		
 		# update Zone Device states values from received "Zone Snapshot Message"
 		"""
-		dzoneOffset = self.convertHexToDec(kzoneOffset)									# convert zone offset number from hex to dec for indexing
+		dzoneOffset = int(kzoneOffset, 16)									# convert zone offset number from hex to dec for indexing
 		if bzoneSnapshotMessageDict != None:
 				self.updateZoneSnapshot(bzoneOffset, zoneSnapshotList, bzoneSnapshotMessageDict)
 				if self.plugin.messageProcessInfo or self.plugin.debug:
@@ -1913,27 +1765,26 @@ class Caddx(object):
 	# process "Partition Status Message"
 	########################################
 	
-	def _partitionStatusMessage(self, dataDict):
+	def _partitionStatusMessage(self, dataDict: list[str]):
 		# extract each ASCII word from the partition status message
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
-		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
-		bmessageLength = self.convertHexToDec(kmessageLength)							# convert message length from hex to dec
-		
-		kpartitionNumber = dataDict[2]
-		dpartitionNumber = self.convertHexToDec(kpartitionNumber)						# convert zone number from hex to dec for indexing
-		dpartitionNumber = (int(dpartitionNumber) + 1)									# partition numbers start from 0 i.e.(0 = partition 1)
-		partition = dpartitionNumber
-		partitionLastUserNumber = self.convertHexToDec(dataDict[7])
-		
-		messageStart = 3																# start pointer for valid message data (exclude message length and message number)
+		kalarmMessage = self.messageAlarmDict(kmessageNumber)		# convert message number to message description
+		messageLength = int(kmessageLength, 16)						# convert message length from hex to dec
+
+		# convert zone number from hex to dec for indexing. partition numbers start from 0 i.e.(0 = partition 1)
+		partition = int(dataDict[2], 16) + 1
+		partitionLastUserNumber = int(dataDict[7], 16)
+
+		# start pointer for valid message data (exclude message length and message number)
+		messageStart = 3
 		
 		# verified message being processed notice	
 		if self.plugin.messageProcessInfo or self.plugin.debug:
-			indigo.server.log("processing message:          %s,  partition: %r,  length: %r" % (kalarmMessage, dpartitionNumber, bmessageLength))
+			indigo.server.log("processing message:          %s,  partition: %r,  length: %r" % (kalarmMessage, partition, messageLength))
 
 		# convert hex to binary map
-		dmessageLength = int(self.convertHexToDec(kmessageLength) - 2)					# valid data message length
+		dmessageLength = int(kmessageLength, 16) - 2					# valid data message length
 		bpartitionStatusMessageDict = self.convertByteDictToBinaryMap(messageStart, dmessageLength, dataDict)
 		
 		# verify message word value and binary mapping 
@@ -2013,12 +1864,12 @@ class Caddx(object):
 	# process "Partitions Snapshot Message"
 	########################################
 	
-	def _partitionSnapshotMessage(self, dataDict):
+	def _partitionSnapshotMessage(self, dataDict: list[str]):
 		# extract each ASCII word from the partition status message
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
-		bmessageLength = self.convertHexToDec(kmessageLength)							# convert message length from hex to dec
+		bmessageLength = int(kmessageLength, 16)										# convert message length from hex to dec
 						
 		messageStart = 2																# start pointer for valid message data (exclude message length and message number)
 		
@@ -2027,7 +1878,7 @@ class Caddx(object):
 			indigo.server.log("processing message:         %s,  partition 1 - 8,  length: %r" % (kalarmMessage, bmessageLength))
 
 		# convert hex to binary map for partitions 1 - 8
-		dmessageLength = int(self.convertHexToDec(kmessageLength) - 1)					# valid data message length
+		dmessageLength = int(kmessageLength, 16) - 1				# valid data message length
 		bpartitionSnapshotMessageDict = self.convertByteDictToBinaryMap(messageStart, dmessageLength, dataDict)
 		
 		# verify binary mapping 
@@ -2063,20 +1914,20 @@ class Caddx(object):
 	# process "System Status Message"
 	########################################
 	
-	def _systemStatusMessage(self, dataDict):
+	def _systemStatusMessage(self, dataDict: list[str]):
 		# extract each ASCII word from the system status message
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		ksystemNumber = dataDict[2]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
-		bmessageLength = self.convertHexToDec(kmessageLength)							# convert message length from hex to dec
-		systemPanelId = int(self.convertHexToDec(ksystemNumber))						# convert system number from hex to dec
+		bmessageLength = int(kmessageLength, 16)							# convert message length from hex to dec
+		systemPanelId = int(ksystemNumber, 16)						# convert system number from hex to dec
 		
 		modelList = ['None', 'NX-4', 'NX-6', 'NX-8', 'NX-8e']
 		self.model = modelList[systemPanelId]
 		
 		kpanelByte12 = dataDict[12]
-		bpanelByte12 = self.convertHexToDec(kpanelByte12)								# convert communicator stack pointer length from hex to dec
+		bpanelByte12 = int(kpanelByte12, 16)								# convert communicator stack pointer length from hex to dec
 		
 		system = int(self.systemId)														# system panel type number for updating state values
 		messageStart = 3																# start pointer for valid message data (exclude message length and message number)
@@ -2086,7 +1937,7 @@ class Caddx(object):
 			indigo.server.log("processing message:         %s,  system model: %s,  length: %r" % (kalarmMessage, self.model, bmessageLength))
 			
 		# convert hex to binary map
-		dmessageLength = int(self.convertHexToDec(kmessageLength) - 2)					# valid data message length
+		dmessageLength = int(kmessageLength, 16) - 2					# valid data message length
 		bsystemStatusMessageDict = self.convertByteDictToBinaryMap(messageStart, dmessageLength, dataDict)
 
 		# verify message word value and binary mapping
@@ -2176,7 +2027,7 @@ class Caddx(object):
 	# process "X10 Messages Received" (this method is not yet complete)
 	########################################
 	
-	def _x10MessageReceived(self, dataDict):
+	def _x10MessageReceived(self, dataDict: list[str]):
 		# extract each ASCII word from the x-10 message received
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
@@ -2188,9 +2039,9 @@ class Caddx(object):
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)
 		
 		# convert hex to binary map
-		bhouseCode = self.convertHexToDec(khouseCode)
-		bunitCode = self.convertHexToDec(kunitCode)
-		bx10FunctionCode = self.convertHexToDec(kx10FunctionCode)
+		bhouseCode = int(khouseCode, 16)
+		bunitCode = int(kunitCode, 16)
+		bx10FunctionCode = int(kx10FunctionCode, 16)
 		
 		# verify binary mapping 
 		self.plugin.debugLog("x10MessageReceived:        decode X-10 house code: %r" % bhouseCode)
@@ -2205,7 +2056,7 @@ class Caddx(object):
 	# process "Log Event Message"
 	########################################
 	
-	def _logEventMessage(self, dataDict):
+	def _logEventMessage(self, dataDict: list[str]):
 		# extract each ASCII word from the log event message
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
@@ -2213,17 +2064,17 @@ class Caddx(object):
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)
 						
 		# convert hex to ascii map
-		deventNum = self.convertHexToDec(dataDict[2])								# specific sequence event number
+		deventNum = int(dataDict[2], 16)								# specific sequence event number
 		# noinspection PyUnusedLocal
-		dtotalLogSize = self.convertHexToDec(dataDict[3])							# total size of the event log queue
-		deventType = self.convertHexToDec(dataDict[4])								# event type number to translated to event scription
-		dzoneUserDevice = (self.convertHexToDec(dataDict[5]) + 1)					# event effects zone (0 = zone 1), user (0 = user 1) or device reference
-		dpartitionNumber = (int(self.convertHexToDec(dataDict[6])) + 1)				# partition numbers start from 0 i.e.(0 = partition 1)
+		dtotalLogSize = int(dataDict[3], 16)							# total size of the event log queue
+		deventType = int(dataDict[4], 16)								# event type number to translated to event scription
+		dzoneUserDevice = int(dataDict[5], 16) + 1						# event effects zone (0 = zone 1), user (0 = user 1) or device reference
+		dpartitionNumber = int(dataDict[6], 16) + 1   					# partition numbers start from 0 i.e.(0 = partition 1)
 	
 		timeStamp = time.asctime(time.localtime(time.time()))
-		deventNumber = self.adjustLogEventNumberDigits(deventNum)
-		dzoneUserDeviceNumber = self.adjustZoneNumberDigits(dzoneUserDevice)
-		
+		deventNumber = f"{deventNum:03}"
+		dzoneUserDeviceNumber = f"{dzoneUserDevice:03}"
+
 		# verified message being processed notice
 		if self.plugin.messageProcessInfo or self.plugin.debug:
 			indigo.server.log("processing message:         %s,  alarm event: %r,  %s" % (kalarmMessage, deventType, timeStamp))
@@ -2344,7 +2195,7 @@ class Caddx(object):
 	# process "Keypad Message Received"
 	########################################
 	
-	def _keypadMessageReceived(self, dataDict):
+	def _keypadMessageReceived(self, dataDict: list[str]):
 		# extract each ASCII word from the keypad message received
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
@@ -2370,7 +2221,7 @@ class Caddx(object):
 	# process "Program Data Reply"	(this method is not yet complete)
 	########################################
 		
-	def _programDataReply(self, dataDict):
+	def _programDataReply(self, dataDict: list[str]):
 		# extract each ASCII word from the program data reply
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
@@ -2391,18 +2242,18 @@ class Caddx(object):
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)
 		
 		# convert hex to binary map
-		bdeviceBusAddress = self.convertHexToDec(kdeviceBusAddress)
-		bupperLogicalLocationOffset = self.convertHexToDec(kupperLogicalLocationOffset)
-		blowerLogicalLocationOffset = self.convertHexToDec(klowerLogicalLocationOffset)
-		blocationLengthDataType = self.convertHexToDec(klocationLengthDataType)
-		bdataTypeByte06 = self.convertHexToDec(kdataTypeByte06)
-		bdataTypeByte07 = self.convertHexToDec(kdataTypeByte07)
-		bdataTypeByte08 = self.convertHexToDec(kdataTypeByte08)
-		bdataTypeByte09 = self.convertHexToDec(kdataTypeByte09)
-		bdataTypeByte10 = self.convertHexToDec(kdataTypeByte10)
-		bdataTypeByte11 = self.convertHexToDec(kdataTypeByte11)
-		bdataTypeByte12 = self.convertHexToDec(kdataTypeByte12)
-		bdataTypeByte13 = self.convertHexToDec(kdataTypeByte13)
+		bdeviceBusAddress = int(kdeviceBusAddress, 16)
+		bupperLogicalLocationOffset = int(kupperLogicalLocationOffset, 16)
+		blowerLogicalLocationOffset = int(klowerLogicalLocationOffset, 16)
+		blocationLengthDataType = int(klocationLengthDataType, 16)
+		bdataTypeByte06 = int(kdataTypeByte06, 16)
+		bdataTypeByte07 = int(kdataTypeByte07, 16)
+		bdataTypeByte08 = int(kdataTypeByte08, 16)
+		bdataTypeByte09 = int(kdataTypeByte09, 16)
+		bdataTypeByte10 = int(kdataTypeByte10, 16)
+		bdataTypeByte11 = int(kdataTypeByte11, 16)
+		bdataTypeByte12 = int(kdataTypeByte12, 16)
+		bdataTypeByte13 = int(kdataTypeByte13, 16)
 		
 		# verify binary mapping 
 		self.plugin.debugLog("programDataReply:        decode device bus address: %r" % bdeviceBusAddress)
@@ -2422,15 +2273,15 @@ class Caddx(object):
 	# process "User Information Reply"	
 	########################################
 	
-	def _userInformationReply(self, dataDict):
+	def _userInformationReply(self, dataDict: list[str]):
 		# extract each ASCII word from the user information reply
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)
-		bmessageLength = self.convertHexToDec(kmessageLength)
+		bmessageLength = int(kmessageLength, 16)
 		
 		kuserNumber = dataDict[2]
-		buserNumber = self.convertHexToDec(kuserNumber)
+		buserNumber = int(kuserNumber, 16)
 		user = buserNumber
 		kpinDigit1and2 = dataDict[3]
 		kpinDigit3and4 = dataDict[4]
@@ -2453,7 +2304,7 @@ class Caddx(object):
 			indigo.server.log("processing message:         %s,  user: %r,  length: %r" % (kalarmMessage, buserNumber, bmessageLength))
 			
 		# convert hex to binary map
-		dmessageLength = int(self.convertHexToDec(kmessageLength) - 2)					# valid data message length
+		dmessageLength = int(kmessageLength, 16) - 2					# valid data message length
 		buserInformationReplyDict = self.convertByteDictToBinaryMap(messageStart, dmessageLength, dataDict)
 		
 		# verify binary mapping 
@@ -2508,161 +2359,20 @@ class Caddx(object):
 	################################################################################
 	# Routines to Support Message Processing methods data conversion methods to support message processing
 	################################################################################
-	# data conversion methods to support message processing
-	
-	########################################
-	# convert Hexadecimal value to Decimal integer value
-	########################################
-	
-	def convertHexToDec(self, s):
-		return int(s, 16)
-		
-	########################################
-	# convert Byte value to Decimal string value 	
-	########################################
-	
-	def convertByteToDec(self, byte):
-		decString = ""
-		bit0 = 0
-		bit1 = 1
-		for i in range(0, 3):
-			var = int("%d%d" % (byte[bit0], byte[bit0]))
-			dec = chr(byte[var])
-			decString = "".join(dec)
-			bit0 += 2
-			bit1 += 2
-		return decString	
-		
-	########################################
-	# convert Decimal value to Hexadecimal value
-	########################################
-	
-	def convertDecToHex(self, n):
-		return "%02x" % n
-		
-	########################################
-	# convert Hexadecimal value to 2 byte Binary word map
-	########################################
-	
-	def convertWordHexToBin(self, word):
-		byte1 = word[0]
-		byte2 = word[1]
-		byteA = self.convertByteHexToBin(byte1)
-		byteB = self.convertByteHexToBin(byte2)
-		word = byteA + byteB
-		return word
-		
-	########################################
-	# convert Hexadecimal to Nibble map dictionary for snapshot zones (offset) + (1 - 16) message
-	########################################
-	
-	def convertNibbleHexToBin(self, nibbles):
-		nibbleDict = {}
-		bitLocation = 0
-		# Todo: Refactor loop
-		for i in nibbles:
-			byte = nibbles[bitLocation]
-			nibble = self.convertByteHexToBin(byte)
-			nibbleDict[bitLocation] = nibble
-			bitLocation += 1
-		return nibbleDict
-		
-	########################################
-	# convert Hexadecimal to Byte map dictionary for (zone status message & snapshot partitions 1 - 8 message)
-	########################################
 
-	def convertNibbleByteHexToBin(self, msgLength, nibbles):
-		if (msgLength * 2) <= len(nibbles):
-			nibbleDict = {}
-			byteDict = {}
-			bitLocation = 0
-			# Todo: Refactor loop
-			for i in nibbles:
-				byte = nibbles[bitLocation]
-				nibble = self.convertByteHexToBin(byte)
-				nibbleDict[bitLocation] = nibble
-				bitLocation += 1
-			byteLocation = 0	
-			byte1Location = 0
-			byte2Location = 1
-			self.plugin.debugLog("convertNibbleByteHexToBin:        valid data message length: %r" % msgLength)
-			self.plugin.debugLog("convertNibbleByteHexToBin:        nibbleDict: %r" % nibbleDict)
-			# Todo: Refactor loop
-			for i in range(0, msgLength):
-				byte1 = nibbleDict[byte1Location]
-				byte2 = nibbleDict[byte2Location]
-				byteDict[byteLocation] = byte1 + byte2
-				byteLocation += 1
-				byte1Location += 2
-				byte2Location += 2
-			return byteDict
-		else:
-			indigo.server.log("convertNibbleByteHexToBin:        error in message format,  message byte length: %r,  nibbles: %r" % (msgLength, len(nibbles)))	
-				
 	########################################
 	# convert valid message Bytes to Bit map dictionary	
 	########################################
 	
-	def convertByteDictToBinaryMap(self, msgStart, msgLength, messageDict):
+	def convertByteDictToBinaryMap(self, msgStart: int, msgLength: int, messageDict: list[str]) -> list[str] | None:
 		if msgLength <= len(messageDict):
-			# self.plugin.debugLog("convertByteDictToBinaryMap:        message start location: %r,  valid data message length: %r" % (msgStart, msgLength))
-			# self.plugin.debugLog("convertByteDictToBinaryMap:        passed message dictionary: %r" % messageDict)
-			bitmapDict = {}
-			# noinspection PyUnusedLocal
-			byteDict = {}
-			byteLocation = msgStart
-			# Todo: Refactor loop
-			for i in range(msgStart, (msgLength + msgStart)):
-				byte = messageDict[byteLocation]
-				nibble0 = byte[0]
-				nibble1 = byte[1]
-				nibbleMSB = self.convertByteHexToBin(nibble0)
-				nibbleLSB = self.convertByteHexToBin(nibble1)
-				bitmapDict[(byteLocation - msgStart)] = nibbleMSB + nibbleLSB
-				byteLocation += 1
-				# self.plugin.debugLog("convertByteDictToBinaryMap:        bit map dictionary: %r" % bitmapDict)
+			bitmapDict = []
+			for i in range(msgStart, (msgStart + msgLength)):
+				bitmapDict.append(f"{int(messageDict[i], 16):08b}")
 			return bitmapDict
 		else:
-			self.plugin.debugLog("convertByteDictToBinaryMap:        error in message format,  message byte length: %r,  nibbles: %r" % (msgLength, len(messageDict)))	
-			
-	########################################
-	# convert each Hexadecimal value to Binary bit map
-	########################################
-		
-	def convertByteHexToBin(self, byte):
-		if byte == "f":
-			byte = "1111"
-		if byte == "e":
-			byte = "1110"
-		if byte == "d":
-			byte = "1101"
-		if byte == "c":
-			byte = "1100"
-		if byte == "b":
-			byte = "1011"
-		if byte == "a":
-			byte = "1010"
-		if byte == "9":
-			byte = "1001"
-		if byte == "8":
-			byte = "1000"
-		if byte == "7":
-			byte = "0111"
-		if byte == "6":
-			byte = "0110"
-		if byte == "5":
-			byte = "0101"
-		if byte == "4":
-			byte = "0100"
-		if byte == "3":
-			byte = "0011"
-		if byte == "2":
-			byte = "0010"
-		if byte == "1":
-			byte = "0001"
-		if byte == "0":
-			byte = "0000"						
-		return byte	    
+			self.plugin.debugLog("convertByteDictToBinaryMap:        error in message format,  message byte length: %r,  nibbles: %r" % (msgLength, len(messageDict)))
+			return None
 
 	################################################################################
 	# Routines for updating Indigo Database States methods update indigo plugin preferences, device configuration ui and device states	
@@ -2696,47 +2406,32 @@ class Caddx(object):
 	# update Interface Configuration Plugin Preferences from received "Interface Configuration Message"
 	def updateInterfaceConfigPluginPrefs(self, varList, newByte):
 		if newByte is not None:
-			address = 7
-			bitLocation = 0
-			# Todo:  Refactor loop.
-			for i in newByte:
-				var = varList[address]
-				bit = newByte[address]
-				# self.plugin.debugLog("updateInterfaceConfiguration:        updating plugin pref variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
+			# Todo:  Test after refactor.
+			for i in range(8):
+				var = varList[i]
+				bit = newByte[i]
 				self.plugin.pluginPrefs[var] = bit
-				address -= 1
-				bitLocation += 1
-		
+
 	# update Interface Configuration Status States from received "Interface Configuration Message"
 	def updateInterfaceConfigStates(self, dev, varList, newByte):
 		if newByte is not None:
-			address = 7
-			bitLocation = 0
-			# Todo:  Refactor loop
-			for i in newByte:
-				var = varList[address]
-				bit = newByte[address]
-				# self.plugin.debugLog("updateInterfaceConfiguration:        updating device state variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
+			# Todo:  Test after refactor
+			for i in range(8):
+				var = varList[i]
+				bit = newByte[i]
 				dev.updateStateOnServer(key=var, value=bit)
-				address -= 1
-				bitLocation += 1	
-						
+
 	########################################
 	# update values from "Zone Status Message"
 	########################################
 	
 	# update Zone Configuration UI pluginProps values from received "Zone Status Message" 
 	def updateZoneStatusConfigUi(self, localProps, varList, newByte):
-		address = 7
-		bitLocation = 0
-		# Todo:  re-factor this loop
-		for i in varList:
-			var = varList[address]
-			bit = newByte[address]
-			# self.plugin.debugLog("updateZoneStatusConfigUi:        updating device config ui variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
+		# Todo: Test after refactor
+		for i in range(8):
+			var = varList[i]
+			bit = newByte[i]
 			localProps[var] = bit
-			address -= 1
-			bitLocation += 1
 		return localProps
 		
 	# update Zone Device States from received "Zone Status Message" 	
@@ -2817,46 +2512,41 @@ class Caddx(object):
 	########################################
 	
 	# update Partition Configuration UI pluginProps values from received "Partition Status Message"
-	def updatePartitionStatusConfigUi(self, localProps, varList, newByte):
-		address = 7
-		bitLocation = 0
-		# Todo: Re-factor this loop
-		for i in varList:
-			var = varList[address]
-			bit = newByte[address]
-			# self.plugin.debugLog("updatePartitionStatusConfigUi:        updating device config ui variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
+
+	""" Not implemented?
+	def updatePartitionStatusConfigUi(self, localProps, varList, bitList):
+		# Todo: Test after refactor
+		for i in range(8):
+			var = varList[i]
+			bit = bitList[i]
 			localProps[var] = bit
-			address -= 1
-			bitLocation += 1
 		return localProps
+	"""
 		
 	# update Partition Status States from received "Partition Status Message" 
 	def updatePartitionStatus(self, dev, varList, newByte):
 		if newByte is not None:
-			address = 7
-			bitLocation = 0
 			# Todo: Re-factor this loop
-			for i in newByte:
-				var = varList[address]
-				bit = newByte[address]
-				# self.plugin.debugLog("updatePartitionStatus:        updating device state variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
+			for i in range(8):
+				var = varList[i]
+				bit = newByte[i]
 				dev.updateStateOnServer(key=var, value=bit)
-				address -= 1
-				bitLocation += 1	
-				
+
 	########################################
 	# update values from "Partition Snapshot Message"
 	########################################
 	
-	# update Partition Configuration UI pluginProps values from received "Partition Snapshot Message" 
-	def updatePartitionSnapshotConfigUi(self, varList, newByte):
-		for key in newByte:
+	# update Partition Configuration UI pluginProps values from received "Partition Snapshot Message"
+
+	""" Not implemented
+	def updatePartitionSnapshotConfigUi(self, varList, bitList):
+		for key in bitList:
 			partitionNumber = (key + 1)
 			# self.plugin.debugLog("updatePartitionSnapshotConfigUi:        updating partition: %r" % partitionNumber)
 			if partitionNumber in self.partitionList.keys():
 				dev = self.partitionList[partitionNumber]
 				localPropsCopy = dev.pluginProps 
-				nibble = newByte[key]
+				nibble = bitList[key]
 				address = 7
 				bitLocation = 0
 				# Todo: Re-factor this loop
@@ -2870,18 +2560,20 @@ class Caddx(object):
 				dev.replacePluginPropsOnServer(localPropsCopy)	
 			else:
 				pass
+	"""
 
 	# update Partition Device States Snapshot from received "Partition Snapshot Message" 
-	def updatePartitionSnapshot(self, varList, newByte):
-		for key in newByte:
-			partitionNumber = (key + 1)
+	def updatePartitionSnapshot(self, varList: list[str], bitList: list[str]):
+		partitionNumber = 1
+		for entry in bitList:
 			# self.plugin.debugLog("updatePartitionSnapshot:        updating partition: %r" % partitionNumber)
 			if partitionNumber in self.partitionList.keys():
 				dev = self.partitionList[partitionNumber] 
-				nibble = newByte[key]
+				nibble = entry
 				address = 7
 				bitLocation = 0
 				# Todo: Re-factor this loop
+				# noinspection PyUnusedLocal
 				for i in nibble:
 					var = varList[address]
 					bit = nibble[address]
@@ -2889,40 +2581,37 @@ class Caddx(object):
 					dev.updateStateOnServer(key=var, value=bit)
 					address -= 1
 					bitLocation += 1
-			else:
-				pass
-		
+			partitionNumber += 1
+
 	########################################
 	# update values from "System Status Message"
 	########################################
 	
-	# update System Status Information Plugin Preferences from received "System Status Message"	
-	def updateSystemStatusPluginPrefs(self, varList, newByte):
+	def updateSystemStatusPluginPrefs(self, varList, newByte) -> None:
+		"""
+		Update System Status Information plugin preferences from received "System Status Message".
+
+		:param varList: TBD
+		:param newByte: TBD
+		:return: None
+		"""
 		if newByte is not None:
-			address = 7
-			bitLocation = 0
-			# Todo: Re-factor this loop
-			for i in newByte:
-				var = varList[address]
-				bit = newByte[address]
+			# Todo: Test after refactor
+			for i in range(8):
+				var = varList[i]
+				bit = newByte[i]
 				# self.plugin.debugLog("updateSystemStatusPluginPrefs:        updating plugin pref variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
 				self.plugin.pluginPrefs[var] = bit
-				address -= 1
-				bitLocation += 1
 					
 	# update System Status States from received "System Status Message"	
 	def updateSystemStatus(self, dev, varList, newByte):
 		if newByte is not None:
-			address = 7
-			bitLocation = 0
-			# Todo: Re-factor this loop
-			for i in newByte:
-				var = varList[address]
-				bit = newByte[address]
+			# Todo: Test after refactor
+			for i in range(8):
+				var = varList[i]
+				bit = newByte[i]
 				# self.plugin.debugLog("updateSystemStatus:        updating device state variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
 				dev.updateStateOnServer(key=var, value=bit)
-				address -= 1
-				bitLocation += 1
 				
 	########################################
 	# update values from "User Information Reply"
@@ -2930,32 +2619,25 @@ class Caddx(object):
 	
 	# update User Information Configuration UI pluginProps values from received "User Information Reply" 	
 	def updateUserInformationStatusConfigUi(self, localProps, varList, newByte):
-		address = 7
-		bitLocation = 0
-		# Todo: Re-factor this loop
-		for i in varList:
-			var = varList[address]
-			bit = newByte[address]
+		# Todo: Test after refactor
+		for i in range(8):
+			var = varList[i]
+			bit = newByte[i]
 			# self.plugin.debugLog("updateUserInformationStatusConfigUi:        updating device config ui variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
 			localProps[var] = bit
-			address -= 1
-			bitLocation += 1
+
 		return localProps
 		
 	# update User Information Status States from received "User Information Reply" 	
 	def updateUserInformationStatus(self, dev, varList, newByte):
 		if newByte is not None:
-			address = 7
-			bitLocation = 0
-			# Todo: Re-factor this loop
-			for i in newByte:
-				var = varList[address]
-				bit = newByte[address]
+			# Todo: Test after refactor
+			for i in range(8):
+				var = varList[i]
+				bit = newByte[i]
 				# self.plugin.debugLog("updateUserInformationStatus:        updating device state variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
 				dev.updateStateOnServer(key=var, value=bit)
-				address -= 1
-				bitLocation += 1	
-				
+
 	################################################################################
 	# Routine for Alarm Panel Lookup Dictionaries method 	(state translation tables for message number and log events)
 	################################################################################
@@ -2963,8 +2645,7 @@ class Caddx(object):
 	########################################
 	# translate message number to message description
 	########################################
-	def messageAlarmDict(self, kmessageNumber): 
-		messageNumber = str(kmessageNumber)
+	def messageAlarmDict(self, kmessageNumber):
 		alarmDict = {
 			"01": "Interface Configuration Message",
 			"03": "Zone Name Message",
@@ -3033,7 +2714,10 @@ class Caddx(object):
 			"bf": "Zone Bypass Toggle",
 			"ff": "end of file"
 		}
-		message = alarmDict[messageNumber]
+		if kmessageNumber in alarmDict:
+			message = alarmDict[kmessageNumber]
+		else:
+			message = "Program Error: No such message"
 		return message
 		
 	########################################
@@ -3041,7 +2725,6 @@ class Caddx(object):
 	########################################
 	
 	def messageLogEventDict(self, keventType):
-		eventType = str(keventType)
 		eventDict = {
 			"0": "Alarm",
 			"1": "Alarm Restore",
@@ -3111,8 +2794,11 @@ class Caddx(object):
 			"126": "Output Trip",
 			"127": "Data Lost"
 		}
-		event = eventDict[eventType]
-		self.plugin.debugLog("messageLogEventDict:        event number \"%s\" " % eventType)
+		if keventType in eventDict:
+			event = eventDict[keventType]
+		else:
+			event = "Program Error: No such event"
+		self.plugin.debugLog("messageLogEventDict:        event number \"%s\" " % keventType)
 		self.plugin.debugLog("messageLogEventDict:        event description \"%s\" " % event)
 		return event
 									

@@ -95,7 +95,7 @@
 	</Field>
         
     <Field id="sleepBetweenIdlePoll" type="menu" defaultValue="0.01"
-    tooltip="idle time between serial port data cycle readings, if no recevied data present (default = 0.01 seconds)">
+    tooltip="idle time between serial port data cycle readings, if no received data present (default = 0.01 seconds)">
         <Label>Sleep Time Between Serial Reads:</Label>
         <List>
             <Option value="0">0</Option>
@@ -351,7 +351,7 @@
 	</Field>
     
     <Field id="logReportingLabel" type="label">
-		<Label>You can enable different levels of reporting plugin activity logging in the Event Log window to suit your requirements by checking the required check boxes.</Label>
+		<Label>You can enable different levels of reporting plugin activity logging in the Event Log window to suit your requirements by checking the required checkboxes.</Label>
 	</Field>
     
     <Field id="makeSpace11" type="label">
@@ -369,17 +369,17 @@
  	</Field>
     
     <Field type="checkbox" id="showPartitionActInfo" defaultValue="true">
-		<Label>Log partition actitivity:</Label>
+		<Label>Log partition activity:</Label>
 		<Description>(changes in Partition state)</Description>
  	</Field>
     
     <Field type="checkbox" id="showZoneActInfo" defaultValue="true">
-		<Label>Log zone actitivity:</Label>
+		<Label>Log zone activity:</Label>
 		<Description>(changes in Zone state)</Description>
  	</Field>
     
     <Field type="checkbox" id="showMessageActInfo" defaultValue="false">
-		<Label>Log communication actitivity:</Label>
+		<Label>Log communication activity:</Label>
 		<Description>(send and receive messages)</Description>
  	</Field>
     
@@ -413,7 +413,7 @@
 	</Field>
     
     <Field type="checkbox" id="showDebugInfo">
-		<Label>Enable debuging:</Label>
+		<Label>Enable debugging:</Label>
 		<Description>(not recommended)</Description>
  	</Field>
     
@@ -599,10 +599,10 @@
     <Field id="userInformationRequestWithoutPin" type="checkbox" readOnly = "YES" defaultValue="false">
         <Label>User Info Request W/O Pin (33h):</Label>
     </Field>
-    <Field id="setUserCodeCommndWithPin" type="checkbox" readOnly = "YES" defaultValue="false">
+    <Field id="setUserCodeCommandWithPin" type="checkbox" readOnly = "YES" defaultValue="false">
         <Label>Set User Code Cmd With Pin (34h):</Label>
     </Field>
-    <Field id="setUserCodeCommndWithoutPin" type="checkbox" readOnly = "YES" defaultValue="false">
+    <Field id="setUserCodeCommandWithoutPin" type="checkbox" readOnly = "YES" defaultValue="false">
         <Label>Set User Code Cmd W/O Pin (35h):</Label>
     </Field>
     <Field id="setUserAuthorisationCommandWithPin" type="checkbox" readOnly = "YES" defaultValue="false">
@@ -1015,7 +1015,7 @@
     
     <!-- System Status: Log Event History -->
     
-    <Field type="label" id="logEvenyHistoryLabel">
+    <Field type="label" id="logEventHistoryLabel">
         <Label>Log Event History</Label>
     </Field>
     

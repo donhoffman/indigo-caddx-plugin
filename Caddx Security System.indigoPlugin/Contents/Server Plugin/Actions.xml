@@ -3,242 +3,242 @@
 	 of a device (devices define their own actions), define them here.
 -->
 <Actions>
-	
-    <!-- Actions: Primary Keypad Functions -->
-    
-    <Action id="actionArmStay" deviceFilter="self.partition">
-		<Name>System Arm in Stay mode</Name>
-		<CallbackMethod>methodArmStay</CallbackMethod>
-	</Action>
-    <Action id="actionArmAway" deviceFilter="self.partition">
-		<Name>System Arm in Away mode</Name>
-		<CallbackMethod>methodArmAway</CallbackMethod>
-	</Action>
-	<Action id="actionDisarm" deviceFilter="self.partition">
-		<Name>System Disarm</Name>
-		<CallbackMethod>methodDisarm</CallbackMethod>
-	</Action>
-    <Action id="actionFirePanic" deviceFilter="self.partition">
-		<Name>Activate Fire Panic</Name>
-		<CallbackMethod>methodFirePanic</CallbackMethod>
-	</Action>
-    <Action id="actionMedicalPanic" deviceFilter="self.partition">
-		<Name>Activate Medical Panic</Name>
-		<CallbackMethod>methodMedicalPanic</CallbackMethod>
-	</Action>
-	<Action id="actionPolicePanic" deviceFilter="self.partition">
-		<Name>Activate Police Duress</Name>
-		<CallbackMethod>methodPoliceDuress</CallbackMethod>
-	</Action>
-    
-    <Action id="sep1"/>
-    
-    <Action id="actionInitiateAutoArm" deviceFilter="self.partition">
-		<Name>Initiate System Auto Arm</Name>
-		<CallbackMethod>methodInitiateAutoArm</CallbackMethod>
-	</Action>
-    <Action id="actionStartKeypadSounder" deviceFilter="self.partition">
-		<Name>Start Keypad Sounder</Name>
-		<CallbackMethod>methodStartKeypadSounder</CallbackMethod>
-    </Action>
-    <Action id="actionTurnOffSounderOrAlarm" deviceFilter="self.partition">
-		<Name>Turn off Sounder or Alarm</Name>
-		<CallbackMethod>methodTurnOffSounderOrAlarm</CallbackMethod>
-	</Action>
-    <Action id="actionStartWalkTestMode" deviceFilter="self.partition">
-		<Name>Start Walk Test mode</Name>
-		<CallbackMethod>methodStartWalkTestMode</CallbackMethod>
-    </Action>
-	<Action id="actionStopWalkTestMode" deviceFilter="self.partition">
-		<Name>Stop Walk Test mode</Name>
-		<CallbackMethod>methodStopWalkTestMode</CallbackMethod>
-    </Action>
-    <Action id="actionCancel" deviceFilter="self.partition">
-		<Name>Cancel</Name>
-		<CallbackMethod>methodCancel</CallbackMethod>
-	</Action>
-    
-    <Action id="sep2"/>
-    
-    <!-- Actions: Secondary Keypad Functions -->
-        
-    <Action id="actionStay1ButtonArmToggleInteriors" deviceFilter="self.partition">
-		<Name>Stay 1 Button arm / toggle Interiors</Name>
-		<CallbackMethod>methodStay1ButtonArmToggleInteriors</CallbackMethod>
-	</Action>
-	<Action id="actionExitButtonArmToggleInstant" deviceFilter="self.partition">
-		<Name>Exit 1 Button arm / toggle Instant</Name>
-		<CallbackMethod>methodExitButtonArmToggleInstant</CallbackMethod>
-	</Action>
-    <Action id="actionEnableSilentExitForThisArmCycle" deviceFilter="self.partition">
-		<Name>Enable Silent Exit (for this arm cycle)</Name>
-		<CallbackMethod>methodEnableSilentExitForThisArmCycle</CallbackMethod>
-	</Action>
-    <Action id="actionChimeToggleChimeMode" deviceFilter="self.partition">
-		<Name>Toggle Chime mode</Name>
-		<CallbackMethod>methodChimeToggleChimeMode</CallbackMethod>
-	</Action>
-    <Action id="actionGroupBypass" deviceFilter="self.partition">
-		<Name>Toggle Group Bypass</Name>
-		<CallbackMethod>methodGroupBypass</CallbackMethod>
-	</Action>
-	<Action id="actionBypassInteriors" deviceFilter="self.partition">
-		<Name>Bypass Interiors</Name>
-		<CallbackMethod>methodBypassInteriors</CallbackMethod>
-	</Action>
-	<Action id="actionSmokeDetectorReset" deviceFilter="self.partition">
-		<Name>Reset Smoke Detectors</Name>
-		<CallbackMethod>methodSmokeDetectorReset</CallbackMethod>
-	</Action>
-    <Action id="actionAutoCallbackDownload" deviceFilter="self.partition">
-		<Name>Initiate Auto callback download</Name>
-		<CallbackMethod>methodAutoCallbackDownload</CallbackMethod>
-	</Action>
-    <Action id="actionManualPickupDownload" deviceFilter="self.partition">
-		<Name>Initiate Manual callback download</Name>
-		<CallbackMethod>methodManualPickupDownload</CallbackMethod>
-	</Action>
-	<Action id="actionPerformTest" deviceFilter="self.partition">
-		<Name>Perform Test</Name>
-		<CallbackMethod>methodPerformTest</CallbackMethod>
-	</Action>
-    <Action id="actionAuxiliaryFunction1" deviceFilter="self.partition">
-		<Name>Set/Reset Auxiliary Relay 1</Name>
-		<CallbackMethod>methodAuxiliaryFunction1</CallbackMethod>
-	</Action>
-	<Action id="actionAuxiliaryFunction2" deviceFilter="self.partition">
-		<Name>Set/Reset Auxiliary Relay 2</Name>
-		<CallbackMethod>methodAuxiliaryFunction2</CallbackMethod>
-	</Action>
-    
-    <Action id="sep3"/>
-    
-    <!-- Actions: Supported Requests and Commands -->
-    
-    <Action id="actionInterfaceConfigurationRequest" deviceFilter="self.partition">
-		<Name>Request Interface Configuration update</Name>
-		<CallbackMethod>methodInterfaceConfigurationRequest</CallbackMethod>
-    </Action>    
-    <Action id="actionZoneNameRequest" deviceFilter="self.partition">
-		<Name>Request - Zone x Name</Name>
-		<CallbackMethod>methodZoneNameRequest</CallbackMethod>
-        <ConfigUI>
-            <Field id="descriptionlabel" type="label" hidden="false">
-				<Label>Zone Name Request</Label>
-			</Field>
-            <Field id="zone" type="menu" default="1">
-				<Label>Zone:</Label>
-                <List class="self" method="getZoneList"/>
-			</Field>
-            <Field id="description" type="textfield" hidden="true" default = "zoneNumber">
-				<Label></Label>
-			</Field>
-		</ConfigUI>
-    </Action>
-    <Action id="actionZoneStatusRequest" deviceFilter="self.partition">
-		<Name>Request Zone x Status</Name>
-		<CallbackMethod>methodZoneStatusRequest</CallbackMethod>
-        <ConfigUI>
-            <Field id="descriptionlabel" type="label" hidden="false">
-				<Label>Zone Status Request</Label>
-			</Field>
-            <Field id="zone" type="menu" default="1">
-				<Label>Zone:</Label>
-                <List class="self" method="getZoneList"/>
-			</Field>
-            <Field id="description" type="textfield" hidden="true" default = "zoneNumber">
-				<Label></Label>
-			</Field>
-		</ConfigUI>
-    </Action>
-    <Action id="actionZonesSnapshotRequest" deviceFilter="self.partition">
-		<Name>Request Zone block address x Snapshot</Name>
-		<CallbackMethod>methodZonesSnapshotRequest</CallbackMethod>
-        <ConfigUI>
-            <Field id="descriptionlabel" type="label" hidden="false">
-				<Label>Zone Snapshot Request</Label>
-			</Field>
-            <Field id="zoneOffset" type="menu" default="1">
-				<Label>Zone Block:</Label>
-                <List class="self" method="getZoneOffsetList"/>
-			</Field>
-            <Field id="description" type="textfield" hidden="true" default = "zoneNumber">
-				<Label></Label>
-            </Field>
-        </ConfigUI>  
-    </Action>
-    <Action id="actionPartitionStatusRequest" deviceFilter="self.partition">
-		<Name>Request Partition x Status</Name>
-		<CallbackMethod>methodPartitionStatusRequest</CallbackMethod>
-        <ConfigUI>
-            <Field id="descriptionlabel" type="label" hidden="false">
-				<Label>Partition Status Request</Label>
-			</Field>
-            <Field id="partition" type="menu" default="1">
-				<Label>Partition:</Label>
-                <List class="self" method="getPartitionList"/>
-			</Field>
-            <Field id="description" type="textfield" hidden="true" default = "partitionNumber">
-				<Label></Label>
-			</Field>
-		</ConfigUI>
-    </Action>
-    <Action id="actionPartitionSnapshotRequest" deviceFilter="self.partition">
-		<Name>Request Partition Snapshot (all)</Name>
-		<CallbackMethod>methodPartitionSnapshotRequest</CallbackMethod>
-    </Action>    
-    <Action id="actionSystemStatusRequest" deviceFilter="self.partition">
-		<Name>Request System Status update</Name>
-		<CallbackMethod>methodSystemStatusRequest</CallbackMethod>
-    </Action>
-    <Action id="actionLogEventRequest" deviceFilter="self.partition">
-		<Name>Request Log Event x</Name>
-		<CallbackMethod>methodLogEventRequest</CallbackMethod>
-    </Action>
-    
-    <Action id="actionKeypadTerminalModeRequest" deviceFilter="self.partition">
-		<Name>Request Keypad Terminal mode</Name>
-		<CallbackMethod>methodKeypadTerminalModeRequest</CallbackMethod>
-    </Action>
-    <Action id="actionUserInformationRequestWithoutPin" deviceFilter="self.partition">
-		<Name>Request User x Information without Pin</Name>
-		<CallbackMethod>methodUserInformationRequestWithoutPin</CallbackMethod>
-        <ConfigUI>
-            <Field id="descriptionlabel" type="label" hidden="false">
-				<Label>User Information Request without PIN</Label>
-			</Field>
-            <Field id="user" type="menu" default="1">
-				<Label>User:</Label>
-                <List class="self" method="getUserList"/>
-			</Field>
-            <Field id="description" type="textfield" hidden="true" default = "userNumber">
-				<Label></Label>
-			</Field>
-		</ConfigUI>
-    </Action>
-    <Action id="actionZoneBypassToggle" deviceFilter="self.partition">
-		<Name>Toggle Zone x Bypass</Name>
-		<CallbackMethod>methodZoneBypassToggle</CallbackMethod>
-        <ConfigUI>
-            <Field id="descriptionlabel" type="label" hidden="false">
-				<Label>Zone Byass Toggle</Label>
-			</Field>
-            <Field id="bypassZone" type="menu" default="1">
-				<Label>Zone:</Label>
-                <List class="self" method="getZoneList"/>
-			</Field>
-            <Field id="description" type="textfield" hidden="true" default = "zoneNumber">
-				<Label></Label>
-			</Field>
-		</ConfigUI>
-    </Action>
-    <Action id="actionSendKeypadTextMessage" deviceFilter="self.partition">
-		<Name>Send Keypad text message</Name>
-		<CallbackMethod>methodSendKeypadTextMessage</CallbackMethod>
-    </Action>        
-    <Action id="actionSetClockCalender" deviceFilter="self.partition">
-		<Name>Set System Date and Time</Name>
-		<CallbackMethod>methodSetClockCalenderCommand</CallbackMethod>
-    </Action>
-    
+  
+  <!-- Actions: Primary Keypad Functions -->
+  
+  <Action id="actionArmStay" deviceFilter="self.partition">
+    <Name>System Arm in Stay mode</Name>
+    <CallbackMethod>methodArmStay</CallbackMethod>
+  </Action>
+  <Action id="actionArmAway" deviceFilter="self.partition">
+    <Name>System Arm in Away mode</Name>
+    <CallbackMethod>methodArmAway</CallbackMethod>
+  </Action>
+  <Action id="actionDisarm" deviceFilter="self.partition">
+    <Name>System Disarm</Name>
+    <CallbackMethod>methodDisarm</CallbackMethod>
+  </Action>
+  <Action id="actionFirePanic" deviceFilter="self.partition">
+    <Name>Activate Fire Panic</Name>
+    <CallbackMethod>methodFirePanic</CallbackMethod>
+  </Action>
+  <Action id="actionMedicalPanic" deviceFilter="self.partition">
+    <Name>Activate Medical Panic</Name>
+    <CallbackMethod>methodMedicalPanic</CallbackMethod>
+  </Action>
+  <Action id="actionPolicePanic" deviceFilter="self.partition">
+    <Name>Activate Police Duress</Name>
+    <CallbackMethod>methodPoliceDuress</CallbackMethod>
+  </Action>
+  
+  <Action id="sep1"/>
+  
+  <Action id="actionInitiateAutoArm" deviceFilter="self.partition">
+    <Name>Initiate System Auto Arm</Name>
+    <CallbackMethod>methodInitiateAutoArm</CallbackMethod>
+  </Action>
+  <Action id="actionStartKeypadSounder" deviceFilter="self.partition">
+    <Name>Start Keypad Sounder</Name>
+    <CallbackMethod>methodStartKeypadSounder</CallbackMethod>
+  </Action>
+  <Action id="actionTurnOffSounderOrAlarm" deviceFilter="self.partition">
+    <Name>Turn off Sounder or Alarm</Name>
+    <CallbackMethod>methodTurnOffSounderOrAlarm</CallbackMethod>
+  </Action>
+  <Action id="actionStartWalkTestMode" deviceFilter="self.partition">
+    <Name>Start Walk Test mode</Name>
+    <CallbackMethod>methodStartWalkTestMode</CallbackMethod>
+  </Action>
+  <Action id="actionStopWalkTestMode" deviceFilter="self.partition">
+    <Name>Stop Walk Test mode</Name>
+    <CallbackMethod>methodStopWalkTestMode</CallbackMethod>
+  </Action>
+  <Action id="actionCancel" deviceFilter="self.partition">
+    <Name>Cancel</Name>
+    <CallbackMethod>methodCancel</CallbackMethod>
+  </Action>
+  
+  <Action id="sep2"/>
+  
+  <!-- Actions: Secondary Keypad Functions -->
+  
+  <Action id="actionStay1ButtonArmToggleInteriors" deviceFilter="self.partition">
+    <Name>Stay 1 Button arm / toggle Interiors</Name>
+    <CallbackMethod>methodStay1ButtonArmToggleInteriors</CallbackMethod>
+  </Action>
+  <Action id="actionExitButtonArmToggleInstant" deviceFilter="self.partition">
+    <Name>Exit 1 Button arm / toggle Instant</Name>
+    <CallbackMethod>methodExitButtonArmToggleInstant</CallbackMethod>
+  </Action>
+  <Action id="actionEnableSilentExitForThisArmCycle" deviceFilter="self.partition">
+    <Name>Enable Silent Exit (for this arm cycle)</Name>
+    <CallbackMethod>methodEnableSilentExitForThisArmCycle</CallbackMethod>
+  </Action>
+  <Action id="actionChimeToggleChimeMode" deviceFilter="self.partition">
+    <Name>Toggle Chime mode</Name>
+    <CallbackMethod>methodChimeToggleChimeMode</CallbackMethod>
+  </Action>
+  <Action id="actionGroupBypass" deviceFilter="self.partition">
+    <Name>Toggle Group Bypass</Name>
+    <CallbackMethod>methodGroupBypass</CallbackMethod>
+  </Action>
+  <Action id="actionBypassInteriors" deviceFilter="self.partition">
+    <Name>Bypass Interiors</Name>
+    <CallbackMethod>methodBypassInteriors</CallbackMethod>
+  </Action>
+  <Action id="actionSmokeDetectorReset" deviceFilter="self.partition">
+    <Name>Reset Smoke Detectors</Name>
+    <CallbackMethod>methodSmokeDetectorReset</CallbackMethod>
+  </Action>
+  <Action id="actionAutoCallbackDownload" deviceFilter="self.partition">
+    <Name>Initiate Auto callback download</Name>
+    <CallbackMethod>methodAutoCallbackDownload</CallbackMethod>
+  </Action>
+  <Action id="actionManualPickupDownload" deviceFilter="self.partition">
+    <Name>Initiate Manual callback download</Name>
+    <CallbackMethod>methodManualPickupDownload</CallbackMethod>
+  </Action>
+  <Action id="actionPerformTest" deviceFilter="self.partition">
+    <Name>Perform Test</Name>
+    <CallbackMethod>methodPerformTest</CallbackMethod>
+  </Action>
+  <Action id="actionAuxiliaryFunction1" deviceFilter="self.partition">
+    <Name>Set/Reset Auxiliary Relay 1</Name>
+    <CallbackMethod>methodAuxiliaryFunction1</CallbackMethod>
+  </Action>
+  <Action id="actionAuxiliaryFunction2" deviceFilter="self.partition">
+    <Name>Set/Reset Auxiliary Relay 2</Name>
+    <CallbackMethod>methodAuxiliaryFunction2</CallbackMethod>
+  </Action>
+  
+  <Action id="sep3"/>
+  
+  <!-- Actions: Supported Requests and Commands -->
+  
+  <Action id="actionInterfaceConfigurationRequest" deviceFilter="self.partition">
+    <Name>Request Interface Configuration update</Name>
+    <CallbackMethod>methodInterfaceConfigurationRequest</CallbackMethod>
+  </Action>
+  <Action id="actionZoneNameRequest" deviceFilter="self.partition">
+    <Name>Request - Zone x Name</Name>
+    <CallbackMethod>methodZoneNameRequest</CallbackMethod>
+    <ConfigUI>
+      <Field id="descriptionlabel" type="label" hidden="false">
+        <Label>Zone Name Request</Label>
+      </Field>
+      <Field id="zone" type="menu" default="1">
+        <Label>Zone:</Label>
+        <List class="self" method="getZoneList"/>
+      </Field>
+      <Field id="description" type="textfield" hidden="true" default="zoneNumber">
+        <Label/>
+      </Field>
+    </ConfigUI>
+  </Action>
+  <Action id="actionZoneStatusRequest" deviceFilter="self.partition">
+    <Name>Request Zone x Status</Name>
+    <CallbackMethod>methodZoneStatusRequest</CallbackMethod>
+    <ConfigUI>
+      <Field id="descriptionlabel" type="label" hidden="false">
+        <Label>Zone Status Request</Label>
+      </Field>
+      <Field id="zone" type="menu" default="1">
+        <Label>Zone:</Label>
+        <List class="self" method="getZoneList"/>
+      </Field>
+      <Field id="description" type="textfield" hidden="true" default="zoneNumber">
+        <Label/>
+      </Field>
+    </ConfigUI>
+  </Action>
+  <Action id="actionZonesSnapshotRequest" deviceFilter="self.partition">
+    <Name>Request Zone block address x Snapshot</Name>
+    <CallbackMethod>methodZonesSnapshotRequest</CallbackMethod>
+    <ConfigUI>
+      <Field id="descriptionlabel" type="label" hidden="false">
+        <Label>Zone Snapshot Request</Label>
+      </Field>
+      <Field id="zoneOffset" type="menu" default="1">
+        <Label>Zone Block:</Label>
+        <List class="self" method="getZoneOffsetList"/>
+      </Field>
+      <Field id="description" type="textfield" hidden="true" default="zoneNumber">
+        <Label/>
+      </Field>
+    </ConfigUI>
+  </Action>
+  <Action id="actionPartitionStatusRequest" deviceFilter="self.partition">
+    <Name>Request Partition x Status</Name>
+    <CallbackMethod>methodPartitionStatusRequest</CallbackMethod>
+    <ConfigUI>
+      <Field id="descriptionlabel" type="label" hidden="false">
+        <Label>Partition Status Request</Label>
+      </Field>
+      <Field id="partition" type="menu" default="1">
+        <Label>Partition:</Label>
+        <List class="self" method="getPartitionList"/>
+      </Field>
+      <Field id="description" type="textfield" hidden="true" default="partitionNumber">
+        <Label/>
+      </Field>
+    </ConfigUI>
+  </Action>
+  <Action id="actionPartitionSnapshotRequest" deviceFilter="self.partition">
+    <Name>Request Partition Snapshot (all)</Name>
+    <CallbackMethod>methodPartitionSnapshotRequest</CallbackMethod>
+  </Action>
+  <Action id="actionSystemStatusRequest" deviceFilter="self.partition">
+    <Name>Request System Status update</Name>
+    <CallbackMethod>methodSystemStatusRequest</CallbackMethod>
+  </Action>
+  <Action id="actionLogEventRequest" deviceFilter="self.partition">
+    <Name>Request Log Event x</Name>
+    <CallbackMethod>methodLogEventRequest</CallbackMethod>
+  </Action>
+  
+  <Action id="actionKeypadTerminalModeRequest" deviceFilter="self.partition">
+    <Name>Request Keypad Terminal mode</Name>
+    <CallbackMethod>methodKeypadTerminalModeRequest</CallbackMethod>
+  </Action>
+  <Action id="actionUserInformationRequestWithoutPin" deviceFilter="self.partition">
+    <Name>Request User x Information without Pin</Name>
+    <CallbackMethod>methodUserInformationRequestWithoutPin</CallbackMethod>
+    <ConfigUI>
+      <Field id="descriptionlabel" type="label" hidden="false">
+        <Label>User Information Request without PIN</Label>
+      </Field>
+      <Field id="user" type="menu" default="1">
+        <Label>User:</Label>
+        <List class="self" method="getUserList"/>
+      </Field>
+      <Field id="description" type="textfield" hidden="true" default="userNumber">
+        <Label/>
+      </Field>
+    </ConfigUI>
+  </Action>
+  <Action id="actionZoneBypassToggle" deviceFilter="self.partition">
+    <Name>Toggle Zone x Bypass</Name>
+    <CallbackMethod>methodZoneBypassToggle</CallbackMethod>
+    <ConfigUI>
+      <Field id="descriptionlabel" type="label" hidden="false">
+        <Label>Zone Bypass Toggle</Label>
+      </Field>
+      <Field id="bypassZone" type="menu" default="1">
+        <Label>Zone:</Label>
+        <List class="self" method="getZoneList"/>
+      </Field>
+      <Field id="description" type="textfield" hidden="true" default="zoneNumber">
+        <Label/>
+      </Field>
+    </ConfigUI>
+  </Action>
+  <Action id="actionSendKeypadTextMessage" deviceFilter="self.partition">
+    <Name>Send Keypad text message</Name>
+    <CallbackMethod>methodSendKeypadTextMessage</CallbackMethod>
+  </Action>
+  <Action id="actionSetClockCalender" deviceFilter="self.partition">
+    <Name>Set System Date and Time</Name>
+    <CallbackMethod>methodSetClockCalenderCommand</CallbackMethod>
+  </Action>
+
 </Actions>

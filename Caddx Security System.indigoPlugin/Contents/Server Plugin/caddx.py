@@ -29,7 +29,7 @@ ACK = "011d"
 NAK = "011e"
 CAN = "011f"
 
-# Keypad Commands
+# Commands
 cmdArmStay = "04bd030101"
 cmdArmAway = "04bd020101"
 cmdDisarm = "04bd010101"
@@ -421,11 +421,10 @@ class Caddx(object):
 	# Poll each zone for Keypad Display Name to use in Create Zone Device name
 	# Todo: singleZoneNameRequest() is used incorrectly by callers.  Figure out what to do?
 	def singleZoneNameRequest(self, zoneKey: int) -> None:
-		messageStart = "0223"
 		zone = f"{zoneKey:02x}"  # 0 = zone 1
-		zoneNameRequest = messageStart + zone
+		zoneNameRequest = cmdZoneNameRequest + zone
 		self.plugin.debugLog("execute action:        Zone Name Request: %s,  %s" % (zone, zoneNameRequest))
-		self.sendMsgDirect(zoneNameRequest)
+		self.sendMsg(zoneNameRequest)
 		time.sleep(self.plugin.sleepBetweenCreateZone)
 											
 	################################################################################
@@ -637,30 +636,16 @@ class Caddx(object):
 			dev.updateStateOnServer(key="lastFunction", value="%r  >> %r  ** %s  " % (alarmMessage, messageNumber, self.timestamp()))
 		self.updateVariable("sendingMessage", (" >> %s --  %s     %r  " % (messageNumber, alarmMessage, transmitDataAscii)))
 
-	def processMessageFromQueue(self, conn, transmitDataAscii: str) -> bool:
+	def processMessageFromQueue(self, conn, transmitDataHex: str) -> bool:
 		"""Send a message in binary format. Wait for reply if necessary.
 
 		:param conn: Handle for serial port.
-		:param transmitDataAscii: Message in hex formatted ASCII.
+		:param transmitDataHex: Hex-formatted message.
 		:return: True if message sent and reply received.  False otherwise.
 		"""
-		transmitMessage = bytearray()
-		for i in bytes.fromhex(transmitDataAscii):
-			if i == '0x7e':
-				transmitMessage.extend(b"\x7d\x5e")
-			elif i == '0x7d':
-				transmitMessage.extend(b"\x7d\x5d")
-			else:
-				transmitMessage.append(i)
-		checksum = self.compute_fletcher16(transmitMessage)
-		transmitMessage.extend(checksum.to_bytes(2, byteorder="little"))
-		transmitMessage[0:0] = b'\x7e'
-		if self.plugin.messageActInfo or self.plugin.debug:
-			indigo.server.log("processMessageFromQueue:            >> sending message: %s" % str(transmitDataAscii))
-		conn.write(transmitMessage)
-
-		requestMessageType = transmitMessage[2]
-		return self.waitForResponse(conn, requestMessageType)
+		self.sendMsg(transmitDataHex)
+		# Todo:  Extract message type so we can check for correct reply.
+		return self.waitForResponse(conn, 0)
 
 	#######################################
 	# Check to see if serial port has any incoming information.
@@ -683,7 +668,8 @@ class Caddx(object):
 		msgData = bytearray()
 		msgData.extend(msgLengthByte)
 		msgLength = int.from_bytes(msgLengthByte, "little")
-		for i in range(msgLength):
+		msgLengthFull = msgLength + 3  # Full message length includes length byte and 2 byte checksum
+		for i in range(msgLength + 2):  # Message checksum included
 			nextChar = conn.read()
 			if nextChar == b'\x7d':
 				nextChar = conn.read()
@@ -698,22 +684,17 @@ class Caddx(object):
 					self.flushCommPort(conn)
 					return None
 			msgData.extend(nextChar)
-		if len(msgData) != (msgLength + 1):  # The actual data plus the message length byte.
-			self.plugin.errorLog(f"readMsg: Message data wrong length ({len(msgData)} != {msgLength + 1}). Flushing and discarding.")
+		if len(msgData) != msgLengthFull:  # The actual data plus the length byte and 2 byte checksum.
+			self.plugin.errorLog(f"readMsg: Message data wrong length ({len(msgData)} != {msgLengthFull}). Flushing and discarding.")
 			self.flushCommPort(conn)
 			return None
 
-		checksumStr = conn.read(2)
-		if len(checksumStr) != 2:
-			self.plugin.errorLog("readMsg: Checksum missing.  Flushing and discarding.")
-			self.flushCommPort(conn)
-			return None
-		offeredChecksum = int.from_bytes(checksumStr, byteorder="little")
+		offeredChecksum = int.from_bytes(msgData[-2:], byteorder="little")
+		del msgData[-2:]
 		computedChecksum = self.compute_fletcher16(msgData)
-		self.plugin.debugLog(f"Checksums - offered: {offeredChecksum}, computed: {computedChecksum}")
 		if offeredChecksum != computedChecksum:
 			self.plugin.errorLog("readMsg: Checksum failed.  Discarding.")
-			# return None
+			return None
 
 		# Convert to the ASCII message list used by upstream parsing.
 		messageList = []
@@ -751,27 +732,30 @@ class Caddx(object):
 				time.sleep(self.plugin.sleepBetweenIdlePoll)
 		return result
 
-	#######################################
-	# Send command directly to serial port, and bypass the command queue.
-	#######################################
+	def sendMsg(self, transmitDataHex: str) -> None:
+		"""
+		Send binary message to panel with byte stuffing and checksum.
 
-	def sendMsgDirect(self, transmitDataAscii: str) -> None:
-		transmitMessage = bytearray()
-		for i in bytes.fromhex(transmitDataAscii):
-			if i == '0x7e':
-				transmitMessage.extend(b"\x7d\x5e")
-			elif i == '0x7d':
-				transmitMessage.extend(b"\x7d\x5d")
-			else:
-				transmitMessage.append(i)
+		:param transmitDataHex: Hex-encoded message
+		:return: None
+		"""
+
+		transmitMessage = bytearray.fromhex(transmitDataHex)
 		checksum = self.compute_fletcher16(transmitMessage)
 		transmitMessage.extend(checksum.to_bytes(2, byteorder="little"))
-		transmitMessage[0:0] = b'\x7e'
-		self.conn.write(transmitMessage)
-
-		messageNumber = transmitDataAscii[2:4]
+		transmitMessageStuffed = bytearray()
+		for i in transmitMessage:
+			if i == '0x7e':
+				transmitMessageStuffed.extend(b"\x7d\x5e")
+			elif i == '0x7d':
+				transmitMessageStuffed.extend(b"\x7d\x5d")
+			else:
+				transmitMessageStuffed.append(i)
+		transmitMessageStuffed[0:0] = b'\x7e'
+		self.conn.write(transmitMessageStuffed)
+		messageNumber = transmitDataHex[2:4]
 		alarmMessage = self.messageAlarmDict(messageNumber)
-		self.plugin.debugLog("sendMsgDirect:           >> sent message: %s,  %s,  %r" % (messageNumber, alarmMessage, transmitMessage))
+		self.plugin.debugLog("sendMsg:           >> sent message: %s,  %s,  %r" % (messageNumber, alarmMessage, transmitMessage))
 
 	def timestamp(self) -> str:
 		"""
@@ -1418,10 +1402,10 @@ class Caddx(object):
 				self.plugin.debugLog("decodeReceivedData: Got 'Message Rejected'")
 				pass
 			case _:
-				self.sendMsgDirect(CAN)
+				self.sendMsg(CAN)
 				indigo.plugin.errorLog(f"decodeReceivedData: Invalid or not supported message type. Type: '{messageNumber:02x}'")
 		if ackRequested:
-			self.sendMsgDirect(ACK)
+			self.sendMsg(ACK)
 
 	########################################
 	# process "Interface Configuration Message"

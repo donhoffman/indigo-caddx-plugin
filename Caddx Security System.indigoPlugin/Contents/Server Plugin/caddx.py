@@ -549,7 +549,7 @@ class Caddx(object):
 		"""
 		Primary worker loop for handling events and commands
 
-		:param devicePort: Serial device string.  Used only for logging
+		:param devicePort: Serial device string.  Used only for logging.
 		:param conn: The pyserial connection object.  Used for all I/O operations on comm port
 		:param commandQueue: The queue used to contain commands for execution.
 		:return: None

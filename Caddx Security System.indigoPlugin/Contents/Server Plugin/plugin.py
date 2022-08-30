@@ -274,16 +274,16 @@ class Plugin(indigo.PluginBase):
     # Indigo Sensor Action callback
     ########################################
     def actionControlSensor(self, action, dev):
-        ### TURN ON ###
+        # Turn on
         if action.sensorAction == indigo.kSensorAction.TurnOn:
             indigo.server.log("actionControlSensor:        ignored \"%s\" %s request (sensor is read-only)" % (dev.name, "on"))
-        ### TURN OFF ###
+        # Turn off
         elif action.sensorAction == indigo.kSensorAction.TurnOff:
             indigo.server.log("actionControlSensor:        ignored \"%s\" %s request (sensor is read-only)" % (dev.name, "off"))
-        ### TOGGLE ###
+        # Toggle
         elif action.sensorAction == indigo.kSensorAction.Toggle:
             indigo.server.log("actionControlSensor:        ignored \"%s\" %s request (sensor is read-only)" % (dev.name, "toggle"))
-        ### STATUS REQUEST ###
+        # Status Request
         elif action.sensorAction == indigo.kSensorAction.RequestStatus:
             # Query hardware module (dev) for its current states here:
             # Todo: Implement actionControlSensor status request

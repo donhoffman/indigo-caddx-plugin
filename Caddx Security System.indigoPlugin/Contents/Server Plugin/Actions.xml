@@ -123,7 +123,7 @@
     <Name>Request - Zone x Name</Name>
     <CallbackMethod>methodZoneNameRequest</CallbackMethod>
     <ConfigUI>
-      <Field id="descriptionlabel" type="label" hidden="false">
+      <Field id="descriptionLabel" type="label" hidden="false">
         <Label>Zone Name Request</Label>
       </Field>
       <Field id="zone" type="menu" default="1">
@@ -139,7 +139,7 @@
     <Name>Request Zone x Status</Name>
     <CallbackMethod>methodZoneStatusRequest</CallbackMethod>
     <ConfigUI>
-      <Field id="descriptionlabel" type="label" hidden="false">
+      <Field id="descriptionLabel" type="label" hidden="false">
         <Label>Zone Status Request</Label>
       </Field>
       <Field id="zone" type="menu" default="1">
@@ -151,11 +151,15 @@
       </Field>
     </ConfigUI>
   </Action>
+  <Action id="actionZoneStatusRequestAll" deviceFilter="self.partition">
+    <Name>Request ALL Zones Status</Name>
+    <CallbackMethod>methodZoneStatusRequestALL</CallbackMethod>
+  </Action>
   <Action id="actionZonesSnapshotRequest" deviceFilter="self.partition">
     <Name>Request Zone block address x Snapshot</Name>
     <CallbackMethod>methodZonesSnapshotRequest</CallbackMethod>
     <ConfigUI>
-      <Field id="descriptionlabel" type="label" hidden="false">
+      <Field id="descriptionLabel" type="label" hidden="false">
         <Label>Zone Snapshot Request</Label>
       </Field>
       <Field id="zoneOffset" type="menu" default="1">
@@ -171,7 +175,7 @@
     <Name>Request Partition x Status</Name>
     <CallbackMethod>methodPartitionStatusRequest</CallbackMethod>
     <ConfigUI>
-      <Field id="descriptionlabel" type="label" hidden="false">
+      <Field id="descriptionLabel" type="label" hidden="false">
         <Label>Partition Status Request</Label>
       </Field>
       <Field id="partition" type="menu" default="1">
@@ -204,7 +208,7 @@
     <Name>Request User x Information without Pin</Name>
     <CallbackMethod>methodUserInformationRequestWithoutPin</CallbackMethod>
     <ConfigUI>
-      <Field id="descriptionlabel" type="label" hidden="false">
+      <Field id="descriptionLabel" type="label" hidden="false">
         <Label>User Information Request without PIN</Label>
       </Field>
       <Field id="user" type="menu" default="1">
@@ -220,7 +224,7 @@
     <Name>Toggle Zone x Bypass</Name>
     <CallbackMethod>methodZoneBypassToggle</CallbackMethod>
     <ConfigUI>
-      <Field id="descriptionlabel" type="label" hidden="false">
+      <Field id="descriptionLabel" type="label" hidden="false">
         <Label>Zone Bypass Toggle</Label>
       </Field>
       <Field id="bypassZone" type="menu" default="1">

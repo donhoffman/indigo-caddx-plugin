@@ -1,1106 +1,1123 @@
 <?xml version="1.0"?>
 <PluginConfig>
-    <!-- Define Caddx NetworX NX-8e Alarm Panel ============================================ -->
-    
-    <Field id="infoLabel" type="label">
-		<Label>Configuration</Label>
-    </Field>
-    
-    <Field id="sep0" type="separator"/>
-    
-    <!-- Panel: Object -->
-    
-    <Field type="label" id="objectLabel">
-        <Label>Panel Object</Label>
-    </Field>
-        
-    <Field id="panelName" type="textfield" defaultValue="">
-		<Label>Name:</Label>
-	</Field>    
-    <Field id="panelLocation" type="textfield" defaultValue="">
-		<Label>Location:</Label>
-	</Field>
-    <Field id="panelType" type="menu" defaultValue="4">
-        <Label>Model:</Label>
-            <List>
-            <Option value="1">NX-4</Option>
-            <Option value="2">NX-6</Option>
-            <Option value="3">NX-8</Option>
-            <Option value="4">NX-8e</Option>
-            </List>
-    </Field>
-    
-    <Field id="makeSpace1" type="label">
-		<Label/>
-	</Field>
-        
-    <Field id="sep1" type="separator"/>
-    
-    <!-- Panel: Device Communication -->
-        
-    <Field type="label" id="deviceCommunicationLabel">
-        <Label>Device Communication</Label>
-    </Field>
-    
-    <Field id="makeSpace2" type="label">
-		<Label/>
-	</Field>
-      
-    <Field id="devicePort" type="serialport">
-        <Label>Network:</Label>
-	</Field>    
-    <Field id="serialBaudRate" type="menu" defaultValue="9600"
-    tooltip="NX-8e serial baud range 2,400 - 38,400 (default = 9,600), NX-584 Home Automation Board serial baud range 2,400 - 76,800 (default = 9,600)">
+  <!-- Define Caddx NetworX NX-8e Alarm Panel ============================================ -->
+  <Field id="infoLabel0" type="label">
+    <Label>Configuration</Label>
+  </Field>
+  
+  <Field id="sep0" type="separator"/>
+  
+  <!-- Panel: Object -->
+  
+  <Field type="label" id="General">
+    <Label>General</Label>
+  </Field>
+  <Field id="variableFolderName" type="textfield" defaultValue="Caddx Security System">
+    <Label>Variable Folder Name:</Label>
+  </Field>
+  <Field id="deviceFolderName" type="textfield" defaultValue="Caddx Security System">
+    <Label>Device Folder Name:</Label>
+  </Field>
+  
+  <Field id="sep00" type="separator"/>
+  
+  <!-- Panel: Object -->
+  
+  <Field type="label" id="objectLabel">
+    <Label>Panel Object</Label>
+  </Field>
+  
+  <Field id="panelName" type="textfield" defaultValue="">
+    <Label>Name:</Label>
+  </Field>
+  <Field id="panelLocation" type="textfield" defaultValue="">
+    <Label>Location:</Label>
+  </Field>
+  <Field id="panelType" type="menu" defaultValue="5">
+    <Label>Model:</Label>
+    <List>
+      <Option value="1">NX-4</Option>
+      <Option value="2">NX-6</Option>
+      <Option value="3">NX-8</Option>
+      <Option value="4">NX-8e</Option>
+      <Option value="5">NX-8v2</Option>
+    </List>
+  </Field>
+  
+  <Field id="makeSpace1" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep1" type="separator"/>
+  
+  <!-- Panel: Device Communication -->
+  
+  <Field type="label" id="deviceCommunicationLabel">
+    <Label>Device Communication</Label>
+  </Field>
+  
+  <Field id="makeSpace2" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="devicePort" type="serialport">
+    <Label>Network:</Label>
+  </Field>
+  <Field id="serialBaudRate" type="menu" defaultValue="9600"
+         tooltip="NX-8e serial baud range 2,400 - 38,400 (default = 9,600), NX-584 Home Automation Board serial baud range 2,400 - 76,800 (default = 9,600)">
     <Label>Baud Rate:</Label>
-        <List>
-            <Option value="2400">2,400 bps</Option>
-            <Option value="4800">4,800 bps</Option>
-            <Option value="9600">9,600 bps</Option>
-            <Option value="19200">19,200 bps</Option>
-            <Option value="38400">38,400 bps</Option>
-            <Option value="76800">76,800 bps</Option>
-        </List>
-    </Field>    
-    <Field id="serialTimeout" type="menu" defaultValue="0.03"
-    tooltip="period of time the serial comm port remains open, to receive a data stream (default = 30 milliseconds)">
-        <Label>Timeout:</Label>
-        <List>
-            <Option value="0.01">10 milliseconds</Option>
-            <Option value="0.02">20 milliseconds</Option>        
-            <Option value="0.03">30 milliseconds</Option>
-            <Option value="0.04">40 milliseconds</Option>
-            <Option value="0.05">50 milliseconds</Option>        
-            <Option value="0.06">60 milliseconds</Option>
-            <Option value="0.07">70 milliseconds</Option>
-            <Option value="0.08">80 milliseconds</Option>
-            <Option value="0.09">90 milliseconds</Option>
-            <Option value="0.10">100 milliseconds</Option>
-        </List>
-    </Field>
-    
-    <Field id="makeSpace3" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep3" type="separator"/>
-    
-    <!-- Panel: Plugin Timer Adjustments -->
-            
-    <Field type="label" id="pluginTimersLabel">
-        <Label>Plugin Timers (adjustment)</Label>
-    </Field>
-    
-    <Field id="makeSpace4" type="label">
-		<Label/>
-	</Field>
-        
-    <Field id="sleepBetweenIdlePoll" type="menu" defaultValue="0.01"
-    tooltip="idle time between serial port data cycle readings, if no received data present (default = 0.01 seconds)">
-        <Label>Sleep Time Between Serial Reads:</Label>
-        <List>
-            <Option value="0">0</Option>
-            <Option value="0.005">5 milliseconds</Option>        
-            <Option value="0.01">10 milliseconds</Option>
-            <Option value="0.015">15 milliseconds</Option>
-            <Option value="0.02">20 milliseconds</Option>        
-            <Option value="0.025">25 milliseconds</Option>
-            <Option value="0.03">30 milliseconds</Option>
-            <Option value="0.035">35 milliseconds</Option>
-            <Option value="0.04">40 milliseconds</Option>
-            <Option value="0.045">45 milliseconds</Option>
-            <Option value="0.05">50 milliseconds</Option>
-        </List>
-    </Field>
-    
-    <Field id="sleepBetweenComm" type="menu" defaultValue="0.3"
-    tooltip="idle time between sending each command, when sending a sequence of serial commands (default = 0.3 seconds)">
-        <Label>Sleep Time Between Commands:</Label>
-        <List>
-            <Option value="0.05">0.05 seconds</Option>
-            <Option value="0.1">0.1 seconds</Option>        
-            <Option value="0.15">0.15 seconds</Option>
-            <Option value="0.2">0.2 seconds</Option>
-            <Option value="0.25">0.25 seconds</Option>
-            <Option value="0.3">0.3 seconds</Option>
-            <Option value="0.35">0.35 seconds</Option>
-            <Option value="0.4">0.4 seconds</Option>
-            <Option value="0.45">0.45 seconds</Option>        
-            <Option value="0.5">0.5 seconds</Option>
-            <Option value="0.55">0.55 seconds</Option>
-            <Option value="0.6">0.6 seconds</Option>
-            <Option value="0.65">0.65 seconds</Option>
-            <Option value="0.7">0.7 seconds</Option>        
-            <Option value="0.75">0.75 seconds</Option>
-        </List>
-    </Field>
-    
-    <Field id="sleepBetweenCreateZone" type="menu" defaultValue="1.0"
-    tooltip="idle time between sending a sequence of zoneDisplayName update requests (default = 1.0 seconds), used for creating zone devices">
-        <Label>Sleep Display Name Requests:</Label>
-        <List>
-            <Option value="0.1">0.1 seconds</Option>
-            <Option value="0.2">0.2 seconds</Option>        
-            <Option value="0.3">0.3 seconds</Option>
-            <Option value="0.4">0.4 seconds</Option>
-            <Option value="0.5">0.5 seconds</Option>        
-            <Option value="0.6">0.6 seconds</Option>
-            <Option value="0.7">0.7 seconds</Option>
-            <Option value="0.8">0.8 seconds</Option>
-            <Option value="0.9">0.9 seconds</Option>
-            <Option value="1.0">1.0 second</Option>
-            <Option value="1.1">1.1 seconds</Option>
-            <Option value="1.2">1.2 seconds</Option>        
-            <Option value="1.3">1.3 seconds</Option>
-            <Option value="1.4">1.4 seconds</Option>
-            <Option value="1.5">1.5 seconds</Option>
-        </List>
-    </Field>
-    
-    <Field id="makeSpace5" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep5" type="separator"/>
-    
-    <!-- Panel: Base Transport -->
-    
-    <Field type="label" id="baseTransportLabel">
-        <Label>Base Transport</Label>
-    </Field>
-    
-    <Field id="makeSpace6" type="label">
-		<Label/>
-	</Field>
-        
-    <Field id="portStatus" type="textfield" readOnly = "YES" defaultValue="">
-		<Label>Port Status:</Label>
-	</Field>    
-    <Field id="communicationFailure" type="checkbox" readOnly = "YES" defaultValue="true">
-		<Label>Communication Failure:</Label>
-	</Field>    
-    <Field id="lastFailureTime" type="textfield" readOnly = "YES" defaultValue="">
-		<Label>Last Failure Time:</Label>
-	</Field>
-    <Field id="watchdogTimerPeriod" type="menu" defaultValue="0"
-    tooltip="watchdog timer period (x) seconds, polls the security system to verify comm integrity (default = disabled)">
-        <Label>Watchdog Timer:</Label>
-            <List>
-            <Option value="0">disabled</Option>
-            <Option value="10">10 seconds</Option>
-            <Option value="60">1 minute</Option>
-            <Option value="120">2 minutes</Option>        
-            <Option value="180">3 minutes</Option>
-            <Option value="240">4 minutes</Option>
-            <Option value="300">5 minutes</Option>        
-            <Option value="600">10 minutes</Option>
-            <Option value="900">15 minutes</Option>
-            <Option value="1200">20 minutes</Option>
-            <Option value="1800">30 minutes</Option>
-            <Option value="3600">1 hour</Option>
-            </List>
-    </Field>
-    
-    <Field id="makeSpace7" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep7" type="separator"/>
-
-    <!-- Panel: Panel Security Functions -->
-    
-    <Field type="label" id="panelExLabel">
-        <Label>Panel Security Functions</Label>
-    </Field>
-    
-    <Field id="makeSpace8" type="label">
-		<Label/>
-	</Field>
-        
-    <Field id="activeCommunication" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Active Communication:</Label>
-	</Field>    
-    <Field id="firmware" type="textfield" readOnly = "YES" defaultValue="">
-		<Label>Firmware:</Label>
-	</Field>
-    <Field id="masterCode" type="textfield" readOnly = "YES" defaultValue="1234">
-		<Label>Master Code:</Label>
-	</Field>            
-    <Field id="codeLength" type="menu" defaultValue="4">
-		<Label>Code Length:</Label>
-            <List>
-            <Option value="4">4 digits</Option>
-            <Option value="6">6 digits</Option>
-            </List>            
-	</Field>
-    <Field id="partitionsSystem" type="menu" defaultValue="1">
-        <Label>Partitions:</Label>
-            <List>
-            <Option value="1">1 partition maximum</Option>
-            <Option value="2">2 partitions maximum</Option>
-            <Option value="3">3 partitions maximum</Option>
-            <Option value="4">4 partitions maximum</Option>
-            <Option value="5">5 partitions maximum</Option>
-            <Option value="6">6 partitions maximum</Option>
-            <Option value="7">7 partitions maximum</Option>
-            <Option value="8">8 partitions maximum</Option>
-            </List>
-    </Field>
-    <Field id="usersSystem" type="menu" defaultValue="4">
-        <Label>Users:</Label>
-            <List>
-            <Option value="1">1 user maximum</Option>
-            <Option value="2">2 users maximum</Option>
-            <Option value="3">3 users maximum</Option>
-            <Option value="4">4 users maximum</Option>
-            <Option value="5">5 users maximum</Option>
-            <Option value="6">6 users maximum</Option>
-            <Option value="7">7 users maximum</Option>
-            <Option value="8">8 users maximum</Option>
-            <Option value="9">9 users maximum</Option>
-            <Option value="10">10 users maximum</Option>
-            <Option value="11">11 users maximum</Option>
-            <Option value="12">12 users maximum</Option>
-            <Option value="13">13 users maximum</Option>
-            <Option value="14">14 users maximum</Option>
-            <Option value="15">15 users maximum</Option>
-            <Option value="16">16 users maximum</Option>
-            <Option value="17">17 users maximum</Option>
-            <Option value="18">18 users maximum</Option>
-            <Option value="19">19 users maximum</Option>
-            <Option value="20">20 users maximum</Option>
-            <Option value="21">21 users maximum</Option>
-            <Option value="22">22 users maximum</Option>
-            <Option value="23">23 users maximum</Option>
-            <Option value="24">25 users maximum</Option>
-            <Option value="25">25 users maximum</Option>
-            <Option value="26">26 users maximum</Option>
-            <Option value="27">27 users maximum</Option>
-            <Option value="28">28 users maximum</Option>
-            <Option value="29">29 users maximum</Option>
-            <Option value="30">30 users maximum</Option>
-            <Option value="31">31 users maximum</Option>
-            <Option value="32">32 users maximum</Option>
-            </List>
-    </Field>
-    <Field id="zonesSystem" type="menu" defaultValue="8">
-        <Label>Zones:</Label>
-            <List>
-            <Option value="4">4 zones maximum</Option>
-            <Option value="6">6 zones maximum</Option>
-            <Option value="8">8 zones maximum</Option>
-            <Option value="16">16 zones maximum</Option>
-            <Option value="24">24 zones maximum</Option>
-            <Option value="32">32 zones maximum</Option>
-            <Option value="40">40 zones maximum</Option>
-            <Option value="48">48 zones maximum</Option>
-            <Option value="56">56 zones maximum</Option>
-            <Option value="64">64 zones maximum</Option>
-            <Option value="72">72 zones maximum</Option>
-            <Option value="80">80 zones maximum</Option>
-            <Option value="88">88 zones maximum</Option>
-            <Option value="96">96 zones maximum</Option>
-            <Option value="104">104 zones maximum</Option>
-            <Option value="112">112 zones maximum</Option>
-            <Option value="120">120 zones maximum</Option>
-            <Option value="128">128 zones maximum</Option>
-            <Option value="136">136 zones maximum</Option>
-            <Option value="144">144 zones maximum</Option>
-            <Option value="152">152 zones maximum</Option>
-            <Option value="160">160 zones maximum</Option>
-            <Option value="168">168 zones maximum</Option>
-            <Option value="176">176 zones maximum</Option>
-            <Option value="184">184 zones maximum</Option>
-            <Option value="192">192 zones maximum</Option>
-            </List>
-    </Field>
-    <Field id="synchroniseDatabase" type="button">
-        <Label>Synchronise Databases:</Label>
-        <Title>Start Database Sync</Title>
-        <CallbackMethod>configSyncDatabase</CallbackMethod>
-    </Field>
-    <Field id="isSynchronising" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Synchronise in Progress:</Label>     
-    </Field>   
-    <Field id="synchronised" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Synchronised with Panel:</Label>
-    </Field>    
-    <Field id="isKeypadProgramming" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Keypad Programming Active:</Label>
-    </Field>    
-    <Field id="panelStatus" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Panel Status:</Label>
-    </Field>
-    <Field id="enableSpeak" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Enable Speak Prompts:</Label>
-    </Field>
-    
-    <Field id="makeSpace9" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep9" type="separator"/>
-    
-    <!-- Panel: Show Indigo Log Reporting Level Information --> 
-       
-    <Field id="showReportingInfoLabel" type="label">
-		<Label>Show Log Reporting Information</Label>
-	</Field>
-	
-	<Field id="makeSpace10" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="logReportingLabel" type="label">
-		<Label>You can enable different levels of reporting plugin activity logging in the Event Log window to suit your requirements by checking the required checkboxes.</Label>
-	</Field>
-    
-    <Field id="makeSpace11" type="label">
-		<Label/>
-	</Field>
-    
-    <Field type="checkbox" id="showAlarmEventInfo" defaultValue="true">
-		<Label>Log alarm events:</Label>
-		<Description>(reported by Alarm system)</Description>
- 	</Field>
-    
-    <Field type="checkbox" id="showCommandActInfo" defaultValue="true">
-		<Label>Log command actions:</Label>
-		<Description>(executed Command actions)</Description>
- 	</Field>
-    
-    <Field type="checkbox" id="showPartitionActInfo" defaultValue="true">
-		<Label>Log partition activity:</Label>
-		<Description>(changes in Partition state)</Description>
- 	</Field>
-    
-    <Field type="checkbox" id="showZoneActInfo" defaultValue="true">
-		<Label>Log zone activity:</Label>
-		<Description>(changes in Zone state)</Description>
- 	</Field>
-    
-    <Field type="checkbox" id="showMessageActInfo" defaultValue="false">
-		<Label>Log communication activity:</Label>
-		<Description>(send and receive messages)</Description>
- 	</Field>
-    
-    <Field type="checkbox" id="showMessageProcessInfo" defaultValue="false">
-		<Label>Log message processing:</Label>
-		<Description>(process comm messages)</Description>
- 	</Field>
-    
-    <Field id="makeSpace12" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep12" type="separator"/>
-    
-    <!-- Panel: Show Debug Information --> 
-       
-    <Field id="showDebugInfoLabel" type="label">
-		<Label>Show Debug Information</Label>
-	</Field>
-	
-	<Field id="makeSpace13" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="debugLabel" type="label">
-		<Label>If you are having problems with the plugin (or you are instructed by support), you can enable extra logging in the Event Log window by checking this button. Use with caution.</Label>
-	</Field>
-	
-	<Field id="makeSpace14" type="label">
-		<Label/>
-	</Field>
-    
-    <Field type="checkbox" id="showDebugInfo">
-		<Label>Enable debugging:</Label>
-		<Description>(not recommended)</Description>
- 	</Field>
-    
-    <Field id="makeSpace15" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep15" type="separator"/>
-    
-    <!-- Panel: Interface Configuration Settings -->
-
-    
-    <Field type="label" id="interfaceConfigurationSettingsLabel">
-        <Label>Interface Options</Label>
-    </Field>
-
-    <Field id="sep16" type="separator"/>
-    <Field id="sep17" type="separator"/>
-
-    <!-- Panel: Transition Message Flags 1 -->
-    
-    <Field type="label" id="transitionMessageFlags1Label">
-        <Label>Transition Message Flags 1          (#210 seg1)</Label>
-    </Field>
-    
-    <Field id="reservedBit0TransitionMessageFlags1" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit0 (00h):</Label>
-    </Field>    
-    <Field id="interfaceConfigurationMessage" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Interface Configure Message (01h):</Label>
-    </Field>    
-    <Field id="reservedBit2TransitionMessageFlags1" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit2 (02h):</Label>
-    </Field>    
-    <Field id="reservedBit3TransitionMessageFlags1" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit3 (03h):</Label>
-    </Field>    
-    <Field id="zoneStatusMessage" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Zone Status Message (04h):</Label>
-    </Field>    
-    <Field id="zoneSnapshotMessage" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Zone Snapshot Message (05h):</Label>
-    </Field>    
-    <Field id="partitionStatusMessage" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Partition Status Message (06h):</Label>
-    </Field>
-    <Field id="partitionSnapshotMessage" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Partition Snapshot Message (07h):</Label>
-    </Field>
-    
-     <Field id="makeSpace18" type="label">
-		<Label/>
-	</Field> 
-       
-    <Field id="sep18" type="separator"/>
-
-    <!-- Panel: Transition Message Flags 2 -->
-    
-    <Field type="label" id="transitionMessageFlags2Label">
-        <Label>Transition Message Flags 2          (#210 seg2)</Label>
-    </Field>
-    
-    <Field id="systemStatusMessage" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>System Status Message (08h):</Label>
-    </Field>    
-    <Field id="receivedX10Message" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>X10 Message Received (09h):</Label>
-    </Field>    
-    <Field id="logEventReceived" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Log Event Received (0Ah):</Label>
-    </Field>    
-    <Field id="keypadMessageReceived" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Keypad Message Received (0Bh):</Label>
-    </Field>    
-    <Field id="reservedBit4TransitionMessageFlags2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit4 (0Ch):</Label>
-    </Field>    
-    <Field id="reservedBit5TransitionMessageFlags2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit5 (0Dh):</Label>
-    </Field>    
-    <Field id="reservedBit6TransitionMessageFlags2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit6 (0Eh):</Label>
-    </Field>    
-    <Field id="reservedBit7TransitionMessageFlags2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit7 (0Fh):</Label>
-    </Field>
-    
-    <Field id="makeSpace19" type="label">
-		<Label/>
-	</Field>
-        
-    <Field id="sep19" type="separator"/>
-    
-    <!-- Panel: Request / Command Flags 1 -->
-    
-    <Field type="label" id="requestCommandFlags1Label">
-        <Label>Request / Command Flags 1        (#211 seg1)</Label>
-    </Field>
-    
-    <Field id="reservedBit0RequestCommandFlags1" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit0 (20h):</Label>
-    </Field>
-    <Field id="interfaceConfigurationRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Interface Configure Request (21h):</Label>
-    </Field>
-    <Field id="reservedBit2RequestCommandFlags1" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit2 (22h):</Label>
-    </Field>
-    <Field id="zoneNameRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Zone Name Request (23h):</Label>
-    </Field>
-    <Field id="zoneStatusRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Zone Status Request (24h):</Label>
-    </Field>
-    <Field id="zoneSnapshotRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Zone Snapshot Request (25h):</Label>
-    </Field>
-    <Field id="partitionStatusRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Partition Status Request (26h):</Label>
-    </Field>
-    <Field id="partitionSnapshotRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Partition Snapshot Request (27h):</Label>
-    </Field>
-    
-    <Field id="makeSpace20" type="label">
-		<Label/>
-	</Field>
-        
-    <Field id="sep20" type="separator"/>
-
-    <!-- Panel: Request / Command Flags 2 -->
-    
-    <Field type="label" id="requestCommandFlags2Label">
-        <Label>Request / Command Flags 2        (#211 seg2)</Label>
-    </Field>
-    
-    <Field id="systemStatusRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>System Status Request (28h):</Label>
-    </Field>
-    <Field id="sendX10Message" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Send X10 Message (29h):</Label>
-    </Field>
-    <Field id="logEventRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Log Event Request (2Ah):</Label>
-    </Field>
-    <Field id="sendKeypadTextMessage" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Send Keypad Text Message (2Bh):</Label>
-    </Field>
-    <Field id="keypadTerminalModeRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Keypad Mode Request (2Ch):</Label>
-    </Field>
-    <Field id="reservedBit5RequestCommandFlags2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit5 (2Dh):</Label>
-    </Field>
-    <Field id="reservedBit6RequestCommandFlags2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit6 (2Eh):</Label>
-    </Field>
-    <Field id="reservedBit7RequestCommandFlags2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit7 (2Fh):</Label>
-    </Field>
-    
-    <Field id="makeSpace21" type="label">
-		<Label/>
-	</Field>
-        
-    <Field id="sep21" type="separator"/>
-
-    <!-- Panel: Request / Command Flags 3 -->
-    
-    <Field type="label" id="requestCommandFlags3Label">
-        <Label>Request / Command Flags 3        (#211 seg3)</Label>
-    </Field>
-    
-    <Field id="programDataRequest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Program Data Request (30h):</Label>
-    </Field>
-    <Field id="programDataCommand" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Program Data Command (31h):</Label>
-    </Field>
-    <Field id="userInformationRequestWithPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>User Info Request With Pin (32h):</Label>
-    </Field>
-    <Field id="userInformationRequestWithoutPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>User Info Request W/O Pin (33h):</Label>
-    </Field>
-    <Field id="setUserCodeCommandWithPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Set User Code Cmd With Pin (34h):</Label>
-    </Field>
-    <Field id="setUserCodeCommandWithoutPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Set User Code Cmd W/O Pin (35h):</Label>
-    </Field>
-    <Field id="setUserAuthorisationCommandWithPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Set User Auth Cmd With Pin (36h):</Label>
-    </Field>
-    <Field id="setUserAuthorisationCommandWithoutPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Set User Auth Cmd W/O Pin (37h):</Label>
-    </Field>
-    
-    <Field id="makeSpace22" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep22" type="separator"/>
-
-    <!-- Panel: Request / Command Flags 4 -->
-    
-    <Field type="label" id="requestCommandFlags4Label">
-        <Label>Request / Command Flags 4        (#211 seg4)</Label>
-    </Field>
-
-    <Field id="reservedBit0RequestCommandFlags4" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit0 (38h):</Label>
-    </Field>
-    <Field id="reservedBit1RequestCommandFlags4" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit1 (39h):</Label>
-    </Field>
-    <Field id="storeCommunicationEventCommand" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Store Comm Event Cmd (3Ah):</Label>
-    </Field>
-    <Field id="setClockCalenderCommand" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Set Clock Calender Cmd (3Bh):</Label>
-    </Field>
-    <Field id="primaryKeypadFunctionWithPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Primary Keypad Ftn With Pin (3Ch):</Label>
-    </Field>
-    <Field id="primaryKeypadFunctionWithoutPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Primary Keypad Ftn W/O Pin (3Dh):</Label>
-    </Field>
-    <Field id="secondaryKeypadFunction" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Secondary Keypad Function (3Eh):</Label>
-    </Field>
-    <Field id="zoneBypassToggle" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Zone Bypass Toggle (3Fh):</Label>
-    </Field>
-    
-    <Field id="makeSpace23" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep23" type="separator"/>
-    
-    <!-- System: System Status Information -->
-
-    <Field type="label" id="systemStatusMessageLabel">
+    <List>
+      <Option value="2400">2,400 bps</Option>
+      <Option value="4800">4,800 bps</Option>
+      <Option value="9600">9,600 bps</Option>
+      <Option value="19200">19,200 bps</Option>
+      <Option value="38400">38,400 bps</Option>
+      <Option value="76800">76,800 bps</Option>
+    </List>
+  </Field>
+  <Field id="serialTimeout" type="menu" defaultValue="0.03"
+         tooltip="period of time the serial comm port remains open, to receive a data stream (default = 30 milliseconds)">
+    <Label>Timeout:</Label>
+    <List>
+      <Option value="0.01">10 milliseconds</Option>
+      <Option value="0.02">20 milliseconds</Option>
+      <Option value="0.03">30 milliseconds</Option>
+      <Option value="0.04">40 milliseconds</Option>
+      <Option value="0.05">50 milliseconds</Option>
+      <Option value="0.06">60 milliseconds</Option>
+      <Option value="0.07">70 milliseconds</Option>
+      <Option value="0.08">80 milliseconds</Option>
+      <Option value="0.09">90 milliseconds</Option>
+      <Option value="0.10">100 milliseconds</Option>
+    </List>
+  </Field>
+  
+  <Field id="makeSpace3" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep3" type="separator"/>
+  
+  <!-- Panel: Plugin Timer Adjustments -->
+  
+  <Field type="label" id="pluginTimersLabel">
+    <Label>Plugin Timers (adjustment)</Label>
+  </Field>
+  
+  <Field id="makeSpace4" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sleepBetweenIdlePoll" type="menu" defaultValue="0.01"
+         tooltip="Idle time between serial port data cycle readings, if no received data present (default = 0.01 seconds)">
+    <Label>Sleep Time Between Serial Reads:</Label>
+    <List>
+      <Option value="0">0</Option>
+      <Option value="0.005">5 milliseconds</Option>
+      <Option value="0.01">10 milliseconds</Option>
+      <Option value="0.015">15 milliseconds</Option>
+      <Option value="0.02">20 milliseconds</Option>
+      <Option value="0.025">25 milliseconds</Option>
+      <Option value="0.03">30 milliseconds</Option>
+      <Option value="0.035">35 milliseconds</Option>
+      <Option value="0.04">40 milliseconds</Option>
+      <Option value="0.045">45 milliseconds</Option>
+      <Option value="0.05">50 milliseconds</Option>
+    </List>
+  </Field>
+  
+  <Field id="sleepBetweenComm" type="menu" defaultValue="0.3"
+         tooltip="idle time between sending each command, when sending a sequence of serial commands (default = 0.3 seconds)">
+    <Label>Sleep Time Between Commands:</Label>
+    <List>
+      <Option value="0.05">0.05 seconds</Option>
+      <Option value="0.1">0.1 seconds</Option>
+      <Option value="0.15">0.15 seconds</Option>
+      <Option value="0.2">0.2 seconds</Option>
+      <Option value="0.25">0.25 seconds</Option>
+      <Option value="0.3">0.3 seconds</Option>
+      <Option value="0.35">0.35 seconds</Option>
+      <Option value="0.4">0.4 seconds</Option>
+      <Option value="0.45">0.45 seconds</Option>
+      <Option value="0.5">0.5 seconds</Option>
+      <Option value="0.55">0.55 seconds</Option>
+      <Option value="0.6">0.6 seconds</Option>
+      <Option value="0.65">0.65 seconds</Option>
+      <Option value="0.7">0.7 seconds</Option>
+      <Option value="0.75">0.75 seconds</Option>
+    </List>
+  </Field>
+  
+  <Field id="sleepBetweenCreateZone" type="menu" defaultValue="1.0"
+         tooltip="idle time between sending a sequence of zoneDisplayName update requests (default = 1.0 seconds), used for creating zone devices">
+    <Label>Sleep Display Name Requests:</Label>
+    <List>
+      <Option value="0.1">0.1 seconds</Option>
+      <Option value="0.2">0.2 seconds</Option>
+      <Option value="0.3">0.3 seconds</Option>
+      <Option value="0.4">0.4 seconds</Option>
+      <Option value="0.5">0.5 seconds</Option>
+      <Option value="0.6">0.6 seconds</Option>
+      <Option value="0.7">0.7 seconds</Option>
+      <Option value="0.8">0.8 seconds</Option>
+      <Option value="0.9">0.9 seconds</Option>
+      <Option value="1.0">1.0 second</Option>
+      <Option value="1.1">1.1 seconds</Option>
+      <Option value="1.2">1.2 seconds</Option>
+      <Option value="1.3">1.3 seconds</Option>
+      <Option value="1.4">1.4 seconds</Option>
+      <Option value="1.5">1.5 seconds</Option>
+    </List>
+  </Field>
+  
+  <Field id="makeSpace5" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep5" type="separator"/>
+  
+  <!-- Panel: Base Transport -->
+  
+  <Field type="label" id="baseTransportLabel">
+    <Label>Base Transport</Label>
+  </Field>
+  
+  <Field id="makeSpace6" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="portStatus" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Port Status:</Label>
+  </Field>
+  <Field id="communicationFailure" type="checkbox" readOnly="YES" defaultValue="true">
+    <Label>Communication Failure --readOnly:</Label>
+  </Field>
+  <Field id="lastFailureTime" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Last Failure Time --readOnly:</Label>
+  </Field>
+  <Field id="watchdogTimerPeriod" type="menu" defaultValue="0"
+         tooltip="watchdog timer period (x) seconds, polls the security system to verify comm integrity (default = disabled)">
+    <Label>Watchdog Timer:</Label>
+    <List>
+      <Option value="0">disabled</Option>
+      <Option value="10">10 seconds</Option>
+      <Option value="60">1 minute</Option>
+      <Option value="120">2 minutes</Option>
+      <Option value="180">3 minutes</Option>
+      <Option value="240">4 minutes</Option>
+      <Option value="300">5 minutes</Option>
+      <Option value="600">10 minutes</Option>
+      <Option value="900">15 minutes</Option>
+      <Option value="1200">20 minutes</Option>
+      <Option value="1800">30 minutes</Option>
+      <Option value="3600">1 hour</Option>
+    </List>
+  </Field>
+  
+  <Field id="makeSpace7" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep7" type="separator"/>
+  
+  <!-- Panel: Panel Security Functions -->
+  
+  <Field type="label" id="panelExLabel">
+    <Label>Panel Security Functions</Label>
+  </Field>
+  
+  <Field id="makeSpace8" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="activeCommunication" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Active Communication --readOnly:</Label>
+  </Field>
+  <Field id="firmware" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Firmware --readOnly:</Label>
+  </Field>
+  <Field id="masterCode" type="textfield" readOnly="YES" defaultValue="1234">
+    <Label>Master Code --readOnly:</Label>
+  </Field>
+  <Field id="codeLength" type="menu" defaultValue="4">
+    <Label>Code Length:</Label>
+    <List>
+      <Option value="4">4 digits</Option>
+      <Option value="6">6 digits</Option>
+    </List>
+  </Field>
+  <Field id="partitionsSystem" type="menu" defaultValue="1">
+    <Label>Partitions:</Label>
+    <List>
+      <Option value="1">1 partition maximum</Option>
+      <Option value="2">2 partitions maximum</Option>
+      <Option value="3">3 partitions maximum</Option>
+      <Option value="4">4 partitions maximum</Option>
+      <Option value="5">5 partitions maximum</Option>
+      <Option value="6">6 partitions maximum</Option>
+      <Option value="7">7 partitions maximum</Option>
+      <Option value="8">8 partitions maximum</Option>
+    </List>
+  </Field>
+  <Field id="usersSystem" type="menu" defaultValue="4">
+    <Label>Users:</Label>
+    <List>
+      <Option value="1">1 user maximum</Option>
+      <Option value="2">2 users maximum</Option>
+      <Option value="3">3 users maximum</Option>
+      <Option value="4">4 users maximum</Option>
+      <Option value="5">5 users maximum</Option>
+      <Option value="6">6 users maximum</Option>
+      <Option value="7">7 users maximum</Option>
+      <Option value="8">8 users maximum</Option>
+      <Option value="9">9 users maximum</Option>
+      <Option value="10">10 users maximum</Option>
+      <Option value="11">11 users maximum</Option>
+      <Option value="12">12 users maximum</Option>
+      <Option value="13">13 users maximum</Option>
+      <Option value="14">14 users maximum</Option>
+      <Option value="15">15 users maximum</Option>
+      <Option value="16">16 users maximum</Option>
+      <Option value="17">17 users maximum</Option>
+      <Option value="18">18 users maximum</Option>
+      <Option value="19">19 users maximum</Option>
+      <Option value="20">20 users maximum</Option>
+      <Option value="21">21 users maximum</Option>
+      <Option value="22">22 users maximum</Option>
+      <Option value="23">23 users maximum</Option>
+      <Option value="24">25 users maximum</Option>
+      <Option value="25">25 users maximum</Option>
+      <Option value="26">26 users maximum</Option>
+      <Option value="27">27 users maximum</Option>
+      <Option value="28">28 users maximum</Option>
+      <Option value="29">29 users maximum</Option>
+      <Option value="30">30 users maximum</Option>
+      <Option value="31">31 users maximum</Option>
+      <Option value="32">32 users maximum</Option>
+    </List>
+  </Field>
+  <Field id="zonesSystem" type="menu" defaultValue="8">
+    <Label>Zones:</Label>
+    <List>
+      <Option value="4">4 zones maximum</Option>
+      <Option value="6">6 zones maximum</Option>
+      <Option value="8">8 zones maximum</Option>
+      <Option value="16">16 zones maximum</Option>
+      <Option value="24">24 zones maximum</Option>
+      <Option value="32">32 zones maximum</Option>
+      <Option value="40">40 zones maximum</Option>
+      <Option value="48">48 zones maximum</Option>
+      <Option value="56">56 zones maximum</Option>
+      <Option value="64">64 zones maximum</Option>
+      <Option value="72">72 zones maximum</Option>
+      <Option value="80">80 zones maximum</Option>
+      <Option value="88">88 zones maximum</Option>
+      <Option value="96">96 zones maximum</Option>
+      <Option value="104">104 zones maximum</Option>
+      <Option value="112">112 zones maximum</Option>
+      <Option value="120">120 zones maximum</Option>
+      <Option value="128">128 zones maximum</Option>
+      <Option value="136">136 zones maximum</Option>
+      <Option value="144">144 zones maximum</Option>
+      <Option value="152">152 zones maximum</Option>
+      <Option value="160">160 zones maximum</Option>
+      <Option value="168">168 zones maximum</Option>
+      <Option value="176">176 zones maximum</Option>
+      <Option value="184">184 zones maximum</Option>
+      <Option value="192">192 zones maximum</Option>
+    </List>
+  </Field>
+  <Field id="synchroniseDatabase" type="button">
+    <Label>Synchronise Databases:</Label>
+    <Title>Start Database Sync</Title>
+    <CallbackMethod>configSyncDatabase</CallbackMethod>
+  </Field>
+  <Field id="isSynchronising" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Synchronise in Progress --readOnly:</Label>
+  </Field>
+  <Field id="synchronised" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Synchronised with Panel --readOnly:</Label>
+  </Field>
+  <Field id="isKeypadProgramming" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Keypad Programming Active --readOnly:</Label>
+  </Field>
+  <Field id="panelStatus" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Panel Status --readOnly:</Label>
+  </Field>
+  <Field id="enableSpeak" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Enable Speak Prompts --readOnly:</Label>
+  </Field>
+  
+  <Field id="makeSpace9" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep9" type="separator"/>
+  
+  <!-- Panel: Show Indigo Log Reporting Level Information -->
+  
+  <Field id="showReportingInfoLabel" type="label">
+    <Label>Show Log Reporting Information</Label>
+  </Field>
+  
+  <Field id="makeSpace10" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="logReportingLabel" type="label">
+    <Label>You can enable different levels of reporting plugin activity logging in the Event Log window to suit your
+      requirements by checking the required check boxes.
+    </Label>
+  </Field>
+  
+  <Field id="makeSpace11" type="label">
+    <Label/>
+  </Field>
+  
+  <Field type="checkbox" id="showAlarmEventInfo" defaultValue="true">
+    <Label>Log alarm events:</Label>
+    <Description>(reported by Alarm system)</Description>
+  </Field>
+  
+  <Field type="checkbox" id="showCommandActInfo" defaultValue="true">
+    <Label>Log command actions:</Label>
+    <Description>(executed Command actions)</Description>
+  </Field>
+  
+  <Field type="checkbox" id="showPartitionActInfo" defaultValue="true">
+    <Label>Log partition activity:</Label>
+    <Description>(changes in Partition state)</Description>
+  </Field>
+  
+  <Field type="checkbox" id="showZoneActInfo" defaultValue="true">
+    <Label>Log zone activity:</Label>
+    <Description>(changes in Zone state)</Description>
+  </Field>
+  
+  <Field type="checkbox" id="showMessageActInfo" defaultValue="false">
+    <Label>Log communication activity:</Label>
+    <Description>(send and receive messages)</Description>
+  </Field>
+  
+  <Field type="checkbox" id="showMessageProcessInfo" defaultValue="false">
+    <Label>Log message processing:</Label>
+    <Description>(process comm messages)</Description>
+  </Field>
+  
+  <Field id="makeSpace12" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep12" type="separator"/>
+  
+  <!-- Panel: Show Debug Information -->
+  
+  <Field id="showDebugInfoLabel" type="label">
+    <Label>Show Debug Information</Label>
+  </Field>
+  
+  <Field id="makeSpace13" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="debugLabel" type="label">
+    <Label>If you are having problems with the plugin (or you are instructed by support), you can enable extra logging
+      in the Event Log window by checking this button. Use with caution.
+    </Label>
+  </Field>
+  
+  <Field id="makeSpace14" type="label">
+    <Label/>
+  </Field>
+  
+  <Field type="checkbox" id="showDebugInfo">
+    <Label>Enable debugging:</Label>
+    <Description>(not recommended)</Description>
+  </Field>
+  
+  <Field id="makeSpace15" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep15" type="separator"/>
+  
+  <!-- Panel: Interface Configuration Settings -->
+  
+  
+  <Field type="label" id="interfaceConfigurationSettingsLabel">
+    <Label>Interface Options .. for info --readOnly</Label>
+  </Field>
+  
+  <Field id="sep16" type="separator"/>
+  
+  <!-- Panel: Transition Message Flags 1 -->
+  
+  <Field type="label" id="transitionMessageFlags1Label">
+    <Label>Transition Message Flags 1 (#210 seg1)</Label>
+  </Field>
+  
+  <Field id="reservedBit0TransitionMessageFlags1" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit0 (00h):</Label>
+  </Field>
+  <Field id="interfaceConfigurationMessage" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Interface Configure Message (01h):</Label>
+  </Field>
+  <Field id="reservedBit2TransitionMessageFlags1" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit2 (02h):</Label>
+  </Field>
+  <Field id="reservedBit3TransitionMessageFlags1" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit3 (03h):</Label>
+  </Field>
+  <Field id="zoneStatusMessage" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Zone Status Message (04h):</Label>
+  </Field>
+  <Field id="zoneSnapshotMessage" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Zone Snapshot Message (05h):</Label>
+  </Field>
+  <Field id="partitionStatusMessage" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Partition Status Message (06h):</Label>
+  </Field>
+  <Field id="partitionSnapshotMessage" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Partition Snapshot Message (07h):</Label>
+  </Field>
+  
+  <Field id="makeSpace18" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep18" type="separator"/>
+  
+  <!-- Panel: Transition Message Flags 2 -->
+  
+  <Field type="label" id="transitionMessageFlags2Label">
+    <Label>Transition Message Flags 2 (#210 seg2)</Label>
+  </Field>
+  
+  <Field id="systemStatusMessage" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>System Status Message (08h):</Label>
+  </Field>
+  <Field id="receivedX10Message" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>X10 Message Received (09h):</Label>
+  </Field>
+  <Field id="logEventReceived" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Log Event Received (0Ah):</Label>
+  </Field>
+  <Field id="keypadMessageReceived" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Keypad Message Received (0Bh):</Label>
+  </Field>
+  <Field id="reservedBit4TransitionMessageFlags2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit4 (0Ch):</Label>
+  </Field>
+  <Field id="reservedBit5TransitionMessageFlags2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit5 (0Dh):</Label>
+  </Field>
+  <Field id="reservedBit6TransitionMessageFlags2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit6 (0Eh):</Label>
+  </Field>
+  <Field id="reservedBit7TransitionMessageFlags2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit7 (0Fh):</Label>
+  </Field>
+  
+  <Field id="makeSpace19" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep19" type="separator"/>
+  
+  <!-- Panel: Request / Command Flags 1 -->
+  
+  <Field type="label" id="requestCommandFlags1Label">
+    <Label>Request / Command Flags 1 (#211 seg1)</Label>
+  </Field>
+  
+  <Field id="reservedBit0RequestCommandFlags1" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit0 (20h):</Label>
+  </Field>
+  <Field id="interfaceConfigurationRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Interface Configure Request (21h):</Label>
+  </Field>
+  <Field id="reservedBit2RequestCommandFlags1" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit2 (22h):</Label>
+  </Field>
+  <Field id="zoneNameRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Zone Name Request (23h):</Label>
+  </Field>
+  <Field id="zoneStatusRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Zone Status Request (24h):</Label>
+  </Field>
+  <Field id="zoneSnapshotRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Zone Snapshot Request (25h):</Label>
+  </Field>
+  <Field id="partitionStatusRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Partition Status Request (26h):</Label>
+  </Field>
+  <Field id="partitionSnapshotRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Partition Snapshot Request (27h):</Label>
+  </Field>
+  
+  <Field id="makeSpace20" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep20" type="separator"/>
+  
+  <!-- Panel: Request / Command Flags 2 -->
+  
+  <Field type="label" id="requestCommandFlags2Label">
+    <Label>Request / Command Flags 2 (#211 seg2)</Label>
+  </Field>
+  
+  <Field id="systemStatusRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>System Status Request (28h):</Label>
+  </Field>
+  <Field id="sendX10Message" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Send X10 Message (29h):</Label>
+  </Field>
+  <Field id="logEventRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Log Event Request (2Ah):</Label>
+  </Field>
+  <Field id="sendKeypadTextMessage" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Send Keypad Text Message (2Bh):</Label>
+  </Field>
+  <Field id="keypadTerminalModeRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Keypad Mode Request (2Ch):</Label>
+  </Field>
+  <Field id="reservedBit5RequestCommandFlags2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit5 (2Dh):</Label>
+  </Field>
+  <Field id="reservedBit6RequestCommandFlags2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit6 (2Eh):</Label>
+  </Field>
+  <Field id="reservedBit7RequestCommandFlags2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit7 (2Fh):</Label>
+  </Field>
+  
+  <Field id="makeSpace21" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep21" type="separator"/>
+  
+  <!-- Panel: Request / Command Flags 3 -->
+  
+  <Field type="label" id="requestCommandFlags3Label">
+    <Label>Request / Command Flags 3 (#211 seg3)</Label>
+  </Field>
+  
+  <Field id="programDataRequest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Program Data Request (30h):</Label>
+  </Field>
+  <Field id="programDataCommand" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Program Data Command (31h):</Label>
+  </Field>
+  <Field id="userInformationRequestWithPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>User Info Request With Pin (32h):</Label>
+  </Field>
+  <Field id="userInformationRequestWithoutPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>User Info Request W/O Pin (33h):</Label>
+  </Field>
+  <Field id="setUserCodeCommandWithPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Set User Code Cmd With Pin (34h):</Label>
+  </Field>
+  <Field id="setUserCodeCommandWithoutPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Set User Code Cmd W/O Pin (35h):</Label>
+  </Field>
+  <Field id="setUserAuthorisationCommandWithPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Set User Auth Cmd With Pin (36h):</Label>
+  </Field>
+  <Field id="setUserAuthorisationCommandWithoutPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Set User Auth Cmd W/O Pin (37h):</Label>
+  </Field>
+  
+  <Field id="makeSpace22" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep22" type="separator"/>
+  
+  <!-- Panel: Request / Command Flags 4 -->
+  
+  <Field type="label" id="requestCommandFlags4Label">
+    <Label>Request / Command Flags 4 (#211 seg4)</Label>
+  </Field>
+  
+  <Field id="reservedBit0RequestCommandFlags4" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit0 (38h):</Label>
+  </Field>
+  <Field id="reservedBit1RequestCommandFlags4" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit1 (39h):</Label>
+  </Field>
+  <Field id="storeCommunicationEventCommand" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Store Comm Event Cmd (3Ah):</Label>
+  </Field>
+  <Field id="setClockCalenderCommand" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Set Clock Calender Cmd (3Bh):</Label>
+  </Field>
+  <Field id="primaryKeypadFunctionWithPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Primary Keypad Ftn With Pin (3Ch):</Label>
+  </Field>
+  <Field id="primaryKeypadFunctionWithoutPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Primary Keypad Ftn W/O Pin (3Dh):</Label>
+  </Field>
+  <Field id="secondaryKeypadFunction" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Secondary Keypad Function (3Eh):</Label>
+  </Field>
+  <Field id="zoneBypassToggle" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Zone Bypass Toggle (3Fh):</Label>
+  </Field>
+  
+  <Field id="makeSpace23" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep23" type="separator"/>
+  
+  <!-- System: System Status Information -->
+  
+  <Field type="label" id="systemStatusMessageLabel">
     <Label>Status Information</Label>
-    </Field>
-           
-    <Field id="sep24" type="separator"/>
-    <Field id="sep25" type="separator"/>
+  </Field>
+  
+  <Field id="sep24" type="separator"/>
+  <Field id="sep25" type="separator"/>
+  
+  <!-- System Status: Byte 3 -->
+  
+  <Field type="label" id="systemStatusByte03Label">
+    <Label>System Status Byte 3</Label>
+  </Field>
+  
+  <Field id="lineSeizure" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Line Seizure:</Label>
+  </Field>
+  <Field id="offHook" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Off Hook:</Label>
+  </Field>
+  <Field id="initialHandshakeReceived" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Initial Handshake Received:</Label>
+  </Field>
+  <Field id="downloadInProgress" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Download In Progress:</Label>
+  </Field>
+  <Field id="dialerDelayInProgress" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Dialer Delay In Progress:</Label>
+  </Field>
+  <Field id="usingBackupPhone" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Using Backup Phone:</Label>
+  </Field>
+  <Field id="listenInActive" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Listen In Active:</Label>
+  </Field>
+  <Field id="twoWayLockout" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Two Way Lockout:</Label>
+  </Field>
+  
+  <Field id="makeSpace26" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep26" type="separator"/>
+  
+  <!-- System Status: Byte 4 -->
+  
+  <Field type="label" id="systemStatusByte04Label">
+    <Label>System Status Byte 4</Label>
+  </Field>
+  
+  <Field id="groundFault" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Ground Fault:</Label>
+  </Field>
+  <Field id="phoneFault" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Phone Fault:</Label>
+  </Field>
+  <Field id="failToCommunicate" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Fail To Communicate:</Label>
+  </Field>
+  <Field id="fuseFault" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Fuse Fault:</Label>
+  </Field>
+  <Field id="boxTamper" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Box Tamper:</Label>
+  </Field>
+  <Field id="sirenTamper" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Siren Tamper:</Label>
+  </Field>
+  <Field id="lowBattery" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Low 12V Battery:</Label>
+  </Field>
+  <Field id="acFail" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>AC Fail:</Label>
+  </Field>
+  
+  <Field id="makeSpace27" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep27" type="separator"/>
+  
+  <!-- System Status: Byte 5 -->
+  
+  <Field type="label" id="systemStatusByte05Label">
+    <Label>System Status Byte 5</Label>
+  </Field>
+  
+  <Field id="expanderBoxTamper" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Expander Box Tamper:</Label>
+  </Field>
+  <Field id="expanderACFailure" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Expander AC Failure:</Label>
+  </Field>
+  <Field id="expanderLowBattery" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Expander Low Battery:</Label>
+  </Field>
+  <Field id="expanderLossOffSupervision" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Expander Loss Off Supervision:</Label>
+  </Field>
+  <Field id="expanderAuxOverCurrent" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Expander Auxiliary OverCurrent:</Label>
+  </Field>
+  <Field id="auxiliaryCommChannelFailure" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Auxiliary Comm Channel Failure:</Label>
+  </Field>
+  <Field id="expanderBellFault" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Expander Bell Fault:</Label>
+  </Field>
+  <Field id="reservedbit7PanelByte5" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit7:</Label>
+  </Field>
+  
+  <Field id="makeSpace28" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep28" type="separator"/>
+  
+  <!-- System Status: Byte 6 -->
+  
+  <Field type="label" id="systemStatusByte06Label">
+    <Label>System Status Byte 6</Label>
+  </Field>
+  
+  <Field id="enable6DigitPin" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Enable 6 Digit Pin:</Label>
+  </Field>
+  <Field id="programmingTokenInUse" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Programming Token In Use:</Label>
+  </Field>
+  <Field id="pinRequiredForLocalDownload" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Pin Requested For Download:</Label>
+  </Field>
+  <Field id="globalPulsingBuzzer" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Global Pulsing Buzzer:</Label>
+  </Field>
+  <Field id="globalSirenOn" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Global Siren On:</Label>
+  </Field>
+  <Field id="globalSteadySiren" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Global Steady Siren:</Label>
+  </Field>
+  <Field id="busDeviceHasLineSeized" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Bus Device Has Line Seized:</Label>
+  </Field>
+  <Field id="busDeviceRequestedSniffMode" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Bus Device Requested Sniff Mode:</Label>
+  </Field>
+  
+  <Field id="makeSpace29" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep29" type="separator"/>
+  
+  <!-- System Status: Byte 7 -->
+  
+  <Field type="label" id="systemStatusByte07Label">
+    <Label>System Status Byte 7</Label>
+  </Field>
+  
+  <Field id="dynamicBatteryTest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Dynamic Battery Test:</Label>
+  </Field>
+  <Field id="acPowerOn" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>AC Power On:</Label>
+  </Field>
+  <Field id="lowBatteryMemory" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Low Battery Memory:</Label>
+  </Field>
+  <Field id="groundFaultMemory" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Ground Fault Memory:</Label>
+  </Field>
+  <Field id="fireAlarmVerificationBeingTimed" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Fire Alarm Verification Timed:</Label>
+  </Field>
+  <Field id="smokePowerReset" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Smoke Power Reset:</Label>
+  </Field>
+  <Field id="linePowerDetected50Hz" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Line Power Detected 50Hz:</Label>
+  </Field>
+  <Field id="timingHighVoltageBatteryCharge" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Timing High Voltage Bat Charge:</Label>
+  </Field>
+  
+  <Field id="makeSpace30" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep30" type="separator"/>
+  
+  <!-- System Status: Byte 8 -->
+  
+  <Field type="label" id="systemStatusByte08Label">
+    <Label>System Status Byte 8</Label>
+  </Field>
+  
+  <Field id="communicationSinceLastAutoTest" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Comm Since Last Auto Test:</Label>
+  </Field>
+  <Field id="powerUpDelayInProgress" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Power Up Delay In Progress:</Label>
+  </Field>
+  <Field id="walkTestMode" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Walk Test Mode:</Label>
+  </Field>
+  <Field id="lossOfSystemTime" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Loss Of System Time:</Label>
+  </Field>
+  <Field id="enrollRequested" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Enroll Requested:</Label>
+  </Field>
+  <Field id="testFixtureMode" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Test Fixture Mode:</Label>
+  </Field>
+  <Field id="controlShutdownMode" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Control Shutdown Mode:</Label>
+  </Field>
+  <Field id="timingACancelWindow" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Timing A Cancel Window:</Label>
+  </Field>
+  
+  <Field id="makeSpace31" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep31" type="separator"/>
+  
+  <!-- System Status: Byte 9 -->
+  
+  <Field type="label" id="systemStatusByte09Label">
+    <Label>System Status Byte 9</Label>
+  </Field>
+  
+  <Field id="reservedbit0PanelByte9" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit0:</Label>
+  </Field>
+  <Field id="reservedbit1PanelByte9" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit1:</Label>
+  </Field>
+  <Field id="reservedbit2PanelByte9" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit2:</Label>
+  </Field>
+  <Field id="reservedbit3PanelByte9" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit3:</Label>
+  </Field>
+  <Field id="reservedbit4PanelByte9" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit4:</Label>
+  </Field>
+  <Field id="reservedbit5PanelByte9" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit5:</Label>
+  </Field>
+  <Field id="reservedbit6PanelByte9" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Reserved Bit6:</Label>
+  </Field>
+  <Field id="callBackInProgress" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Callback In Progress:</Label>
+  </Field>
+  
+  <Field id="makeSpace32" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep32" type="separator"/>
+  
+  <!-- System Status: Byte 10 -->
+  
+  <Field type="label" id="systemStatusByte10Label">
+    <Label>System Status Byte 10</Label>
+  </Field>
+  
+  <Field id="phoneLineFaulted" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Phone Line Faulted:</Label>
+  </Field>
+  <Field id="voltagePresentInterruptActive" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Voltage Present Interrupt Active:</Label>
+  </Field>
+  <Field id="housePhoneOffHook" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>House Phone OffHook:</Label>
+  </Field>
+  <Field id="phoneLineMonitorEnabled" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Phone Line Monitor Enabled:</Label>
+  </Field>
+  <Field id="sniffing" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Sniffing:</Label>
+  </Field>
+  <Field id="lastReadWasOffHook" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Last Read Was OffHook:</Label>
+  </Field>
+  <Field id="listenInRequested" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Listen In Requested:</Label>
+  </Field>
+  <Field id="listenInTrigger" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Listen In Trigger:</Label>
+  </Field>
+  
+  <Field id="makeSpace33" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep33" type="separator"/>
+  
+  <!-- System Status: Byte 11 -->
+  
+  <Field type="label" id="systemStatusByte11Label">
+    <Label>System Status Byte 11</Label>
+  </Field>
+  
+  <Field id="validPartition1" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 1:</Label>
+  </Field>
+  <Field id="validPartition2" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 2:</Label>
+  </Field>
+  <Field id="validPartition3" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 3:</Label>
+  </Field>
+  <Field id="validPartition4" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 4:</Label>
+  </Field>
+  <Field id="validPartition5" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 5:</Label>
+  </Field>
+  <Field id="validPartition6" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 6:</Label>
+  </Field>
+  <Field id="validPartition7" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 7:</Label>
+  </Field>
+  <Field id="validPartition8" type="checkbox" readOnly="YES" defaultValue="false">
+    <Label>Valid Partition 8:</Label>
+  </Field>
+  
+  <Field id="makeSpace34" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep34" type="separator"/>
+  
+  <!-- System Status: Byte 12 -->
+  
+  <Field type="label" id="systemStatusByte12Label">
+    <Label>System Status Byte 12</Label>
+  </Field>
+  
+  <Field id="communicatorStackPointer" type="textfield" readOnly="YES" defaultValue="false">
+    <Label>Comm Stack Pointer:</Label>
+  </Field>
+  
+  <Field id="makeSpace35" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep35" type="separator"/>
+  
+  <!-- System Status: Log Event History -->
+  
+  <Field type="label" id="logEventHistoryLabel">
+    <Label>Log Event History</Label>
+  </Field>
+  
+  <Field id="zlogEventHistory01" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 1:</Label>
+  </Field>
+  <Field id="zlogEventHistory02" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 2:</Label>
+  </Field>
+  <Field id="zlogEventHistory03" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 3:</Label>
+  </Field>
+  <Field id="zlogEventHistory04" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 4:</Label>
+  </Field>
+  <Field id="zlogEventHistory05" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 5:</Label>
+  </Field>
+  <Field id="zlogEventHistory06" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 6:</Label>
+  </Field>
+  <Field id="zlogEventHistory07" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 7:</Label>
+  </Field>
+  <Field id="zlogEventHistory08" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 8:</Label>
+  </Field>
+  <Field id="zlogEventHistory09" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 9:</Label>
+  </Field>
+  <Field id="zlogEventHistory10" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 10:</Label>
+  </Field>
+  <Field id="zlogEventHistory11" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 11:</Label>
+  </Field>
+  <Field id="zlogEventHistory12" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 12:</Label>
+  </Field>
+  <Field id="zlogEventHistory13" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 13:</Label>
+  </Field>
+  <Field id="zlogEventHistory14" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 14:</Label>
+  </Field>
+  <Field id="zlogEventHistory15" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 15:</Label>
+  </Field>
+  <Field id="zlogEventHistory16" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 16:</Label>
+  </Field>
+  <Field id="zlogEventHistory17" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 17:</Label>
+  </Field>
+  <Field id="zlogEventHistory18" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 18:</Label>
+  </Field>
+  <Field id="zlogEventHistory19" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 19:</Label>
+  </Field>
+  <Field id="zlogEventHistory20" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 20:</Label>
+  </Field>
+  <Field id="zlogEventHistory21" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 21:</Label>
+  </Field>
+  <Field id="zlogEventHistory22" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 22:</Label>
+  </Field>
+  <Field id="zlogEventHistory23" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 23:</Label>
+  </Field>
+  <Field id="zlogEventHistory24" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 24:</Label>
+  </Field>
+  <Field id="zlogEventHistory25" type="textfield" readOnly="YES" defaultValue="">
+    <Label>Log Event History 25:</Label>
+  </Field>
+  
+  <Field id="makeSpace36" type="label">
+    <Label/>
+  </Field>
+  
+  <Field id="sep36" type="separator"/>
 
-    <!-- System Status: Byte 3 -->
-    
-    <Field type="label" id="systemStatusByte03Label">
-        <Label>System Status Byte 3</Label>
-    </Field>
-
-    <Field id="lineSeizure" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Line Seizure:</Label>
-    </Field>    
-    <Field id="offHook" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Off Hook:</Label>
-    </Field>    
-    <Field id="initialHandshakeReceived" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Initial Handshake Received:</Label>
-    </Field>    
-    <Field id="downloadInProgress" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Download In Progress:</Label>
-    </Field>    
-    <Field id="dialerDelayInProgress" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Dialer Delay In Progress:</Label>
-    </Field>    
-    <Field id="usingBackupPhone" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Using Backup Phone:</Label>
-    </Field>    
-    <Field id="listenInActive" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Listen In Active:</Label>
-    </Field>
-    <Field id="twoWayLockout" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Two Way Lockout:</Label>
-    </Field>
-    
-    <Field id="makeSpace26" type="label">
-		<Label/>
-	</Field>
-           
-    <Field id="sep26" type="separator"/>
-
-    <!-- System Status: Byte 4 -->
-
-    <Field type="label" id="systemStatusByte04Label">
-        <Label>System Status Byte 4</Label>
-    </Field>
-
-    <Field id="groundFault" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Ground Fault:</Label>
-    </Field>    
-    <Field id="phoneFault" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Phone Fault:</Label>
-    </Field>    
-    <Field id="failToCommunicate" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Fail To Communicate:</Label>
-    </Field>    
-    <Field id="fuseFault" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Fuse Fault:</Label>
-    </Field>    
-    <Field id="boxTamper" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Box Tamper:</Label>
-    </Field>    
-    <Field id="sirenTamper" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Siren Tamper:</Label>
-    </Field>    
-    <Field id="lowBattery" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Low 12V Battery:</Label>
-    </Field>
-    <Field id="acFail" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>AC Fail:</Label>
-    </Field>
-    
-    <Field id="makeSpace27" type="label">
-		<Label/>
-	</Field>
-
-    <Field id="sep27" type="separator"/>
-
-    <!-- System Status: Byte 5 -->
-
-    <Field type="label" id="systemStatusByte05Label">
-        <Label>System Status Byte 5</Label>
-    </Field>
-
-    <Field id="expanderBoxTamper" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Expander Box Tamper:</Label>
-    </Field>    
-    <Field id="expanderACFailure" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Expander AC Failure:</Label>
-    </Field>    
-    <Field id="expanderLowBattery" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Expander Low Battery:</Label>
-    </Field>    
-    <Field id="expanderLossOffSupervision" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Expander Loss Off Supervision:</Label>
-    </Field>    
-    <Field id="expanderAuxOverCurrent" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Expander Auxiliary OverCurrent:</Label>
-    </Field>    
-    <Field id="auxiliaryCommChannelFailure" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Auxiliary Comm Channel Failure:</Label>
-    </Field>    
-    <Field id="expanderBellFault" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Expander Bell Fault:</Label>
-    </Field>
-    <Field id="reservedbit7PanelByte5" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit7:</Label>
-    </Field>
-    
-    <Field id="makeSpace28" type="label">
-		<Label/>
-	</Field>
-
-    <Field id="sep28" type="separator"/>
-
-    <!-- System Status: Byte 6 -->
-    
-    <Field type="label" id="systemStatusByte06Label">
-        <Label>System Status Byte 6</Label>
-    </Field>
-
-    <Field id="enable6DigitPin" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Enable 6 Digit Pin:</Label>
-    </Field>    
-    <Field id="programmingTokenInUse" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Programming Token In Use:</Label>
-    </Field>    
-    <Field id="pinRequiredForLocalDownload" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Pin Requested For Download:</Label>
-    </Field>    
-    <Field id="globalPulsingBuzzer" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Global Pulsing Buzzer:</Label>
-    </Field>    
-    <Field id="globalSirenOn" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Global Siren On:</Label>
-    </Field>    
-    <Field id="globalSteadySiren" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Global Steady Siren:</Label>
-    </Field>    
-    <Field id="busDeviceHasLineSeized" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Bus Device Has Line Seized:</Label>
-    </Field>
-    <Field id="busDeviceRequestedSniffMode" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Bus Device Requested Sniff Mode:</Label>
-    </Field>
-    
-    <Field id="makeSpace29" type="label">
-		<Label/>
-	</Field>
-
-    <Field id="sep29" type="separator"/>
-
-    <!-- System Status: Byte 7 -->
-    
-    <Field type="label" id="systemStatusByte07Label">
-        <Label>System Status Byte 7</Label>
-    </Field>
-        
-    <Field id="dynamicBatteryTest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Dynamic Battery Test:</Label>
-    </Field>    
-    <Field id="acPowerOn" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>AC Power On:</Label>
-    </Field>    
-    <Field id="lowBatteryMemory" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Low Battery Memory:</Label>
-    </Field>    
-    <Field id="groundFaultMemory" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Ground Fault Memory:</Label>
-    </Field>    
-    <Field id="fireAlarmVerificationBeingTimed" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Fire Alarm Verification Timed:</Label>
-    </Field>    
-    <Field id="smokePowerReset" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Smoke Power Reset:</Label>
-    </Field>    
-    <Field id="linePowerDetected50Hz" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Line Power Detected 50Hz:</Label>
-    </Field>
-    <Field id="timingHighVoltageBatteryCharge" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Timing High Voltage Bat Charge:</Label>
-    </Field>
-    
-    <Field id="makeSpace30" type="label">
-		<Label/>
-	</Field>
-
-    <Field id="sep30" type="separator"/>
-
-    <!-- System Status: Byte 8 -->
-    
-    <Field type="label" id="systemStatusByte08Label">
-        <Label>System Status Byte 8</Label>
-    </Field>
-
-    <Field id="communicationSinceLastAutoTest" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Comm Since Last Auto Test:</Label>
-    </Field>    
-    <Field id="powerUpDelayInProgress" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Power Up Delay In Progress:</Label>
-    </Field>    
-    <Field id="walkTestMode" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Walk Test Mode:</Label>
-    </Field>    
-    <Field id="lossOfSystemTime" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Loss Of System Time:</Label>
-    </Field>    
-    <Field id="enrollRequested" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Enroll Requested:</Label>
-    </Field>    
-    <Field id="testFixtureMode" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Test Fixture Mode:</Label>
-    </Field>    
-    <Field id="controlShutdownMode" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Control Shutdown Mode:</Label>
-    </Field>
-    <Field id="timingACancelWindow" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Timing A Cancel Window:</Label>
-    </Field>
-    
-    <Field id="makeSpace31" type="label">
-		<Label/>
-	</Field>
-
-    <Field id="sep31" type="separator"/>
-
-    <!-- System Status: Byte 9 -->
-    
-    <Field type="label" id="systemStatusByte09Label">
-        <Label>System Status Byte 9</Label>
-    </Field>
-        
-    <Field id="reservedbit0PanelByte9" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit0:</Label>
-    </Field>    
-    <Field id="reservedbit1PanelByte9" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit1:</Label>
-    </Field>    
-    <Field id="reservedbit2PanelByte9" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit2:</Label>
-    </Field>    
-    <Field id="reservedbit3PanelByte9" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit3:</Label>
-    </Field>    
-    <Field id="reservedbit4PanelByte9" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit4:</Label>
-    </Field>    
-    <Field id="reservedbit5PanelByte9" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit5:</Label>
-    </Field>    
-    <Field id="reservedbit6PanelByte9" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Reserved Bit6:</Label>
-    </Field>
-    <Field id="callBackInProgress" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Callback In Progress:</Label>
-    </Field>
-    
-    <Field id="makeSpace32" type="label">
-		<Label/>
-	</Field>
-
-    <Field id="sep32" type="separator"/>
-
-    <!-- System Status: Byte 10 -->
-    
-    <Field type="label" id="systemStatusByte10Label">
-        <Label>System Status Byte 10</Label>
-    </Field>
-
-    <Field id="phoneLineFaulted" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Phone Line Faulted:</Label>
-    </Field>    
-    <Field id="voltagePresentInterruptActive" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Voltage Present Interrupt Active:</Label>
-    </Field>    
-    <Field id="housePhoneOffHook" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>House Phone OffHook:</Label>
-    </Field>    
-    <Field id="phoneLineMonitorEnabled" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Phone Line Monitor Enabled:</Label>
-    </Field>    
-    <Field id="sniffing" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Sniffing:</Label>
-    </Field>    
-    <Field id="lastReadWasOffHook" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Last Read Was OffHook:</Label>
-    </Field>    
-    <Field id="listenInRequested" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Listen In Requested:</Label>
-    </Field>
-    <Field id="listenInTrigger" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Listen In Trigger:</Label>
-    </Field>
-    
-    <Field id="makeSpace33" type="label">
-		<Label/>
-	</Field>
-
-    <Field id="sep33" type="separator"/>
-
-    <!-- System Status: Byte 11 -->
-    
-    <Field type="label" id="systemStatusByte11Label">
-        <Label>System Status Byte 11</Label>
-    </Field>
-    
-    <Field id="validPartition1" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 1:</Label>
-    </Field>    
-    <Field id="validPartition2" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 2:</Label>
-    </Field>    
-    <Field id="validPartition3" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 3:</Label>
-    </Field>    
-    <Field id="validPartition4" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 4:</Label>
-    </Field>    
-    <Field id="validPartition5" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 5:</Label>
-    </Field>    
-    <Field id="validPartition6" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 6:</Label>
-    </Field>    
-    <Field id="validPartition7" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 7:</Label>
-    </Field>
-    <Field id="validPartition8" type="checkbox" readOnly = "YES" defaultValue="false">
-        <Label>Valid Partition 8:</Label>
-    </Field>
-    
-    <Field id="makeSpace34" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep34" type="separator"/>
-
-    <!-- System Status: Byte 12 -->
-    
-    <Field type="label" id="systemStatusByte12Label">
-        <Label>System Status Byte 12</Label>
-    </Field>
-        
-    <Field id="communicatorStackPointer" type="textfield" readOnly = "YES" defaultValue="false">
-        <Label>Comm Stack Pointer:</Label>
-    </Field>
-    
-    <Field id="makeSpace35" type="label">
-		<Label/>
-	</Field>
-            
-    <Field id="sep35" type="separator"/>
-    
-    <!-- System Status: Log Event History -->
-    
-    <Field type="label" id="logEventHistoryLabel">
-        <Label>Log Event History</Label>
-    </Field>
-    
-    <Field id="zlogEventHistory01" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   1:</Label>
-    </Field>
-    <Field id="zlogEventHistory02" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   2:</Label>
-    </Field>
-    <Field id="zlogEventHistory03" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   3:</Label>
-    </Field>
-    <Field id="zlogEventHistory04" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   4:</Label>
-    </Field>
-    <Field id="zlogEventHistory05" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   5:</Label>
-    </Field>
-    <Field id="zlogEventHistory06" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   6:</Label>
-    </Field>
-    <Field id="zlogEventHistory07" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   7:</Label>
-    </Field>
-    <Field id="zlogEventHistory08" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   8:</Label>
-    </Field>
-    <Field id="zlogEventHistory09" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History   9:</Label>
-    </Field>
-    <Field id="zlogEventHistory10" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 10:</Label>
-    </Field>
-    <Field id="zlogEventHistory11" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 11:</Label>
-    </Field>
-    <Field id="zlogEventHistory12" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 12:</Label>
-    </Field>
-    <Field id="zlogEventHistory13" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 13:</Label>
-    </Field>
-    <Field id="zlogEventHistory14" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 14:</Label>
-    </Field>
-    <Field id="zlogEventHistory15" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 15:</Label>
-    </Field>
-    <Field id="zlogEventHistory16" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 16:</Label>
-    </Field>
-    <Field id="zlogEventHistory17" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 17:</Label>
-    </Field>
-    <Field id="zlogEventHistory18" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 18:</Label>
-    </Field>
-    <Field id="zlogEventHistory19" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 19:</Label>
-    </Field>
-    <Field id="zlogEventHistory20" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 20:</Label>
-    </Field>
-    <Field id="zlogEventHistory21" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 21:</Label>
-    </Field>
-    <Field id="zlogEventHistory22" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 22:</Label>
-    </Field>
-    <Field id="zlogEventHistory23" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 23:</Label>
-    </Field>
-    <Field id="zlogEventHistory24" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 24:</Label>
-    </Field>
-    <Field id="zlogEventHistory25" type="textfield" readOnly = "YES" defaultValue="">
-        <Label>Log Event History 25:</Label>
-    </Field>
-    
-    <Field id="makeSpace36" type="label">
-		<Label/>
-	</Field>
-    
-    <Field id="sep36" type="separator"/>
-        
 </PluginConfig>
-
+    
     <!-- Define Caddx NetworX NX-8e Alarm Panel ============================================ -->

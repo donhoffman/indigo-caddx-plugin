@@ -10,6 +10,7 @@
 # Python Imports
 ################################################################################
 import time
+import datetime
 
 import indigo
 from caddx import Caddx
@@ -42,7 +43,17 @@ class Plugin(indigo.PluginBase):
         self.zoneActInfo = pluginPrefs.get("showZoneActInfo", False)
         self.messageActInfo = pluginPrefs.get("showMessageActInfo", False)
         self.messageProcessInfo = pluginPrefs.get("showMessageProcessInfo", False)
+
         self.pluginId = "com.ians.caddx"
+        self.triggerList = []
+        self.initDevs = True
+
+        # Todo: Understand purpose of deleted variables
+        try:
+            indigo.variable.delete(u"Caddx_receiveMessage")
+            indigo.variable.delete(u"Caddx_sendingMessage")
+        finally:
+            pass
 
     ########################################
     def __del__(self):
@@ -55,6 +66,78 @@ class Plugin(indigo.PluginBase):
     def startup(self):
         self.debugLog("startup:        process called for caddx plugin ")
 
+        fn = self.pluginPrefs.get(u'variableFolderName', 'Caddx Security System')
+        if fn not in indigo.variables.folders:
+            indigo.variables.folder.create(fn)
+        self.pluginPrefs[u'variableFolderName'] = fn
+
+        fn = self.pluginPrefs.get(u'deviceFolderName', 'Caddx Security System')
+        if fn not in indigo.devices.folders:
+            indigo.devices.folder.create(fn)
+        self.pluginPrefs[u'deviceFolderName'] = fn
+
+        self.startupFixes_7_4_3()
+
+    def startupFixes_7_4_3(self):
+        """ Change old device names.
+        Added by Karl after v1.3.0, and at or before v7.4.3
+
+        :return: None
+        """
+        for dev in indigo.devices.iter(self.pluginId):
+            indigo.server.log(dev.name + "  " + dev.deviceTypeId)
+            if dev.deviceTypeId == u"zone":
+                if u"zoneState" in dev.states:
+                    zS = dev.states[u"zoneState"]
+                    if u"zoneDisplay" in dev.states:
+                        if dev.states[u"zoneDisplay"].find("-") == -1:
+                            zSP = self.padDisplay(zS)
+                            zD = dev.states[u"zoneDisplay"]
+                            dt = datetime.datetime.now().strftime("%m-%d %H:%M:%S")
+                            lN = dev.states[u"lastNormal"][5:]
+                            lT = dev.states[u"lastTriggered"][5:]
+                            if len(lN) > 10:  # has a date text , use that
+                                if zS == "normal":
+                                    if zSP + lN != zD:
+                                        dev.updateStateOnServer("zoneDisplay", zSP + lN)
+                                elif zS == "triggered":
+                                    if zSP + lT != zD:
+                                        dev.updateStateOnServer("zoneDisplay", zSP + lT)
+                                else:
+                                    dev.updateStateOnServer("zoneDisplay", zSP + dt)
+                            else:  # nothing populated, use current date
+                                if zSP + dt != zD:
+                                    dev.updateStateOnServer("zoneDisplay", zSP + dt)
+
+    # Todo: Refactor padDisplay away.
+    def padDisplay(self, status):
+        if status == "up":
+            return status.ljust(11)
+        elif status == "expired":
+            return status.ljust(11)
+        elif status == "down":
+            return status.ljust(11)
+        elif status == "changed":
+            return status.ljust(11)
+        elif status == "normal":
+            return status.ljust(11)
+        elif status == "triggered":
+            return status.ljust(10)
+        elif status == "tampered":
+            return status.ljust(10)
+        elif status == "trouble":
+            return status.ljust(11)
+        elif status == "bypassed":
+            return status.ljust(10)
+        elif status == "inhibited":
+            return status.ljust(10)
+        elif status == "lowBattery":
+            return status.ljust(11)
+        elif status == "supervisionLoss":
+            return "supervLoss".ljust(11)
+        else:
+            return status.ljust(14)
+
     def shutdown(self):
         self.debugLog("shutdown:        process called for caddx plugin ")
 
@@ -64,6 +147,8 @@ class Plugin(indigo.PluginBase):
 
     def deviceStartComm(self, dev):
         self.debugLog("deviceStartComm:        entering process %s (%d - %s)" % (dev.name, dev.id, dev.deviceTypeId))
+        if self.initDevs:
+            dev.stateListOrDisplayStateIdChanged()
         self.caddx.deviceStart(dev)
 
     def deviceStopComm(self, dev):
@@ -73,14 +158,13 @@ class Plugin(indigo.PluginBase):
     ########################################
     # Trigger Start and Stop methods
     ########################################
-    # Todo: Not implemented?
-    # def triggerStartProcessing(self, trigger):
-    # 	self.debugLog("triggerStartProcessing:        entering process %s (%d)" % (trigger.name, trigger.id))
-    # 	self.caddx.triggerStart(trigger)
-    #
-    # def triggerStopProcessing(self, trigger):
-    # 	self.debugLog("triggerStopProcessing:        entering process %s (%d)" % (trigger.name, trigger.id))
-    # 	self.caddx.triggerStop(trigger)
+    def triggerStartProcessing(self, trigger):
+        self.debugLog("triggerStartProcessing:        entering process %s (%d)" % (trigger.name, trigger.id))
+        self.caddx.triggerStart(trigger)
+
+    def triggerStopProcessing(self, trigger):
+        self.debugLog("triggerStopProcessing:        entering process %s (%d)" % (trigger.name, trigger.id))
+        self.caddx.triggerStop(trigger)
 
     ########################################
     # Run Concurrent Thread Start and Stop methods
@@ -88,6 +172,8 @@ class Plugin(indigo.PluginBase):
 
     def runConcurrentThread(self):
         self.debugLog("runConcurrentThread:        entering process")
+        self.initDevs = False
+
         if self.devicePort is None:
             indigo.server.log("The Caddx communication parameters are not yet configured. Please configure in the plugin configuration.")
             pass
@@ -120,6 +206,15 @@ class Plugin(indigo.PluginBase):
             errorsDict['masterCode'] = "Master Code number of digits must equal the Code Length set"
             self.debugLog("validateDeviceConfigUi:        Master Code number of digits must equal the Code Length set")
             return False, valuesDict, errorsDict
+
+        # Todo:  This is in more than one place.  Are both needed?
+        fn = valuesDict[u'variableFolderName']
+        if fn not in indigo.variables.folders:
+            indigo.variables.folder.create(fn)
+
+        fn = valuesDict[u'deviceFolderName']
+        if fn not in indigo.devices.folders:
+            indigo.devices.folder.create(fn)
 
         if len(errorsDict) > 0:			# Some UI fields are not valid, return corrected fields and error messages (client will not let the dialog window close).
             return False, valuesDict, errorsDict
@@ -262,32 +357,38 @@ class Plugin(indigo.PluginBase):
     # Actions command method routines <action.xml>
     ########################################
 
-    ########################################
-    # Indigo Relay / Dimmer Action callback
-    ########################################
-    # Fixme: Not implemented or not needed for this plugin?
-    # def actionControlDimmerRelay(self, action, dev):
-    # 	deviceAction = action.deviceAction
-    # 	indigo.server.log("ignored \"%s\" %s request (sensor is read-only)" % (dev.name, deviceAction))
+    def actionControlDimmerRelay(self, action, dev):
+        """ Indigo Relay / Dimmer Action callback.
+        Not applicable to this device type.
+
+        :param action: Action enum.
+        :param dev: Reference to device.
+        :return: None
+        """
+        indigo.server.log(f"Ignored '{dev.name}' {action.deviceAction} request (sensor is read-only)")
 
     ########################################
     # Indigo Sensor Action callback
     ########################################
     def actionControlSensor(self, action, dev):
-        # Turn on
+        """ Indigo Sensor Action callback.
+        As this is a read-only device, only *indigo.kSensorAction.RequestStatus* is supported.
+
+        :param action: Action enum.
+        :param dev: Reference to device.
+        :return: None
+        """
+
         if action.sensorAction == indigo.kSensorAction.TurnOn:
-            indigo.server.log("actionControlSensor:        ignored \"%s\" %s request (sensor is read-only)" % (dev.name, "on"))
-        # Turn off
+            indigo.server.log(f"actionControlSensor:        Ignored '{dev.name}' 'on' request (sensor is read-only)")
         elif action.sensorAction == indigo.kSensorAction.TurnOff:
-            indigo.server.log("actionControlSensor:        ignored \"%s\" %s request (sensor is read-only)" % (dev.name, "off"))
-        # Toggle
+            indigo.server.log(f"actionControlSensor:        Ignored '{dev.name}' 'off' request (sensor is read-only)")
         elif action.sensorAction == indigo.kSensorAction.Toggle:
-            indigo.server.log("actionControlSensor:        ignored \"%s\" %s request (sensor is read-only)" % (dev.name, "toggle"))
-        # Status Request
+            indigo.server.log(f"actionControlSensor:        Ignored '{dev.name}' 'toggle' request (sensor is read-only)")
         elif action.sensorAction == indigo.kSensorAction.RequestStatus:
             # Query hardware module (dev) for its current states here:
             # Todo: Implement actionControlSensor status request
-            indigo.server.log("actionControlSensor:        sent \"%s\" %s" % (dev.name, "status request"))
+            indigo.server.log(f"actionControlSensor:        Sent '{dev.name}' 'status request'")
 
     ########################################
     # Plugin Custom Action callback
@@ -380,6 +481,9 @@ class Plugin(indigo.PluginBase):
     def methodZoneStatusRequest(self, pluginAction):					# command action: --> Zone Status Request <--
         self.caddx.actionCmdMessage(pluginAction, "Zone Status Request")
 
+    def methodZoneStatusRequestALL(self, pluginAction):                                     # command action: --> Zone Status Request <--
+        self.caddx.actionCmdMessage(pluginAction, "Zone Status Request ALL")
+
     def methodZonesSnapshotRequest(self, pluginAction):					# command action: --> Zones Snapshot Request <--
         self.caddx.actionCmdMessage(pluginAction, "Zones Snapshot Request")
 
@@ -414,12 +518,46 @@ class Plugin(indigo.PluginBase):
     # Plugin Config Action callback
     ########################################
 
-    # Synchronise the Indigo device databases with the Caddx NetworX alarm panel database
-
     # noinspection PyUnusedLocal
     def configSyncDatabase(self, pluginAction):
+        """ Synchronise the Indigo device databases with the Caddx NetworX alarm panel database.
+
+        :param pluginAction: Not used.
+        :return: None
+        """
         indigo.server.log("configSyncDatabase:        start database sync process")
         self.syncDatabase()
+
+    ######################################################################################
+    # Indigo Trigger processing and handling
+    ######################################################################################
+
+    # Todo:  Understand and deal with duplicates for triggerStartProcessing() and triggerStopProcessing()
+    def triggerStartProcessing(self, trigger):
+        self.triggerList.append(trigger.id)
+
+    def triggerStopProcessing(self, trigger):
+        if trigger.id in self.triggerList:
+            self.triggerList.remove(trigger.id)
+
+    # Todo: Understand intent and remove or implement.
+    """
+    def triggerUpdated(self, origDev, newDev):
+        self.logger.log(4, u"<<-- entering triggerUpdated: %s" % origDev.name)
+        self.triggerStopProcessing(origDev)
+        self.triggerStartProcessing(newDev)
+    """
+
+    def triggerEvent(self, eventId):
+        """ Handle Indigo trigger.
+
+        :param eventId: Definition TBD
+        :return: None
+        """
+        for trigId in self.triggerList:
+            trigger = indigo.triggers[trigId]
+            if trigger.pluginTypeId == eventId:
+                indigo.trigger.execute(trigger)
 
     ########################################
     # Menu - Create Basic Alarm System Devices method
@@ -427,6 +565,10 @@ class Plugin(indigo.PluginBase):
     # create all indigo basic system indigo devices for the Caddx NetworX alarm system
 
     def createAlarmSystemDevices(self):
+        """ Create all indigo devices for the Caddx NetworX alarm panel
+
+        :return: None
+        """
         # Todo: Call to createInterfaceOptions() commented out in original version.  What does it do?
         # self._createInterfaceOptions()
         self._createStatusInfo()
@@ -435,8 +577,14 @@ class Plugin(indigo.PluginBase):
         self._createAlarmUsers()
         self._createAlarmZones()
 
-    # Todo: Implement _createInterfaceOptions()?
-    def _createInterfaceOptions(self):						# create interface message options device
+    # Todo: Verify implementation of _createInterfaceOptions()?
+    def _createInterfaceOptions(self):
+        """
+        Create interface message options device.
+        To be implemented.
+
+        :return: None
+        """
         panel = 1
         if panel in self.caddx.panelList.keys():
             indigo.server.log("createInterfaceOptions:        Alarm device interface message options already exists")
@@ -447,6 +595,7 @@ class Plugin(indigo.PluginBase):
                 protocol=indigo.kProtocol.Plugin,
                 address="",
                 name=deviceName,
+                folder=self.pluginPrefs['deviceFolderName'],
                 description="Interface options",
                 pluginId=self.pluginId,
                 deviceTypeId="panel",
@@ -464,6 +613,7 @@ class Plugin(indigo.PluginBase):
                 protocol=indigo.kProtocol.Plugin,
                 address="",
                 name=deviceName,
+                folder=self.pluginPrefs['deviceFolderName'],
                 description="System status info",
                 pluginId=self.pluginId,
                 deviceTypeId="statusInfo",
@@ -486,6 +636,7 @@ class Plugin(indigo.PluginBase):
                     protocol=indigo.kProtocol.Plugin,
                     address="",
                     name=deviceName,
+                    folder=self.pluginPrefs['deviceFolderName'],
                     description="Alarm partition %s" % partition,
                     pluginId=self.pluginId,
                     deviceTypeId="partition",
@@ -504,6 +655,7 @@ class Plugin(indigo.PluginBase):
                 protocol=indigo.kProtocol.Plugin,
                 address="",
                 name=deviceName,
+                folder=self.pluginPrefs['deviceFolderName'],
                 description="Alarm keypad %s" % keypad,
                 pluginId=self.pluginId,
                 deviceTypeId="keypad",
@@ -518,12 +670,14 @@ class Plugin(indigo.PluginBase):
                 indigo.server.log("createAlarmUsers:        Alarm device user: %r already exists" % key)
             else:
                 indigo.server.log("createAlarmUsers:        Creating alarm device user: %r" % key)
+                # Todo:  Karl's version prefixed device name with Caddx_.  Is this really necessary if we use a folder?
                 deviceName = f"User {user:02d}"
                 userName = f"TBD {user:02d}"
                 indigo.device.create(
                     protocol=indigo.kProtocol.Plugin,
                     address="",
                     name=deviceName,
+                    folder=self.pluginPrefs['deviceFolderName'],
                     description=f"Alarm user {user:02d}",
                     pluginId=self.pluginId,
                     deviceTypeId="user",
@@ -539,16 +693,25 @@ class Plugin(indigo.PluginBase):
                 indigo.server.log("createAlarmZones:        Alarm device zone %r already exists" % key)
             else:
                 zoneName = "Zone " + f"{key:03}"
-                self.caddx.singleZoneNameRequest(key - 1)			# read alarm zone Keypad Display Name
-                # Fixme: above is never used.
+                # Fixme: Karl's version does the following. Bodge. Need to find a better way.
+                for ii in range(5):
+                    self.caddx.keypadDisplayName = ""
+                    self.caddx.singleZoneNameRequest(key - 1)
+                    if self.caddx.keypadDisplayName != "":
+                        break  # Got non-empty string
+                if self.caddx.keypadDisplayName == "":
+                    self.caddx.keypadDisplayName = "Unknown"
                 displayName = self.caddx.keypadDisplayName
+                # Fixme: End.
                 self.debugLog("createAlarmZones:        key: %r,  displayName: %s" % (key, displayName))
                 indigo.server.log("createAlarmZones:        Creating alarm device zone: %r" % key)		# create specific alarm zone device
+                # Todo:  Karl's version prefixed device name with Caddx_.  Is this really necessary if we use a folder?
                 deviceName = f"{zoneName} - {displayName.rstrip()}"
                 indigo.device.create(
                     protocol=indigo.kProtocol.Plugin,
                     address="",
                     name=deviceName,
+                    folder=self.pluginPrefs['deviceFolderName'],
                     description=f"Security {zoneName}",
                     pluginId=self.pluginId,
                     deviceTypeId="zone",
@@ -559,15 +722,19 @@ class Plugin(indigo.PluginBase):
     # Menu - Synchronise  Database method
     ########################################
 
-    def syncDatabase(self):	 # Synchronise the Indigo device databases with the Caddx NetworX alarm panel database
+    def syncDatabase(self):
+        """
+        Synchronise the Indigo device databases with the Caddx NetworX alarm panel database.
+
+        :return: None
+        """
         indigo.server.log("syncDatabase:        start Indigo database synchronisation process with Caddx NetworX Security System database.")
 
         # update sync database states in plugin config preferences
         self.pluginPrefs["isSynchronising"] = True
         self.pluginPrefs["panelStatus"] = "synchronising Database  ** %s" % self.caddx.timestamp()
-        variableID = "panelStatus"
-        panelStatusVariable = ("synchronising Database  ** %s" % self.caddx.timestamp())
-        self.caddx.updateVariable(variableID, panelStatusVariable)
+        # Todo:  Karl's version prefixed variable with Caddx_.  Is this really necessary if we use a folder?
+        self.caddx.updateVariable("panelStatus", f"Synchronising Database  ** {self.caddx.timestamp()}")
 
         # set limit parameters for request commands( determine the range of update requests)
         action = ""
@@ -594,9 +761,8 @@ class Plugin(indigo.PluginBase):
         self.pluginPrefs["isSynchronising"] = False
         self.pluginPrefs["synchronised"] = True
         self.pluginPrefs["panelStatus"] = "synchronise completed  ** %s " % self.caddx.timestamp()
-        variableID = "panelStatus"
-        panelStatusVariable = ("synchronise completed  ** %s " % self.caddx.timestamp())
-        self.caddx.updateVariable(variableID, panelStatusVariable)
+        # Todo:  Karl's version prefixed variable with Caddx_.  Is this really necessary if we use a folder?
+        self.caddx.updateVariable("panelStatus", f"Synchronise completed  ** {self.caddx.timestamp()}")
 
     ########################################
     # Menu - Interface Config values to Log method
@@ -851,8 +1017,8 @@ class Plugin(indigo.PluginBase):
         ]
         entryNumber = 1
         for item in logEventHistoryList:
-            logEntry = self.pluginPrefs[item]
-            if not len(logEntry):
+            logEntry = str(self.pluginPrefs[item])
+            if not logEntry:
                 logEntry = "Empty"
             indigo.server.log(f"{entryNumber:02}:  {logEntry}")
             entryNumber += 1

@@ -1,48 +1,48 @@
 <?xml version="1.0"?>
 <MenuItems>
-	<!-- Define Menu Items for Caddx NetworX NX-8e Alarm System =============== -->
+  <!-- Define Menu Items for Caddx NetworX NX-8e Alarm System =============== -->
+  
+  <MenuItem id="menu1">
+    <Name>Create Caddx Alarm System Devices</Name>
+    <CallbackMethod>createAlarmSystemDevices</CallbackMethod>
+  </MenuItem>
+  
+  <MenuItem id="menu3">
+    <Name>Synchronise Database</Name>
+    <CallbackMethod>syncDatabase</CallbackMethod>
+  </MenuItem>
+  
+  <MenuItem id="menu4">
+    <Name>Set Date/ Time</Name>
+    <CallbackMethod>setClockCalender</CallbackMethod>
+  </MenuItem>
+  
+  <MenuItem id="menu5">
+    <Name>Interface Messages Settings</Name>
+    <CallbackMethod>interfaceMessageConfigToLog</CallbackMethod>
+  </MenuItem>
+  
+  <MenuItem id="menu6">
+    <Name>System Status Information</Name>
+    <CallbackMethod>systemStatusToLog</CallbackMethod>
+  </MenuItem>
+  
+  <MenuItem id="menu7">
+    <Name>Partition Status</Name>
+    <CallbackMethod>partitionStatusToLog</CallbackMethod>
+  </MenuItem>
+  
+  <MenuItem id="menu8">
+    <Name>Zones Summary</Name>
+    <CallbackMethod>zonesSummaryToLog</CallbackMethod>
+  </MenuItem>
+  
+  <MenuItem id="menu9">
+    <Name>Event Log History</Name>
+    <CallbackMethod>logEventHistoryToLog</CallbackMethod>
+  </MenuItem>
+  
+  
+  <!-- Define Menu Items for Caddx NetworX NX-8e Alarm System =============== -->
 
-    <MenuItem id="menu1">
-        <Name>Create Caddx Alarm System Devices</Name>
-        <CallbackMethod>createAlarmSystemDevices</CallbackMethod>
-    </MenuItem>
-    
-    <MenuItem id="menu3">
-        <Name>Synchronise Database</Name>
-        <CallbackMethod>syncDatabase</CallbackMethod>
-    </MenuItem>
-    
-    <MenuItem id="menu4">
-        <Name>Set Date/ Time</Name>
-        <CallbackMethod>setClockCalender</CallbackMethod>
-    </MenuItem>
-    
-    <MenuItem id="menu5">
-        <Name>Interface Messages Settings</Name>
-        <CallbackMethod>interfaceMessageConfigToLog</CallbackMethod>
-    </MenuItem>
-    
-    <MenuItem id="menu6">
-        <Name>System Status Information</Name>
-        <CallbackMethod>systemStatusToLog</CallbackMethod>
-    </MenuItem>
-    
-    <MenuItem id="menu7">
-        <Name>Partition Status</Name>
-        <CallbackMethod>partitionStatusToLog</CallbackMethod>
-    </MenuItem>
-    
-    <MenuItem id="menu8">
-        <Name>Zones Summary</Name>
-        <CallbackMethod>zonesSummaryToLog</CallbackMethod>
-    </MenuItem>
-    
-    <MenuItem id="menu9">
-        <Name>Event Log History</Name>
-        <CallbackMethod>logEventHistoryToLog</CallbackMethod>
-    </MenuItem>
-
-    
-    <!-- Define Menu Items for Caddx NetworX NX-8e Alarm System =============== -->
-    
 </MenuItems>

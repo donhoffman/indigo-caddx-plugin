@@ -19,6 +19,7 @@
       <w>dpartition</w>
       <w>dtotal</w>
       <w>dzone</w>
+      <w>fromhex</w>
       <w>kalarm</w>
       <w>kday</w>
       <w>kdevice</w>
@@ -37,6 +38,8 @@
       <w>pstate</w>
       <w>reservedbit</w>
       <w>restorable</w>
+      <w>serialport</w>
+      <w>superv</w>
       <w>zreserved</w>
       <w>zreservedbit</w>
       <w>zstate</w>

@@ -12,6 +12,8 @@
 import logging
 import time
 import queue
+import copy
+import datetime
 
 ################################################################################
 # Local Imports
@@ -106,7 +108,7 @@ class Caddx(object):
 		self.panelList = {}
 		self.systemStatusList = {}
 		
-		self.commandQueue = None
+		self.commandQueue = queue.Queue()
 		self.shutdown = ""
 		self.devicePort = None
 		self.conn = None
@@ -120,8 +122,7 @@ class Caddx(object):
 		self.watchdogTimer = (time.time()) + 5
 		self.suspendInterfaceConfigMessageDisplay = True
 		self.errorCountComm = 0
-		
-		self.createVariables = False
+		self.devStateChangeList = {}
 		self.repeatAlarmTripped = False
 
 	def __del__(self):
@@ -142,89 +143,89 @@ class Caddx(object):
 		# noinspection PyUnusedLocal
 		keypad = int(dev.pluginProps["associatedKeypad"])
 		if action == "Arm in Stay Mode":
-			logPrintMessage = "execute action:        Arm Alarm in Stay Mode"
+			logPrintMessage = "Execute action:        Arm Alarm in Stay Mode"
 			self.sendMsgToQueue(cmdArmStay)
 			if self.plugin.enableSpeakPrompts:	
 				indigo.server.speak(sayArmingStay)
 		elif action == "Arm in Away Mode":
-			logPrintMessage = "execute action:        Arm Alarm in Away Mode"
+			logPrintMessage = "Execute action:        Arm Alarm in Away Mode"
 			self.sendMsgToQueue(cmdArmAway)
 			if self.plugin.enableSpeakPrompts:
 				indigo.server.speak(sayArmingAway)
 		elif action == "Disarm System":
-			logPrintMessage = "execute action:        Disarm System"
+			logPrintMessage = "Execute action:        Disarm System"
 			self.sendMsgToQueue(cmdDisarm)
 		elif action == "Activate Fire Panic":
-			logPrintMessage = "execute action:        Activate Fire Alert"
+			logPrintMessage = "Execute action:        Activate Fire Alert"
 			self.sendMsgToQueue(cmdFirePanic)
 			if self.plugin.enableSpeakPrompts:
 				indigo.server.speak(sayActivateFire)
 		elif action == "Activate Medical Panic":
-			logPrintMessage = "execute action:        Activate Medical Alert"
+			logPrintMessage = "Execute action:        Activate Medical Alert"
 			self.sendMsgToQueue(cmdMedicalPanic)
 			if self.plugin.enableSpeakPrompts:
 				indigo.server.speak(sayActivateMedical)
 		elif action == "Activate Police Duress":
-			logPrintMessage = "execute action:        Activate Police Duress"
+			logPrintMessage = "Execute action:        Activate Police Duress"
 			self.sendMsgToQueue(cmdPolicePanic)
 			if self.plugin.enableSpeakPrompts:
 				indigo.server.speak(sayActivatePolice)
 		elif action == "Turn Off Any Sounder or Alarm":
-			logPrintMessage = "execute action:        Turn Off Any Sounder or Alarm"
+			logPrintMessage = "Execute action:        Turn Off Any Sounder or Alarm"
 			self.sendMsgToQueue(cmdTurnOffSounderOrAlarm)
 		elif action == "Cancel":
-			logPrintMessage = "execute action:        Cancel"
+			logPrintMessage = "Execute action:        Cancel"
 			self.sendMsgToQueue(cmdCancel)
 		elif action == "Initiate Auto Arm":
-			logPrintMessage = "execute action:        Initiate Auto Arm"
+			logPrintMessage = "Execute action:        Initiate Auto Arm"
 			self.sendMsgToQueue(cmdInitiateAutoArm)
 		elif action == "Start Walk Test Mode":
-			logPrintMessage = "execute action:        Start Walk Test Mode"
+			logPrintMessage = "Execute action:        Start Walk Test Mode"
 			self.sendMsgToQueue(cmdStartWalkTestMode)
 		elif action == "Stop Walk Test Mode":
-			logPrintMessage = "execute action:        Stop Walk Test Mode"
+			logPrintMessage = "Execute action:        Stop Walk Test Mode"
 			self.sendMsgToQueue(cmdStopWalkTestMode)
 		elif action == "Stay 1 Button Arm Toggle Interiors":
-			logPrintMessage = "execute action:        Stay (1 button arm / toggle Interiors)"
+			logPrintMessage = "Execute action:        Stay (1 button arm / toggle Interiors)"
 			self.sendMsgToQueue(cmdStay1ButtonArmToggleInteriors)
 		elif action == "Toggle Chime Mode":
-			logPrintMessage = "execute action:        Chime (toggle Chime Mode)"
+			logPrintMessage = "Execute action:        Chime (toggle Chime Mode)"
 			self.sendMsgToQueue(cmdChimeToggleChimeMode)
 		elif action == "Exit 1 Button Arm Toggle Instant":
-			logPrintMessage = "execute action:        Exit (1 button arm / toggle Instant)"
+			logPrintMessage = "Execute action:        Exit (1 button arm / toggle Instant)"
 			self.sendMsgToQueue(cmdExitButtonArmToggleInstant)
 		elif action == "Bypass Interiors":
-			logPrintMessage = "execute action:        Bypass Interiors"
+			logPrintMessage = "Execute action:        Bypass Interiors"
 			self.sendMsgToQueue(cmdBypassInteriors)
 		elif action == "Reset Smoke Detectors":
-			logPrintMessage = "execute action:        Reset Smoke Detectors"
+			logPrintMessage = "Execute action:        Reset Smoke Detectors"
 			self.sendMsgToQueue(cmdSmokeDetectorReset)
 		elif action == "Auto Callback Download":
-			logPrintMessage = "execute action:        Auto Callback Download"
+			logPrintMessage = "Execute action:        Auto Callback Download"
 			self.sendMsgToQueue(cmdAutoCallbackDownload)
 		elif action == "Manual Pickup Download":
-			logPrintMessage = "execute action:        Manual Pickup Download"
+			logPrintMessage = "Execute action:        Manual Pickup Download"
 			self.sendMsgToQueue(cmdManualPickupDownload)
 		elif action == "Enable Silent Exit for this Arm Cycle":
-			logPrintMessage = "execute action:        Enable Silent Exit (for this arm cycle)"
+			logPrintMessage = "Execute action:        Enable Silent Exit (for this arm cycle)"
 			self.sendMsgToQueue(cmdEnableSilentExitForThisArmCycle)
 		elif action == "Perform Test":
-			logPrintMessage = "execute action:        Perform Test"
+			logPrintMessage = "Execute action:        Perform Test"
 			self.sendMsgToQueue(cmdPerformTest)
 		elif action == "Group Bypass":
-			logPrintMessage = "execute action:        Group Bypass"
+			logPrintMessage = "Execute action:        Group Bypass"
 			self.sendMsgToQueue(cmdGroupBypass)
 		elif action == "Auxiliary Function 1":
-			logPrintMessage = "execute action:        Auxiliary Function 1"
+			logPrintMessage = "Execute action:        Auxiliary Function 1"
 			self.sendMsgToQueue(cmdAuxiliaryFunction1)
 		elif action == "Auxiliary Function 2":
-			logPrintMessage = "execute action:        Auxiliary Function 2"
+			logPrintMessage = "Execute action:        Auxiliary Function 2"
 			self.sendMsgToQueue(cmdAuxiliaryFunction2)
 		elif action == "Start Keypad Sounder":
-			logPrintMessage = "execute action:        Start Keypad Sounder"
+			logPrintMessage = "Execute action:        Start Keypad Sounder"
 			self.sendMsgToQueue(cmdStartKeypadSounder)
 		else:
-			logPrintMessage = "execute action:        Requested Action %s not defined." % action
+			logPrintMessage = f"Execute action:        Requested Action {action} not defined."
 		if self.plugin.commandActInfo or self.plugin.debug:
 			indigo.server.log("%s" % logPrintMessage)
 
@@ -234,95 +235,102 @@ class Caddx(object):
 
 	def actionCmdMessage(self, pluginAction, action):
 		if action == "Interface Configuration Request":
-			logPrintMessage = "execute action:        Interface Configuration Request"
+			logPrintMessage = "Execute action:        Interface Configuration Request"
 			self.sendMsgToQueue(cmdInterfaceConfigurationRequest)
 		elif action == "Zone Name Request":
 			value = int(pluginAction.props["zone"]) - 1  # 0 = zone 1
 			zone = f"{value:02x}"
 			zoneNameRequest = cmdZoneNameRequest + zone
-			logPrintMessage = "execute action:        Zone Name Request,  zone: %s" % value
+			logPrintMessage = "Execute action:        Zone Name Request,  zone: %s" % value
 			self.sendMsgToQueue(zoneNameRequest)
 		elif action == "Zone Status Request":
 			value = int(pluginAction.props["zone"]) - 1  # 0 = zone 1
 			zone = f"{value:02x}"
 			zoneStatusRequest = cmdZoneStatusRequest + zone
-			logPrintMessage = "execute action:        Zone Status Request,  zone: %s" % value
+			logPrintMessage = "Execute action:        Zone Status Request,  zone: %s" % value
 			self.sendMsgToQueue(zoneStatusRequest)
+		elif action == "Zone Status Request ALL":
+			for zz in self.zoneList.keys():
+				value = int(zz) - 1  # 0 = zone 1
+				zone = f"{value:02x}"
+				zoneStatusRequest = cmdZoneStatusRequest + zone
+				self.sendMsgToQueue(zoneStatusRequest)
+			logPrintMessage = "Execute action:        Zone Status Request, all zones"
 		elif action == "Zones Snapshot Request":
 			value = int(pluginAction.props["zoneOffset"])
 			kzoneOffSet = f"{value:02x}"
 			zonesSnapshotRequest = cmdZonesSnapshotRequest + kzoneOffSet
-			logPrintMessage = "execute action:        Zones Snapshot Request,  block address: %s" % value
+			logPrintMessage = "Execute action:        Zones Snapshot Request,  block address: %s" % value
 			self.sendMsgToQueue(zonesSnapshotRequest)
 		elif action == "Partition Status Request":
 			value = int(pluginAction.props["partition"]) - 1  # 0 = partition 1
 			kpartition = f"{value:02x}"
 			partitionStatusRequest = cmdPartitionStatusRequest + kpartition
-			logPrintMessage = "execute action:        Partition Status Request,  partition: %s" % value
+			logPrintMessage = "Execute action:        Partition Status Request,  partition: %s" % value
 			self.sendMsgToQueue(partitionStatusRequest)
 		elif action == "Partition Snapshot Request":
-			logPrintMessage = "execute action:        Partition Snapshot Request"
+			logPrintMessage = "Execute action:        Partition Snapshot Request"
 			self.sendMsgToQueue(cmdPartitionSnapshotRequest)
 		elif action == "System Status Request":
-			logPrintMessage = "execute action:        System Status Request"
+			logPrintMessage = "Execute action:        System Status Request"
 			self.sendMsgToQueue(cmdSystemStatusRequest)
 		# Todo: Incomplete implementation?
 		# elif action == "Send X-10 Command":
-		# 	logPrintMessage = "execute action:        Send X-10 Command"
+		# 	logPrintMessage = "Execute action:        Send X-10 Command"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Log Event Request":
-		# 	logPrintMessage = "execute action:        Log Event Request"
+		# 	logPrintMessage = "Execute action:        Log Event Request"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Send Keypad Text Message":
-		# 	logPrintMessage = "execute action:        Send Keypad Text Message"
+		# 	logPrintMessage = "Execute action:        Send Keypad Text Message"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Keypad Terminal Mode Request":
-		# 	logPrintMessage = "execute action:        Keypad Terminal Mode Request"
+		# 	logPrintMessage = "Execute action:        Keypad Terminal Mode Request"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Program Data Request":
-		# 	logPrintMessage = "execute action:        Program Data Request"
+		# 	logPrintMessage = "Execute action:        Program Data Request"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Program Data Command":
-		# 	logPrintMessage = "execute action:        Program Data Command"
+		# 	logPrintMessage = "Execute action:        Program Data Command"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "User Information Request with Pin":
-		# 	logPrintMessage = "execute action:        User Information Request with Pin"
+		# 	logPrintMessage = "Execute action:        User Information Request with Pin"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		elif action == "User Information Request without Pin":
 			value = int(pluginAction.props["user"])
 			kuser = f"{value:02x}"
 			userInformationRequestWithoutPin = cmdUserInformationRequestWithoutPin + kuser
-			logPrintMessage = "execute action:        User Information Request without Pin,  user: %s" % value
+			logPrintMessage = "Execute action:        User Information Request without Pin,  user: %s" % value
 			self.sendMsgToQueue(userInformationRequestWithoutPin)
 		# Todo: Incomplete implementation?
 		# elif action == "Set User Code Command with Pin":
-		# 	logPrintMessage = "execute action:        Set User Code Command with Pin"
+		# 	logPrintMessage = "Execute action:        Set User Code Command with Pin"
 		# 	self.sendMsgToQueue(userInformationRequestWithPin)
 		# elif action == "Set User Code Command without Pin":
-		# 	logPrintMessage = "execute action:        Set User Code Command without Pin"
+		# 	logPrintMessage = "Execute action:        Set User Code Command without Pin"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Set User Authorisation with Pin":
-		# 	logPrintMessage = "execute action:        Set User Authorisation with Pin"
+		# 	logPrintMessage = "Execute action:        Set User Authorisation with Pin"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Set User Authorisation without Pin":
-		# 	logPrintMessage = "execute action:        Set User Authorisation without Pin"
+		# 	logPrintMessage = "Execute action:        Set User Authorisation without Pin"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		# elif action == "Store Communication Event Command":
-		# 	logPrintMessage = "execute action:        Store Communication Event Command"
+		# 	logPrintMessage = "Execute action:        Store Communication Event Command"
 		# 	self.sendMsgToQueue(cmdSystemStatusRequest)
 		elif action == "Set Clock and Calender":
-			logPrintMessage = "execute action:        Set Clock and Calender"
+			logPrintMessage = "Execute action:        Set Clock and Calender"
 			self.actionSetClockCalenderCommand(action="")
 		elif action == "Zone Bypass toggle":
 			value = int(pluginAction.props["bypassZone"]) - 1  # 0 = zone 1
 			zone = f"{value:02x}"
 			zoneBypassToggle = cmdZoneBypassToggle + zone
-			logPrintMessage = "execute action:        Zone Bypass Toggle: zone %s: " % value
+			logPrintMessage = f"Execute action:        Zone Bypass Toggle: zone {value}: "
 			self.sendMsgToQueue(zoneBypassToggle)
 		else:
-			logPrintMessage = "execute action:        Requested Action: \"%s\" is not defined." % action
+			logPrintMessage = f"Execute action:        Requested Action: '{action}' is not defined."
 		if self.plugin.commandActInfo or self.plugin.debug:
-			indigo.server.log("%s" % logPrintMessage)	
+			indigo.server.log(logPrintMessage)
 	
 	########################################
 	# System action requests for database synchronisation
@@ -331,7 +339,7 @@ class Caddx(object):
 	# noinspection PyUnusedLocal
 	def actionInterfaceConfigurationRequest(self, action):
 		if self.plugin.commandActInfo or self.plugin.debug:
-			indigo.server.log("execute action:        Interface Configuration Request")
+			indigo.server.log("Execute action:        Interface Configuration Request")
 		self.sendMsgToQueue(cmdInterfaceConfigurationRequest)
 		time.sleep(self.plugin.sleepBetweenComm)
 		
@@ -340,7 +348,7 @@ class Caddx(object):
 			zone = f"{key:02x}"  # 0 = zone 1
 			zoneNameRequest = cmdZoneNameRequest + zone
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Zone Name Request: %s,   %s  (zone %s)" % (zone, zoneNameRequest, (key + 1)))
+				indigo.server.log("Execute action:        Zone Name Request: %s,   %s  (zone %s)" % (zone, zoneNameRequest, (key + 1)))
 			self.sendMsgToQueue(zoneNameRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 
@@ -349,7 +357,7 @@ class Caddx(object):
 			zone = f"{key:02x}"  # 0 = zone 1
 			zoneStatusRequest = cmdZoneStatusRequest + zone
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Zone Status Request: %s,  %s  (zone %s)" % (zone, zoneStatusRequest, (key + 1)))
+				indigo.server.log("Execute action:        Zone Status Request: %s,  %s  (zone %s)" % (zone, zoneStatusRequest, (key + 1)))
 			self.sendMsgToQueue(zoneStatusRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 									
@@ -358,7 +366,7 @@ class Caddx(object):
 			kzoneOffSet = f"{key:02x}"
 			zonesSnapshotRequest = cmdZonesSnapshotRequest + kzoneOffSet
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Zones Snapshot Request: %s,  %s  (block %s)" % (kzoneOffSet, zonesSnapshotRequest, key))
+				indigo.server.log("Execute action:        Zones Snapshot Request: %s,  %s  (block %s)" % (kzoneOffSet, zonesSnapshotRequest, key))
 			self.sendMsgToQueue(zonesSnapshotRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 		
@@ -367,21 +375,21 @@ class Caddx(object):
 			kpartition = f"{key:02x}"		# 0 = partition 1
 			partitionStatusRequest = cmdPartitionStatusRequest + kpartition
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Partition Status Request: %s  %s  (partition %s)" % (kpartition, partitionStatusRequest, (key + 1)))
+				indigo.server.log("Execute action:        Partition Status Request: %s  %s  (partition %s)" % (kpartition, partitionStatusRequest, (key + 1)))
 			self.sendMsgToQueue(partitionStatusRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 
 	# noinspection PyUnusedLocal
 	def actionPartitionSnapshotRequest(self, action):
 		if self.plugin.commandActInfo or self.plugin.debug:
-			indigo.server.log("execute action:        Partition Snapshot Request: Partition 1 - 8")
+			indigo.server.log("Execute action:        Partition Snapshot Request: Partition 1 - 8")
 		self.sendMsgToQueue(cmdPartitionSnapshotRequest)
 		time.sleep(self.plugin.sleepBetweenComm)
 
 	# noinspection PyUnusedLocal
 	def actionSystemStatusRequest(self, action):
 		if self.plugin.commandActInfo or self.plugin.debug:
-			indigo.server.log("execute action:        System Status Request")
+			indigo.server.log("Execute action:        System Status Request")
 		self.sendMsgToQueue(cmdSystemStatusRequest)
 		time.sleep(self.plugin.sleepBetweenComm)		
 
@@ -393,7 +401,7 @@ class Caddx(object):
 			keventNumber = f"{key+1:02x}"
 			logEventRequest = kmessagestart + keventNumber
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        Log Event Request: %s,  %s" % (keventNumber, logEventRequest))
+				indigo.server.log("Execute action:        Log Event Request: %s,  %s" % (keventNumber, logEventRequest))
 			self.sendMsgToQueue(logEventRequest)
 			time.sleep(self.plugin.sleepBetweenComm)
 		
@@ -402,7 +410,7 @@ class Caddx(object):
 			user = f"{key+1:02x}"
 			userInformationRequestWithoutPin = cmdUserInformationRequestWithoutPin + user
 			if self.plugin.commandActInfo or self.plugin.debug:
-				indigo.server.log("execute action:        User Information Request without Pin: %s,  %s  (user %s)" % (user, userInformationRequestWithoutPin, (key + 1)))
+				indigo.server.log("Execute action:        User Information Request without Pin: %s,  %s  (user %s)" % (user, userInformationRequestWithoutPin, (key + 1)))
 			self.sendMsgToQueue(userInformationRequestWithoutPin)
 			time.sleep(self.plugin.sleepBetweenComm)					
 
@@ -423,7 +431,7 @@ class Caddx(object):
 	def singleZoneNameRequest(self, zoneKey: int) -> None:
 		zone = f"{zoneKey:02x}"  # 0 = zone 1
 		zoneNameRequest = cmdZoneNameRequest + zone
-		self.plugin.debugLog("execute action:        Zone Name Request: %s,  %s" % (zone, zoneNameRequest))
+		self.plugin.debugLog("Execute action:        Zone Name Request: %s,  %s" % (zone, zoneNameRequest))
 		self.sendMsg(zoneNameRequest)
 		time.sleep(self.plugin.sleepBetweenCreateZone)
 											
@@ -436,41 +444,42 @@ class Caddx(object):
 	########################################
 	
 	def deviceStart(self, dev):
-		self.plugin.debugLog("deviceStart:        adding device %s." % dev.name)
+		self.plugin.debugLog("deviceStart:        starting device %s." % dev.name)
 			
 		if dev.deviceTypeId == 'zone':
 			zone = int(dev.pluginProps['address'])
 			if zone not in self.zoneList.keys():
 				self.zoneList[zone] = dev
-				dev.updateStateOnServer(key='zoneNumber', value=zone)	
+				self.addToStatesUpdateList(dev, key='zoneNumber', value=zone)
 		elif dev.deviceTypeId == 'partition':
 			partition = int(dev.pluginProps['address'])
 			if partition not in self.partitionList.keys():
 				self.partitionList[partition] = dev
-				dev.updateStateOnServer(key='partitionNumber', value=partition)			
+				self.addToStatesUpdateList(dev, key='partitionNumber', value=partition)
 		elif dev.deviceTypeId == 'user':
 			user = int(dev.pluginProps['address'])
 			if user not in self.userList.keys():
 				self.userList[user] = dev
-				dev.updateStateOnServer(key='userNumber', value=user)
+				self.addToStatesUpdateList(dev, key='userNumber', value=user)
 		elif dev.deviceTypeId == 'keypad':
 			keypad = int(dev.pluginProps['address'])
 			if keypad not in self.keypadList.keys():
 				self.keypadList[keypad] = dev
-				dev.updateStateOnServer(key='keypadNumber', value=keypad)		
+				self.addToStatesUpdateList(dev, key='keypadNumber', value=keypad)
 		elif dev.deviceTypeId == 'panel':
 			panel = int(self.systemId)
 			if panel not in self.panelList.keys():
 				self.panelList[panel] = dev
-				dev.updateStateOnServer(key='panelNumber', value=panel)
+				self.addToStatesUpdateList(dev, key='panelNumber', value=panel)
 		elif dev.deviceTypeId == 'statusInfo':
 			system = int(self.systemId)
 			if system not in self.systemStatusList.keys():
 				self.systemStatusList[system] = dev
-				dev.updateStateOnServer(key='systemNumber', value=system)
-	
+				self.addToStatesUpdateList(dev, key='systemNumber', value=system)
+		self.executeUpdateStatesList()
+
 	def deviceStop(self, dev):
-		self.plugin.debugLog("deviceStop:        removing device %s." % dev.name)
+		self.plugin.debugLog("deviceStop:        stopping device %s." % dev.name)
 		
 		if dev.deviceTypeId == 'zone':
 			zone = int(dev.pluginProps['address'])
@@ -495,8 +504,10 @@ class Caddx(object):
 		elif dev.deviceTypeId == 'statusInfo':
 			system = int(self.systemId)
 			if system in self.systemStatusList.keys():
-				del self.systemStatusList[system]		
-	
+				del self.systemStatusList[system]
+		# Todo: Since no states were changed, this seems superfluous.
+		self.executeUpdateStatesList()
+
 	########################################
 	# Communication Start and Stop methods
 	#######################################
@@ -522,10 +533,8 @@ class Caddx(object):
 			self.commStatusUp()
 			indigo.server.log("connection initialised to Caddx NetworX security devices on %s {baud: %s bps, timeout: %s seconds}." % (devicePort, baudRate, serialTimeout))
 			self.conn = conn
-			commandQueue = queue.Queue()
-			self.commandQueue = commandQueue
 			self.plugin.debugLog(f"startComm: connection: {devicePort}")
-			self.activeCommLoop(devicePort, conn, commandQueue)
+			self.activeCommLoop(devicePort, conn, self.commandQueue)
 		else:
 			self.plugin.errorLog(f"startComm: connection failure to Caddx NetworX Security device on {devicePort}")
 
@@ -536,20 +545,24 @@ class Caddx(object):
 		"""
 		self.plugin.debugLog("stopComm:        entering process")
 		self.plugin.debugLog("stopComm:        initiating stop looping communication to device %s" % self.devicePort)
-		commandQueue = self.commandQueue
 		self.commStatusDown()
 		
-		while not commandQueue.empty():
-			command = commandQueue.get()
+		while not self.commandQueue.empty():
+			command = self.commandQueue.get()
 			self.plugin.debugLog("stopComm:        command Queue contains: %s" % command)
-		commandQueue.put("stopSerialCommunication")
-		del commandQueue
+		self.commandQueue.put("stopSerialCommunication")
+		while not self.commandQueue.empty():
+			try:
+				self.commandQueue.get(False)
+			except queue.Empty:
+				continue
+			self.commandQueue.task_done()
 
 	def activeCommLoop(self, devicePort: str, conn, commandQueue: queue) -> None:
 		"""
 		Primary worker loop for handling events and commands
 
-		:param devicePort: Serial device string.  Used only for logging
+		:param devicePort: Serial device string.  Used only for logging.
 		:param conn: The pyserial connection object.  Used for all I/O operations on comm port
 		:param commandQueue: The queue used to contain commands for execution.
 		:return: None
@@ -600,7 +613,8 @@ class Caddx(object):
 		finally:
 			indigo.server.log("closed connection to conn device %s (finally)." % devicePort)
 			conn.close()	
-			pass																		# finally, exit thread.
+			pass
+		self.executeUpdateStatesList()
 
 	def compute_fletcher16(self, data: bytearray) -> int:
 		"""
@@ -617,24 +631,24 @@ class Caddx(object):
 			sum2 = (sum2 + sum1) % 255
 		return (sum2 << 8) | sum1
 
-	def sendMsgToQueue(self, transmitDataAscii: str) -> None:
+	def sendMsgToQueue(self, transmitDataHex: str) -> None:
 		"""
 		Add new command to queue, which is polled and emptied by activeCommLoop() and passed to processMessageFromQueue()
 
-		:param transmitDataAscii: The command message in hex-encoded ASCII.
+		:param transmitDataHex: The command message in hex-encoded ASCII.
 		:return: None.
 		"""
-		messageNumber = transmitDataAscii[2:4]
+		messageNumber = transmitDataHex[2:4]
 		alarmMessage = self.messageAlarmDict(messageNumber)
 		if self.plugin.messageActInfo or self.plugin.debug:
-			indigo.server.log("sendCmdToQueue:          || queue send message: %s  " % str(transmitDataAscii))
-		self.commandQueue.put(transmitDataAscii)
+			indigo.server.log("sendCmdToQueue:          || queue send message: %s  " % str(transmitDataHex))
+		self.commandQueue.put(transmitDataHex)
 
 		partition = 1  # update partition device state - lastFunction with the last transmitted message
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
-			dev.updateStateOnServer(key="lastFunction", value="%r  >> %r  ** %s  " % (alarmMessage, messageNumber, self.timestamp()))
-		self.updateVariable("sendingMessage", (" >> %s --  %s     %r  " % (messageNumber, alarmMessage, transmitDataAscii)))
+			self.addToStatesUpdateList(dev, key="lastFunction", value=f"{alarmMessage}  >> {messageNumber}  ** {self.timestamp()} ")
+		self.updateVariable("sendingMessage", f" >> {messageNumber} --  {alarmMessage}     {transmitDataHex} ")
 
 	def processMessageFromQueue(self, conn, transmitDataHex: str) -> bool:
 		"""Send a message in binary format. Wait for reply if necessary.
@@ -938,9 +952,9 @@ class Caddx(object):
 				# localPropsCopy["partitionState"] = pstate
 				# localPropsCopy["lastStateChange"] = "Partition (1) %r  ** %s " % (pstate, self.timestamp())
 				# dev.replacePluginPropsOnServer(localPropsCopy)
-				dev.updateStateOnServer(key="partitionState", value=pstate)
-				dev.updateStateOnServer(key="partitionStatus", value=pcondition)
-				dev.updateStateOnServer(key="lastStateChange", value="Partition (1) %r  ** %s " % (pstate, self.timestamp()))
+				self.addToStatesUpdateList(dev, key="partitionState", value=pstate)
+				self.addToStatesUpdateList(dev, key="partitionStatus", value=pcondition)
+				self.addToStatesUpdateList(dev, key="lastStateChange", value="Partition (1) %r  ** %s " % (pstate, self.timestamp()))
 				if self.plugin.partitionActInfo or self.plugin.debug:
 					indigo.server.log("partition 1:       '%s!' " % pstate)
 			
@@ -948,8 +962,8 @@ class Caddx(object):
 			keypad = int(dev.pluginProps['associatedKeypad'])
 			if keypad in self.keypadList.keys():
 				dev = self.keypadList[keypad]
-				dev.updateStateOnServer(key="LCDMessageLine1", value=displayLCDLine1)
-				dev.updateStateOnServer(key="LCDMessageLine2", value=displayLCDLine2)
+				self.addToStatesUpdateList(dev, key="LCDMessageLine1", value=displayLCDLine1)
+				self.addToStatesUpdateList(dev, key="LCDMessageLine2", value=displayLCDLine2)
 				if self.plugin.partitionActInfo or self.plugin.debug:
 					indigo.server.log('keypad %s:           LCD message line 1: "%s",  LCD message line 2: "%s"' % (keypad, displayLCDLine1, displayLCDLine2))
 			
@@ -977,8 +991,8 @@ class Caddx(object):
 				dev = self.keypadList[keypad]
 				displayLCDLine1 = "Security Breach"
 				displayLCDLine2 = zoneBreached
-				dev.updateStateOnServer(key="LCDMessageLine1", value=displayLCDLine1)
-				dev.updateStateOnServer(key="LCDMessageLine2", value=displayLCDLine2)
+				self.addToStatesUpdateList(dev, key="LCDMessageLine1", value=displayLCDLine1)
+				self.addToStatesUpdateList(dev, key="LCDMessageLine2", value=displayLCDLine2)
 				if self.plugin.partitionActInfo or self.plugin.debug:
 					indigo.server.log('keypad %d:           LCD message line 1: "%s",   LCD message line 2: "%s"' % (keypad, displayLCDLine1, displayLCDLine2))
 			if self.plugin.enableSpeakPrompts:
@@ -1206,55 +1220,35 @@ class Caddx(object):
 		# test for condition of zoneState device state for Group Trigger Plugin
 		if zoneCondition == '00000001':
 			zoneState = "triggered"
-			zoneCondition = 0
 		elif zoneCondition == '00000010':
 			zoneState = "tampered"
-			zoneCondition = 1
 		elif zoneCondition == '00000100':
 			zoneState = "trouble"	
-			zoneCondition = 2
 		elif zoneCondition == '00001000':
 			zoneState = "bypassed"
-			zoneCondition = 3	
 		elif zoneCondition == '00010000':
 			zoneState = "inhibited"
-			zoneCondition = 4
 		elif zoneCondition == '00100000':
 			zoneState = "lowBattery"
-			zoneCondition = 5
 		elif zoneCondition == '01000000':
 			zoneState = "supervisionLoss"
-			zoneCondition = 6
 		elif zoneCondition == '00000000':
 			zoneState = "normal"
-			zoneCondition = 7
-		else:	
+		else:
 			zoneState = "multipleChanges"
-			zoneCondition = 8
-			
+
 		# update zoneState device state
-		zoneStateList = [
-			'Triggered', 'Tampered', 'Trouble', 'Bypassed', 'Inhibited (Force Armed)', 'Low Battery',
-			'Loss Of Supervision', 'Normal', 'Multiple State Changes'
-		]
-		stateList = [True, True, True, False, False, False, False, False, False]
-		zstate = zoneStateList[zoneCondition]
-		state = stateList[zoneCondition]
-		dev.updateStateOnServer(key="zoneState", value=zoneState)
-		dev.updateStateOnServer(key="onOffState", value=state)	
+		self.addToStatesUpdateList(dev, key="zoneState", value=zoneState)
 		if self.plugin.zoneActInfo or self.plugin.debug:
-			indigo.server.log("zone %s:          '%s!' {%s }" % (zone, zstate, zoneName))
+			indigo.server.log("zone %s:          '%s!' {%s }" % (zone, zoneState, zoneName))
 		
 		# update partition lastZoneTrigger device state and variable
 		if zoneState == "triggered":
 			partition = 1
 			if partition in self.partitionList.keys():
 				dev = self.partitionList[partition]
-				dev.updateStateOnServer(key="lastZoneTrigger", value="Zone %s  ** %s " % (zone, self.timestamp()))
-				# update indigo variable "lastZoneTrigger"
-				variableID = "lastZoneTrigger"
-				lastZoneTriggerVariable = ("Zone %s  ** %s " % (zone, self.timestamp()))
-				self.updateVariable(variableID, lastZoneTriggerVariable)
+				self.addToStatesUpdateList(dev, key="lastZoneTrigger", value="Zone %s  ** %s " % (zone, self.timestamp()))
+				self.updateVariable("lastZoneTrigger", f"Zone {zone}  ** {self.timestamp()} ")
 		
 	################################################################################
 	# Routines for Communication Status Update methods (update comm status in plugin config preferences)
@@ -1272,18 +1266,16 @@ class Caddx(object):
 		self.plugin.pluginPrefs['panelStatus'] = f"Connected  ** {self.timestamp()}"
 		self.updateVariable("portStatus", "Port (opened)")
 		self.updateVariable("panelStatus", f"Connected  ** {self.timestamp()}")
-		partition = 1												# update partition status variables config ui and device state
+
+		# Update partition status variables config ui and device state
+		partition = 1
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
-			# dev.updateStateOnServer(key="partitionState", value="Connected")
-			dev.updateStateOnServer(key="securityState", value="Connected")
-			dev.updateStateOnServer(key="lastStateChange", value="Partition 1  Connected  ** %s" % self.timestamp())
-			variableID = "securityState"
-			securityStateVariable = "Connected"
-			self.updateVariable(variableID, securityStateVariable)
-			variableID = "lastStateChange"
-			lastStateChangeVariable = ("Partition 1  Connected  ** %s" % self.timestamp())
-			self.updateVariable(variableID, lastStateChangeVariable)
+			self.addToStatesUpdateList(dev, key="partitionState", value="Connected")
+			self.addToStatesUpdateList(dev, key="securityState", value="Connected")
+			self.addToStatesUpdateList(dev, key="lastStateChange", value=f"Partition 1  Connected  ** {self.timestamp()}")
+			self.updateVariable("securityState", "Connected")
+			self.updateVariable("lastStateChange", f"Partition 1  Connected  ** {self.timestamp()}")
 
 	def commStatusDown(self) -> None:
 		"""
@@ -1297,24 +1289,18 @@ class Caddx(object):
 		self.plugin.pluginPrefs['activeCommunication'] = False	
 		self.plugin.pluginPrefs['panelStatus'] = "Disconnected  ** %s" % self.timestamp()
 		self.plugin.pluginPrefs['synchronised'] = False
-		variableID = "portStatus"
-		portStatusVariable = "Port (closed)"
-		self.updateVariable(variableID, portStatusVariable)
-		variableID = "panelStatus"
-		panelStatusVariable = ("Disconnected  ** %s " % self.timestamp())
-		self.updateVariable(variableID, panelStatusVariable)	
-		partition = 1													# update partition status variables config ui and device state
+		self.updateVariable("portStatus", "Port (closed)")
+		self.updateVariable("panelStatus", f"Disconnected  ** {self.timestamp()}")
+
+		# update partition status variables config ui and device state
+		partition = 1
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
-			# dev.updateStateOnServer(key="partitionState", value="Disconnected")
-			dev.updateStateOnServer(key="securityState", value="Disconnected")
-			dev.updateStateOnServer(key="lastStateChange", value="Partition 1  Disconnected  ** %s" % self.timestamp())
-			variableID = "securityState"
-			securityStateVariable = "Disconnected"
-			self.updateVariable(variableID, securityStateVariable)
-			variableID = "lastStateChange"
-			lastStateChangeVariable = ("Partition 1  Disconnected  ** %s" % self.timestamp())
-			self.updateVariable(variableID, lastStateChangeVariable)
+			self.addToStatesUpdateList(dev, key="partitionState", value="Disconnected")
+			self.addToStatesUpdateList(dev, key="securityState", value="Disconnected")
+			self.addToStatesUpdateList(dev, key="lastStateChange", value=f"Partition 1  Disconnected  ** {self.timestamp}")
+			self.updateVariable("securityState", "Disconnected")
+			self.updateVariable("lastStateChange", f"Partition 1  Disconnected  ** {self.timestamp()}")
 
 	def commContinuityCheck(self) -> None:
 		"""
@@ -1337,6 +1323,9 @@ class Caddx(object):
 					self.watchdogTimer = timeNow + self.plugin.watchdogTimerPeriod  # reset watchdog timer
 					self.plugin.pluginPrefs['firmware'] = '*****'				# reset firmware to test communication loop
 					self.sendMsgToQueue(cmdInterfaceConfigurationRequest)	 # command action: Interface Configuration Request
+					# Todo:  Getting a dump of all zones seems like overkill.  Really necessary?
+					self.actionCmdMessage("", "Zone Status Request ALL")  # update status of zones in case we missed an event
+
 			else:
 				return
 		else:
@@ -1406,6 +1395,7 @@ class Caddx(object):
 				indigo.plugin.errorLog(f"decodeReceivedData: Invalid or not supported message type. Type: '{messageNumber:02x}'")
 		if ackRequested:
 			self.sendMsg(ACK)
+		self.executeUpdateStatesList()
 
 	########################################
 	# process "Interface Configuration Message"
@@ -1524,7 +1514,7 @@ class Caddx(object):
 			# Fixme:  The panel device was never created, so following if will always fail.  Intent?
 			if panel in self.panelList.keys():
 				dev = self.panelList[panel]
-				dev.updateStateOnServer(key='firmware', value=panelFirmware)
+				self.addToStatesUpdateList(dev, key=u'firmware', value=panelFirmware)
 				self.updateInterfaceConfigStates(dev, transitionMessageFlags1List, binterfaceConfigurationMessageDict[0])
 				self.updateInterfaceConfigStates(dev, transitionMessageFlags2List, binterfaceConfigurationMessageDict[1])
 				self.updateInterfaceConfigStates(dev, requestCommandFlags1List, binterfaceConfigurationMessageDict[2])
@@ -1552,7 +1542,7 @@ class Caddx(object):
 		kzoneNameHex = ""
 		for i in range(3, 19):
 			kzoneNameHex += dataDict[i]
-		displayName = bytearray.fromhex(kzoneNameHex).decode("utf-8").rstrip()
+		displayName = bytes.fromhex(kzoneNameHex).decode("utf-8").rstrip()
 
 		# kzoneName1 = dataDict[3] + dataDict[4] + dataDict[5] + dataDict[6] + dataDict[7] + dataDict[8] + dataDict[9] + dataDict[10]
 		# kzoneName2 = dataDict[11] + dataDict[12] + dataDict[13] + dataDict[14] + dataDict[15] + dataDict[16] + dataDict[17] + dataDict[18]
@@ -1573,7 +1563,7 @@ class Caddx(object):
 				localPropsCopy = dev.pluginProps
 				localPropsCopy["zoneDisplayName"] = displayName
 				dev.replacePluginPropsOnServer(localPropsCopy)
-				# dev.updateStateOnServer(key="zoneDisplayName", value=displayName)
+				# self.addToStatesUpdateList(dev,key="zoneDisplayName", value=displayName)
 				if self.plugin.messageProcessInfo or self.plugin.debug:
 					indigo.server.log("update zone name:        device configuration ui and device state records successfully updated with zone: %r, '%s'" % (dzoneNumber, displayName))
 			else:
@@ -1650,19 +1640,22 @@ class Caddx(object):
 				self.updateZoneStatusConfigUi(localPropsCopy, partitionMaskList, bzoneStatusMessageDict[0])
 				self.updateZoneStatusConfigUi(localPropsCopy, typeFlag1List, bzoneStatusMessageDict[1])
 				self.updateZoneStatusConfigUi(localPropsCopy, typeFlag2List, bzoneStatusMessageDict[2])
-				self.updateZoneStatusConfigUi(localPropsCopy, typeFlag3List, bzoneStatusMessageDict[3])			
+				self.updateZoneStatusConfigUi(localPropsCopy, typeFlag3List, bzoneStatusMessageDict[3])
+
 				# determine configured panel 'zone group type'
 				zoneGroupTypeDict = bzoneStatusMessageDict[1] + bzoneStatusMessageDict[2] + bzoneStatusMessageDict[3]
 				zoneGroupType = self.zoneGroupType(zoneGroupTypeDict)
 				zoneGroupDescription = self.zoneGroupDescription(zoneGroupTypeDict)
 				self.plugin.debugLog("zoneStatusMessage:        zone group type %r,  %s  dictionary: %r" % (zoneGroupType, zoneGroupDescription, zoneGroupTypeDict))
+
 				# update zone configuration UI for zone group type and description
 				localPropsCopy["zoneGroupType"] = zoneGroupType	
 				localPropsCopy["zoneGroupDescription"] = zoneGroupDescription			
 				dev.replacePluginPropsOnServer(localPropsCopy)
+
 				# update zone device state for zone group type and description
-				# dev.updateStateOnServer(key="zoneGroupType", value=zoneGroupType)
-				# dev.updateStateOnServer(key="zoneGroupDescription", value=zoneGroupDescription)
+				# self.addToStatesUpdateList(dev,key="zoneGroupType", value=zoneGroupType)
+				# self.addToStatesUpdateList(dev,key="zoneGroupDescription", value=zoneGroupDescription)
 				if self.plugin.messageProcessInfo or self.plugin.debug:
 					indigo.server.log("update zone status:        device configuration ui records successfully updated with zone status message:  zone: %r" % dzoneNumber)	
 			else:
@@ -1805,7 +1798,7 @@ class Caddx(object):
 		if bpartitionStatusMessageDict is not None:
 			if partition in self.partitionList.keys():
 				dev = self.partitionList[partition]
-				dev.updateStateOnServer(key="lastUserNumber", value=partitionLastUserNumber)
+				self.addToStatesUpdateList(dev, key="lastUserNumber", value=partitionLastUserNumber)
 				self.updatePartitionStatus(dev, partitionConditionFlag1List, bpartitionStatusMessageDict[0])
 				self.updatePartitionStatus(dev, partitionConditionFlag2List, bpartitionStatusMessageDict[1])
 				self.updatePartitionStatus(dev, partitionConditionFlag3List, bpartitionStatusMessageDict[2])
@@ -1828,15 +1821,15 @@ class Caddx(object):
 				keypad = int(dev.pluginProps['associatedKeypad'])
 				if keypad in self.keypadList.keys():
 					dev = self.keypadList[keypad]
-					dev.updateStateOnServer(key='armedSystem', value=systemArmed)
-					dev.updateStateOnServer(key='readyToArm', value=systemReady)
-					dev.updateStateOnServer(key='fire', value=fireAlert)
-					dev.updateStateOnServer(key='acPowerOn', value=acPowerOn)
-					dev.updateStateOnServer(key='stayMode', value=stayArmed)
-					dev.updateStateOnServer(key='chimeMode', value=chimeMode)
-					dev.updateStateOnServer(key='exitDelay', value=exitDelay)
-					dev.updateStateOnServer(key='zoneBypass', value=bypassZone)
-					# dev.updateStateOnServer(key='cancelPending', value=cancelPending)
+					self.addToStatesUpdateList(dev, key='armedSystem', value=systemArmed)
+					self.addToStatesUpdateList(dev, key='readyToArm', value=systemReady)
+					self.addToStatesUpdateList(dev, key='fire', value=fireAlert)
+					self.addToStatesUpdateList(dev, key='acPowerOn', value=acPowerOn)
+					self.addToStatesUpdateList(dev, key='stayMode', value=stayArmed)
+					self.addToStatesUpdateList(dev, key='chimeMode', value=chimeMode)
+					self.addToStatesUpdateList(dev, key='exitDelay', value=exitDelay)
+					self.addToStatesUpdateList(dev, key='zoneBypass', value=bypassZone)
+					# self.addToStatesUpdateList(dev,key='cancelPending', value=cancelPending)
 					if self.plugin.messageProcessInfo or self.plugin.debug:
 						indigo.server.log("update keypad status:        device state records successfully updated with partition status message:  keypad: %r" % keypad)
 			else:
@@ -1874,12 +1867,12 @@ class Caddx(object):
 		
 		# update Device Partition Configuration UI values from received "Partition Snapshot Message"
 		"""
-		#	if bpartitionSnapshotMessageDict != None:
-		#		self.updatePartitionSnapshotConfigUi(partitionSnapshotList, bpartitionSnapshotMessageDict)
-		#		if self.plugin.messageProcessInfo or self.plugin.debug:
-		#			indigo.server.log("update partition snapshot . device configuration ui records  successfully updated for partition snapshot message: partition: all active partitions: ")
-		#	else:
-		#		self.plugin.debugLog("update partition snapshot . no device configuration ui records in message dictionary for partition status message update.")
+		if bpartitionSnapshotMessageDict != None:
+			self.updatePartitionSnapshotConfigUi(partitionSnapshotList, bpartitionSnapshotMessageDict)
+			if self.plugin.messageProcessInfo or self.plugin.debug:
+				indigo.server.log("update partition snapshot . device configuration ui records  successfully updated for partition snapshot message: partition: all active partitions: ")
+		else:
+			self.plugin.debugLog("update partition snapshot . no device configuration ui records in message dictionary for partition status message update.")
 		"""
 							
 		# update Device Partition State values from received "Partition Snapshot Message"
@@ -1907,9 +1900,14 @@ class Caddx(object):
 		bmessageLength = int(kmessageLength, 16)							# convert message length from hex to dec
 		systemPanelId = int(ksystemNumber, 16)						# convert system number from hex to dec
 		
-		modelList = ['None', 'NX-4', 'NX-6', 'NX-8', 'NX-8e']
-		self.model = modelList[systemPanelId]
-		
+		model = {"0": 'None', "1": 'NX-4', "2": 'NX-6', "3": 'NX-8', "4": 'NX-8e', "10": 'NX-6v2', "12": 'NX-8v2'}
+
+		systemPanelIdS = str(systemPanelId)
+		if systemPanelIdS in model:
+			self.model = model[systemPanelIdS]
+		else:
+			self.model = "Other"
+
 		kpanelByte12 = dataDict[12]
 		bpanelByte12 = int(kpanelByte12, 16)								# convert communicator stack pointer length from hex to dec
 		
@@ -1988,9 +1986,9 @@ class Caddx(object):
 		if bsystemStatusMessageDict is not None:
 			if system in self.systemStatusList.keys():
 				dev = self.systemStatusList[system]
-				dev.updateStateOnServer(key='systemNumber', value=systemPanelId)
-				dev.updateStateOnServer(key='model', value=self.model)
-				dev.updateStateOnServer(key='communicatorStackPointer', value=bpanelByte12)
+				self.addToStatesUpdateList(dev, key=u'systemNumber', value=systemPanelId)
+				self.addToStatesUpdateList(dev, key=u'model', value=self.model)
+				self.addToStatesUpdateList(dev, key=u'communicatorStackPointer', value=bpanelByte12)
 				self.updateSystemStatus(dev, panelByte03List, bsystemStatusMessageDict[0])
 				self.updateSystemStatus(dev, panelByte04List, bsystemStatusMessageDict[1])
 				self.updateSystemStatus(dev, panelByte05List, bsystemStatusMessageDict[2])
@@ -2124,9 +2122,7 @@ class Caddx(object):
 				# update enter keypad program mode states in plugin preferences
 				self.plugin.pluginPrefs["isKeypadProgramming"] = True
 				self.plugin.pluginPrefs["panelStatus"] = "Program Mode (enter)  ** %s " % self.timestamp()
-				variableID = "panelStatus"
-				panelStatusVariable = ("Program Mode (enter)  ** %s " % self.timestamp())
-				self.updateVariable(variableID, panelStatusVariable)
+				self.updateVariable("panelStatus", f"Program Mode (enter)  ** {self.timestamp()}")
 			elif deventType == 174:
 				eventDeviceDescription = self.messageLogDeviceAddressDict(dzoneUserDevice - 1)
 				logEventMessagePrint = "log event %s:        exiting program mode: %s,  address: %s,  partition: %s  ** %s" % (
@@ -2134,9 +2130,7 @@ class Caddx(object):
 				# update exit keypad program mode states in plugin preferences
 				self.plugin.pluginPrefs["isKeypadProgramming"] = False
 				self.plugin.pluginPrefs["panelStatus"] = "Program Mode (exit)  ** %s " % self.timestamp()
-				variableID = "panelStatus"
-				panelStatusVariable = ("Program Mode (exit)  ** %s " % self.timestamp())
-				self.updateVariable(variableID, panelStatusVariable)
+				self.updateVariable("panelStatus", f"Program Mode (exit)  ** {self.timestamp()}")
 			elif deventType == 245:
 				eventDeviceDescription = self.messageLogDeviceAddressDict(dzoneUserDevice - 1)
 				logEventMessagePrint = "log event %s:      registering module: %s,  address: %s,  partition: %s  ** %s" % (
@@ -2165,15 +2159,13 @@ class Caddx(object):
 			newVariable = logEventHistoryList[item] 
 			oldVariable = logEventHistoryList[item + 1]
 			self.plugin.pluginPrefs[newVariable] = self.plugin.pluginPrefs[oldVariable]
-			item += 1	
+			item += 1
 		self.plugin.pluginPrefs["zlogEventHistory25"] = logEventMessagePrint
 			
 		# update indigo eventLog variable		
 		if self.plugin.alarmEventInfo or self.plugin.debug:
 			indigo.server.log("%s" % logEventMessagePrint)
-			variableID = "eventLogMessage"
-			eventLogVariable = logEventMessagePrint
-			self.updateVariable(variableID, eventLogVariable)
+			self.updateVariable("eventLogMessage", logEventMessagePrint)
 			
 	########################################
 	# process "Keypad Message Received"
@@ -2330,7 +2322,7 @@ class Caddx(object):
 		if buserInformationReplyDict is not None:
 			if user in self.userList.keys():
 				dev = self.userList[user]
-				dev.updateStateOnServer(key="userPin", value=kuserPin)
+				self.addToStatesUpdateList(dev, key="userPin", value=kuserPin)
 				self.updateUserInformationStatus(dev, authorityFlag1List, buserInformationReplyDict[3])
 				self.updateUserInformationStatus(dev, userAuthorisedPartitionList, buserInformationReplyDict[4])
 				if self.plugin.messageProcessInfo or self.plugin.debug:
@@ -2370,10 +2362,10 @@ class Caddx(object):
 	def updateVariable(self, varName, varValue):
 		# indigo.server.log("updateVariable(): -- variable  %s: value  %r: " % (varName,varValue))
 		# Todo:  I re-factored this a bit.  Review.
-		if "Caddx Security System" not in indigo.variables.folders:
-			caddxVariablesFolder = indigo.variables.folder.create("Caddx Security System")
+		if self.plugin.pluginPrefs['variableFolderName'] not in indigo.variables.folders:
+			caddxVariablesFolder = indigo.variables.folder.create(self.plugin.pluginPrefs['variableFolderName'])
 		else:
-			caddxVariablesFolder = indigo.variables.folders["Caddx Security System"]
+			caddxVariablesFolder = indigo.variables.folders[self.plugin.pluginPrefs['variableFolderName']]
 			
 		if varName not in indigo.variables:
 			varName_ = indigo.variable.create(name=varName, value="", folder=caddxVariablesFolder)
@@ -2403,7 +2395,7 @@ class Caddx(object):
 			for i in range(8):
 				var = varList[i]
 				bit = newByte[i]
-				dev.updateStateOnServer(key=var, value=bit)
+				self.addToStatesUpdateList(dev, key=var, value=bit)
 
 	########################################
 	# update values from "Zone Status Message"
@@ -2420,34 +2412,16 @@ class Caddx(object):
 		
 	# update Zone Device States from received "Zone Status Message" 	
 	def updateZoneStatus(self, dev, zoneConditionLevel1, zoneConditionLevel2):
-		var = 'faultedOrDelayedTrip'
-		bit = zoneConditionLevel1[7]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'tampered'
-		bit = zoneConditionLevel1[6]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'troubleCondition'
-		bit = zoneConditionLevel1[5]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'bypassedCondition'
-		bit = zoneConditionLevel1[4]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'inhibitedForceArmed'
-		bit = zoneConditionLevel1[3]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'lowBattery'
-		bit = zoneConditionLevel1[2]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'lossOfSupervision'
-		bit = zoneConditionLevel1[1]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'alarmMemoryCondition'
-		bit = zoneConditionLevel2[7]
-		dev.updateStateOnServer(key=var, value=bit)
-		var = 'bypassMemory'
-		bit = zoneConditionLevel2[6]
-		dev.updateStateOnServer(key=var, value=bit)
-	
+		self.addToStatesUpdateList(dev, key='faultedOrDelayedTrip', value=zoneConditionLevel1[7])
+		self.addToStatesUpdateList(dev, key='tampered', value=zoneConditionLevel1[6])
+		self.addToStatesUpdateList(dev, key='troubleCondition', value=zoneConditionLevel1[5])
+		self.addToStatesUpdateList(dev, key='bypassedCondition', value=zoneConditionLevel1[4])
+		self.addToStatesUpdateList(dev, key='inhibitedForceArmed', value=zoneConditionLevel1[3])
+		self.addToStatesUpdateList(dev, key='lowBattery', value=zoneConditionLevel1[2])
+		self.addToStatesUpdateList(dev, key='lossOfSupervision', value=zoneConditionLevel1[1])
+		self.addToStatesUpdateList(dev, key='alarmMemoryCondition', value=zoneConditionLevel2[7])
+		self.addToStatesUpdateList(dev, key='bypassMemory', value=zoneConditionLevel2[6])
+
 	########################################
 	# update values from "Zone Snapshot Message"
 	########################################
@@ -2465,10 +2439,8 @@ class Caddx(object):
 					bitLocation = 7
 					# Todo: Re-factor this loop
 					for i in range(0, 4):
-						var = varList[address]
-						bit = nibble[bitLocation]
 						# self.plugin.debugLog("updateZoneSnapshot:        updating device state,  zone: %r,  variable: %r,  value: %r,  address: %r" % (zoneAddress, var, bit, bitLocation))
-						dev.updateStateOnServer(key=var, value=bit)
+						self.addToStatesUpdateList(dev, key=varList[address], value=nibble[bitLocation])
 						address -= 1
 						bitLocation -= 1
 					zoneAddress += 1	
@@ -2480,10 +2452,8 @@ class Caddx(object):
 					bitLocation = 3
 					# Todo: Re-factor this loop
 					for i in range(0, 4):
-						var = varList[address]
-						bit = nibble[bitLocation]
 						# self.plugin.debugLog("updateZoneSnapshot:        updating device state,  zone: %r,  variable: %r,  value: %r,  address: %r" % (zoneAddress, var, bit, bitLocation))
-						dev.updateStateOnServer(key=var, value=bit)
+						self.addToStatesUpdateList(dev, key=varList[address], value=nibble[bitLocation])
 						address -= 1
 						bitLocation -= 1
 					zoneAddress += 1	
@@ -2510,11 +2480,9 @@ class Caddx(object):
 	# update Partition Status States from received "Partition Status Message" 
 	def updatePartitionStatus(self, dev, varList, newByte):
 		if newByte is not None:
-			# Todo: Re-factor this loop
+			# Todo: Verify refactored loop
 			for i in range(8):
-				var = varList[i]
-				bit = newByte[i]
-				dev.updateStateOnServer(key=var, value=bit)
+				self.addToStatesUpdateList(dev, key=varList[i], value=newByte[i])
 
 	########################################
 	# update values from "Partition Snapshot Message"
@@ -2559,10 +2527,8 @@ class Caddx(object):
 				# Todo: Re-factor this loop
 				# noinspection PyUnusedLocal
 				for i in nibble:
-					var = varList[address]
-					bit = nibble[address]
 					# self.plugin.debugLog("updatePartitionSnapshot:        updating device state variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
-					dev.updateStateOnServer(key=var, value=bit)
+					self.addToStatesUpdateList(dev, key=varList[address], value=nibble[address])
 					address -= 1
 					bitLocation += 1
 			partitionNumber += 1
@@ -2592,11 +2558,9 @@ class Caddx(object):
 		if newByte is not None:
 			# Todo: Test after refactor
 			for i in range(8):
-				var = varList[i]
-				bit = newByte[i]
 				# self.plugin.debugLog("updateSystemStatus:        updating device state variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
-				dev.updateStateOnServer(key=var, value=bit)
-				
+				self.addToStatesUpdateList(dev, key=varList[i], value=newByte[i])
+
 	########################################
 	# update values from "User Information Reply"
 	########################################
@@ -2617,10 +2581,8 @@ class Caddx(object):
 		if newByte is not None:
 			# Todo: Test after refactor
 			for i in range(8):
-				var = varList[i]
-				bit = newByte[i]
 				# self.plugin.debugLog("updateUserInformationStatus:        updating device state variable: %r,  value: %r,  address: %r" % (var, bit, bitLocation))
-				dev.updateStateOnServer(key=var, value=bit)
+				self.addToStatesUpdateList(dev, key=varList[i], value=newByte[i])
 
 	################################################################################
 	# Routine for Alarm Panel Lookup Dictionaries method 	(state translation tables for message number and log events)
@@ -2861,7 +2823,10 @@ class Caddx(object):
 			"126": "user",
 			"127": "none"
 		}
-		byte5Value = byte5Dict[eventType]
+		if eventType in byte5Dict:
+			byte5Value = byte5Dict[eventType]
+		else:
+			byte5Value = "Program Error: No such byte5Value"
 		self.plugin.debugLog("messageLogByte5Dict:        event number: \"%s\" " % eventType)
 		self.plugin.debugLog("messageLogByte5Dict:        zone,  device,  user: \"%s\" " % byte5Value)
 		return byte5Value
@@ -2941,7 +2906,10 @@ class Caddx(object):
 			"126": False,
 			"127": False
 		}
-		byte6Valid = byte6Dict[eventType]
+		if eventType in byte6Dict:
+			byte6Valid = byte6Dict[eventType]
+		else:
+			byte6Valid = "Program Error: No such byte6Valid"
 		self.plugin.debugLog("messageLogByte6Dict:        event number: \"%s\" " % eventType)
 		self.plugin.debugLog("messageLogByte6Dict:        partition valid: \"%s\" " % byte6Valid)		
 		return byte6Valid
@@ -3066,7 +3034,63 @@ class Caddx(object):
 			"254": "Keypad (8)",
 			"255": "Keypad (8)"
 		}
-		device = deviceDict[deviceAddress]
+		if deviceAddress in deviceDict:
+			device = deviceDict[deviceAddress]
+		else:
+			device = "Program Error: No such device"
 		self.plugin.debugLog("messageLogEventDict:        device: \"%s\" " % device)
 		return device		
-	
+
+	def addToStatesUpdateList(self, dev, key: str, value: int | str) -> None:
+		"""
+		Collect all devices states to be updated.
+		Will update collected state changes in executeUpdateStatesList().
+
+		:param dev: The device handle.
+		:param key: The key for the device state.
+		:param value: The value to which the device state is set.
+		:return: None
+		"""
+		devId = str(dev.id)
+		local = copy.copy(self.devStateChangeList)
+		if devId not in local:
+			local[devId] = {}
+		local[devId][key] = value
+		self.devStateChangeList = copy.copy(local)
+
+	def executeUpdateStatesList(self) -> None:
+		if not self.devStateChangeList:
+			return
+		local = copy.copy(self.devStateChangeList)
+		self.devStateChangeList = {}
+		changedOnly = {}
+
+		for devId in local:
+			if local[devId]:
+				dev = indigo.devices[int(devId)]
+				for key in local[devId]:
+					if key not in dev.states:
+						indigo.server.log(f"device: {dev.name}  does not have state: {key}, value: {local[devId][key]}")
+						continue
+					if local[devId][key] != dev.states[key]:
+						if devId not in changedOnly:
+							changedOnly[devId] = []
+						changedOnly[devId].append({"key": key, "value": local[devId][key]})
+
+						if key == "zoneState":
+							self.plugin.triggerEvent("zoneChanged")
+							if local[devId][key].find(u"normal") > -1:
+								dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOn)
+								changedOnly[devId].append(
+									{"key": "lastNormal", "value": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+							elif local[devId][key].find(u"triggered") > -1:
+								dev.updateStateImageOnServer(indigo.kStateImageSel.SensorTripped)
+								changedOnly[devId].append(
+									{"key": "lastTriggered", "value": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+							else:
+								dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
+							changedOnly[devId].append({u"key": "zoneDisplay", "value": self.plugin.padDisplay(
+								local[devId][key]) + datetime.datetime.now().strftime("%m-%d %H:%M:%S")})
+
+				if devId in changedOnly and changedOnly[devId] != []:
+					dev.updateStatesOnServer(changedOnly[devId])

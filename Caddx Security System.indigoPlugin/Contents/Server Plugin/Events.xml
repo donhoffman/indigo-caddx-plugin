@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<Events>
+  <Event id="zoneChanged">
+    <Name>A zone has changed status</Name>
+  </Event>
+</Events>

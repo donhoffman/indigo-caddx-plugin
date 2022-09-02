@@ -1,2068 +1,2124 @@
 <?xml version="1.0"?>
 <Devices>
-    <!-- Define Caddx NetworX NX-8e System Panel ============================================ -->
-    <Device type="custom" id="panel">
-        <Name>Interface Options</Name>
-        <ConfigUI>
-            <Field id="infoLabel" type="label">
-                <Label>Configuration</Label>
-            </Field>
-            
-            <Field id="sep1" type="separator" />
-            
-            <!-- Select Panel -->
-            
-            <Field id="address" type="menu" defaultValue="4">
-                <Label>Model:</Label>
-                    <List>
-                    <Option value="1">NX-4</Option>
-                    <Option value="2">NX-6</Option>
-                    <Option value="3">NX-8</Option>
-                    <Option value="4">NX-8e</Option>
-                    </List>
-            </Field>
-            <Field id="firmware" type="textfield" readOnly = "YES" defaultValue="">
-                <Label>Firmware:</Label>
-            </Field>
-            
-            <Field id="sep2" type="separator" />
-                       
-        </ConfigUI>             
-        <States>
-        
-            <!-- System: Panel States -->
-            
-            <State id="panelNumber">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Panel ID</TriggerLabel>
-                <ControlPageLabel>Panel ID</ControlPageLabel>
-			</State>
-            <State id="firmware">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Firmware</TriggerLabel>
-                <ControlPageLabel>Firmware</ControlPageLabel>
-			</State>
+  <!-- Define Caddx NetworX NX-8e System Panel ============================================ -->
+  <Device type="custom" id="panel">
+    <Name>Interface Options</Name>
+    <ConfigUI>
+      <Field id="infoLabel" type="label">
+        <Label>Configuration</Label>
+      </Field>
+      
+      <Field id="sep1" type="separator"/>
+      
+      <!-- Select Panel -->
+      
+      <Field id="address" type="menu" defaultValue="4">
+        <Label>Model:</Label>
+        <List>
+          <Option value="1">NX-4</Option>
+          <Option value="2">NX-6</Option>
+          <Option value="3">NX-8</Option>
+          <Option value="4">NX-8e</Option>
+          <Option value="10">NX-6V2</Option>
+          <Option value="12">NX-8V2</Option>
+        </List>
+      </Field>
+      <Field id="firmware" type="textfield" readOnly="YES" defaultValue="">
+        <Label>Firmware --readOnly</Label>
+      </Field>
+      
+      <Field id="sep2" type="separator"/>
     
-            <State id="sep0">
-				<ValueType>Separator</ValueType>
-			</State>           
-            
-            <!-- System  Panel :Interface Configuration: Transition Message Flag 1 -->
-                        
-            <State id="zreservedBit0TransitionMessageFlags1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Reserved Bit0 Transition Message Flag1</TriggerLabel>
-                <ControlPageLabel>Reserved Bit0 Transition Message Flag1</ControlPageLabel>
-			</State> 
-			<State id="interfaceConfigurationMessage">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Interface Configuration Message</TriggerLabel>
-				<ControlPageLabel>Interface Configuration Message</ControlPageLabel>
-			</State>
-			<State id="zreservedBit2TransitionMessageFlags1">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit2 Transition Message Flags1</TriggerLabel>
-				<ControlPageLabel>Reserved Bit2 Transition Message Flags1</ControlPageLabel>
-			</State>
-            <State id="zreservedBit3TransitionMessageFlags1">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit3 Transition Message Flags1</TriggerLabel>
-				<ControlPageLabel>Reserved Bit3 Transition Message Flags1</ControlPageLabel>
-			</State>
-			<State id="zoneStatusMessage">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Zone Status Message</TriggerLabel>
-				<ControlPageLabel>Zone Status Message</ControlPageLabel>
-            </State>
-            <State id="zoneSnapshotMessage">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Zone Snapshot Message</TriggerLabel>
-				<ControlPageLabel>Zone Snapshot Message</ControlPageLabel>
-			</State>
-			<State id="partitionStatusMessage">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Partition Status Message</TriggerLabel>
-				<ControlPageLabel>Partition Status Message</ControlPageLabel>
-			</State>
-            <State id="partitionSnapshotMessage">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Partition Snapshot Message</TriggerLabel>
-				<ControlPageLabel>Partition Snapshot Message</ControlPageLabel>
-			</State>
-            
-            <State id="sep1">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Interface Configuration: Transition Message Flag 2 -->
-            
-            <State id="systemStatusMessage">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>System Status Message</TriggerLabel>
-                <ControlPageLabel>System Status Message</ControlPageLabel>
-			</State> 
-			<State id="receivedX10Message">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Received X10 Message</TriggerLabel>
-				<ControlPageLabel>Received X10 Message</ControlPageLabel>
-			</State>
-			<State id="logEventReceived">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Log Event Received</TriggerLabel>
-				<ControlPageLabel>Log Event Received</ControlPageLabel>
-			</State>
-            <State id="keypadMessageReceived">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Keypad Message Received</TriggerLabel>
-				<ControlPageLabel>Keypad Message Received</ControlPageLabel>
-			</State>
-			<State id="zreservedBit4TransitionMessageFlags2">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit4 Transition Message Flags2</TriggerLabel>
-				<ControlPageLabel>Reserved Bit4 Transition Message Flags2</ControlPageLabel>
-            </State>
-            <State id="zreservedBit5TransitionMessageFlags2">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit5 Transition Message Flags2</TriggerLabel>
-				<ControlPageLabel>Reserved Bit5 Transition Message Flags2</ControlPageLabel>
-			</State>
-			<State id="zreservedBit6TransitionMessageFlags2">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit6 Transition Message Flags2</TriggerLabel>
-				<ControlPageLabel>Reserved Bit6 Transition Message Flags2</ControlPageLabel>
-			</State>
-            <State id="zreservedBit7TransitionMessageFlags2">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit7 Transition Message Flags2</TriggerLabel>
-				<ControlPageLabel>Reserved Bit7 Transition Message Flags2</ControlPageLabel>
-			</State>
-            
-            <State id="sep2">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Interface Configuration: Request/Command Flag 1 -->            
-            
-            <State id="zreservedBit0RequestCommandFlags1">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit0 Request Command Flags1</TriggerLabel>
-				<ControlPageLabel>Reserved Bit0 Request Command Flags1</ControlPageLabel>
-			</State>
-            <State id="interfaceConfigurationRequest">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Interface Configuration Request</TriggerLabel>
-				<ControlPageLabel>Interface Configuration Request</ControlPageLabel>
-			</State>
-			<State id="zreservedBit2RequestCommandFlags1">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit2 Request Command Flags1</TriggerLabel>
-				<ControlPageLabel>Reserved Bit2 Request Command Flags1</ControlPageLabel>
-			</State>
-            <State id="zoneNameRequest">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Zone Name Request</TriggerLabel>
-				<ControlPageLabel>Zone Name Request</ControlPageLabel>
-			</State>
-			<State id="zoneStatusRequest">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Zone Status Request</TriggerLabel>
-				<ControlPageLabel>Zone Status Request</ControlPageLabel>
-            </State>
-            <State id="zoneSnapshotRequest">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Zone Snapshot Request</TriggerLabel>
-				<ControlPageLabel>Zone Snapshot Request</ControlPageLabel>
-			</State>
-			<State id="partitionStatusRequest">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Partition Status Request</TriggerLabel>
-				<ControlPageLabel>Partition Status Request</ControlPageLabel>
-			</State>
-            <State id="partitionSnapshotRequest">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Partition Snapshot Request</TriggerLabel>
-				<ControlPageLabel>Partition Snapshot Request</ControlPageLabel>
-			</State>
-            
-            <State id="sep3">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Interface Configuration: Request/Command Flag 2 -->
-            
-            <State id="systemStatusRequest">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>System Status Request</TriggerLabel>
-                <ControlPageLabel>System Status Request</ControlPageLabel>
-			</State>
-            <State id="sendX10Message">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Send X10 Message</TriggerLabel>
-				<ControlPageLabel>Send X10 Message</ControlPageLabel>
-			</State>
-			<State id="logEventRequest">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Log Event Request</TriggerLabel>
-				<ControlPageLabel>Log Event Request</ControlPageLabel>
-			</State>
-            <State id="sendKeypadTextMessage">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Send Keypad Text Message</TriggerLabel>
-				<ControlPageLabel>Send Keypad Text Message</ControlPageLabel>
-			</State>
-			<State id="keypadTerminalModeRequest">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Keypad Terminal Mode Request</TriggerLabel>
-				<ControlPageLabel>Keypad Terminal Mode Request</ControlPageLabel>
-            </State>
-            <State id="zreservedBit5RequestCommandFlags2">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit5 Request Command Flags2</TriggerLabel>
-				<ControlPageLabel>Reserved Bit5 Request Command Flags2</ControlPageLabel>
-			</State>
-			<State id="zreservedBit6RequestCommandFlags2">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit6 Request Command Flags2</TriggerLabel>
-				<ControlPageLabel>Reserved Bit6 Request Command Flags2</ControlPageLabel>
-			</State>
-            <State id="zreservedBit7RequestCommandFlags2">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit7 Request Command Flags2</TriggerLabel>
-				<ControlPageLabel>Reserved Bit7 Request Command Flags2</ControlPageLabel>
-			</State>
-            
-            <State id="sep4">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Interface Configuration: Request/Command Flag 3 -->
-            
-            <State id="programDataRequest">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Program Data Request</TriggerLabel>
-                <ControlPageLabel>Program Data Request</ControlPageLabel>
-			</State> 
-			<State id="programDataCommand">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Program Data Command</TriggerLabel>
-				<ControlPageLabel>Program Data Command</ControlPageLabel>
-			</State>
-			<State id="userInformationRequestWithPin">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>User Information Request With Pin</TriggerLabel>
-				<ControlPageLabel>User Information Request With Pin</ControlPageLabel>
-			</State>
-            <State id="userInformationRequestWithoutPin">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>User Information Request Without Pin</TriggerLabel>
-				<ControlPageLabel>User Information Request Without Pin</ControlPageLabel>
-			</State>
-			<State id="setUserCodeCommandWithPin">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Set User Code Command WithPin</TriggerLabel>
-				<ControlPageLabel>Set User Code Command With Pin</ControlPageLabel>
-            </State>
-            <State id="setUserCodeCommandWithoutPin">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Set User Code Command Without Pin</TriggerLabel>
-				<ControlPageLabel>Set User Code Command WithoutPin</ControlPageLabel>
-			</State>
-			<State id="setUserAuthorisationCommandWithPin">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Set User Authorisation Command With Pin</TriggerLabel>
-				<ControlPageLabel>Set User Authorisation Command With Pin</ControlPageLabel>
-			</State>
-            <State id="setUserAuthorisationCommandWithoutPin">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Set User Authorisation Command Without Pin</TriggerLabel>
-				<ControlPageLabel>Set User Authorisation Command Without Pin</ControlPageLabel>
-			</State>
-            
-            <State id="sep5">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Interface Configuration: Request/Command Flag 4 -->
-            
-            <State id="zreservedBit0RequestCommandFlags4">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Reserved Bit0 Request Command Flags4</TriggerLabel>
-                <ControlPageLabel>Reserved Bit0 Request Command Flags4</ControlPageLabel>
-			</State> 
-			<State id="zreservedBit1RequestCommandFlags4">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit1 Request Command Flags4</TriggerLabel>
-				<ControlPageLabel>Reserved Bit1 Request Command Flags4</ControlPageLabel>
-			</State>
-			<State id="storeCommunicationEventCommand">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Store Communication Event Command</TriggerLabel>
-				<ControlPageLabel>Store Communication Event Command</ControlPageLabel>
-			</State>
-            <State id="setClockCalenderCommand">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Set Clock Calendar Command</TriggerLabel>
-				<ControlPageLabel>Set Clock Calendar Command</ControlPageLabel>
-			</State>
-            <State id="primaryKeypadFunctionWithPin">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Primary Keypad Function With Pin</TriggerLabel>
-				<ControlPageLabel>Primary Keypad Function With Pin</ControlPageLabel>
-			</State>
-            <State id="primaryKeypadFunctionWithoutPin">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Primary Keypad Function Without Pin</TriggerLabel>
-				<ControlPageLabel>Primary Keypad Function Without Pin</ControlPageLabel>
-			</State>
-			<State id="secondaryKeypadFunction">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Secondary Keypad Function</TriggerLabel>
-				<ControlPageLabel>Secondary Keypad Function</ControlPageLabel>
-			</State>
-            <State id="zoneBypassToggle">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Zone Bypass Toggle</TriggerLabel>
-				<ControlPageLabel>Zone Bypass Toggle</ControlPageLabel>
-			</State>
-            
-        </States>
-        <UiDisplayStateId>firmware</UiDisplayStateId>
-    </Device>
+    </ConfigUI>
+    <States>
+      
+      <!-- System: Panel States -->
+      
+      <State id="panelNumber">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Panel ID</TriggerLabel>
+        <ControlPageLabel>Panel ID</ControlPageLabel>
+      </State>
+      <State id="firmware">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Firmware</TriggerLabel>
+        <ControlPageLabel>Firmware</ControlPageLabel>
+      </State>
+      
+      <State id="sep0">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System  Panel :Interface Configuration: Transition Message Flag 1 -->
+      
+      <State id="zreservedBit0TransitionMessageFlags1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit0 Transition Message Flag1</TriggerLabel>
+        <ControlPageLabel>Reserved Bit0 Transition Message Flag1</ControlPageLabel>
+      </State>
+      <State id="interfaceConfigurationMessage">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Interface Configuration Message</TriggerLabel>
+        <ControlPageLabel>Interface Configuration Message</ControlPageLabel>
+      </State>
+      <State id="zreservedBit2TransitionMessageFlags1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit2 Transition Message Flags1</TriggerLabel>
+        <ControlPageLabel>Reserved Bit2 Transition Message Flags1</ControlPageLabel>
+      </State>
+      <State id="zreservedBit3TransitionMessageFlags1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit3 Transition Message Flags1</TriggerLabel>
+        <ControlPageLabel>Reserved Bit3 Transition Message Flags1</ControlPageLabel>
+      </State>
+      <State id="zoneStatusMessage">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone Status Message</TriggerLabel>
+        <ControlPageLabel>Zone Status Message</ControlPageLabel>
+      </State>
+      <State id="zoneSnapshotMessage">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone Snapshot Message</TriggerLabel>
+        <ControlPageLabel>Zone Snapshot Message</ControlPageLabel>
+      </State>
+      <State id="partitionStatusMessage">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Partition Status Message</TriggerLabel>
+        <ControlPageLabel>Partition Status Message</ControlPageLabel>
+      </State>
+      <State id="partitionSnapshotMessage">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Partition Snapshot Message</TriggerLabel>
+        <ControlPageLabel>Partition Snapshot Message</ControlPageLabel>
+      </State>
+      
+      <State id="sep1">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Interface Configuration: Transition Message Flag 2 -->
+      
+      <State id="systemStatusMessage">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>System Status Message</TriggerLabel>
+        <ControlPageLabel>System Status Message</ControlPageLabel>
+      </State>
+      <State id="receivedX10Message">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Received X10 Message</TriggerLabel>
+        <ControlPageLabel>Received X10 Message</ControlPageLabel>
+      </State>
+      <State id="logEventReceived">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Log Event Received</TriggerLabel>
+        <ControlPageLabel>Log Event Received</ControlPageLabel>
+      </State>
+      <State id="keypadMessageReceived">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Keypad Message Received</TriggerLabel>
+        <ControlPageLabel>Keypad Message Received</ControlPageLabel>
+      </State>
+      <State id="zreservedBit4TransitionMessageFlags2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit4 Transition Message Flags2</TriggerLabel>
+        <ControlPageLabel>Reserved Bit4 Transition Message Flags2</ControlPageLabel>
+      </State>
+      <State id="zreservedBit5TransitionMessageFlags2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit5 Transition Message Flags2</TriggerLabel>
+        <ControlPageLabel>Reserved Bit5 Transition Message Flags2</ControlPageLabel>
+      </State>
+      <State id="zreservedBit6TransitionMessageFlags2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit6 Transition Message Flags2</TriggerLabel>
+        <ControlPageLabel>Reserved Bit6 Transition Message Flags2</ControlPageLabel>
+      </State>
+      <State id="zreservedBit7TransitionMessageFlags2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit7 Transition Message Flags2</TriggerLabel>
+        <ControlPageLabel>Reserved Bit7 Transition Message Flags2</ControlPageLabel>
+      </State>
+      
+      <State id="sep2">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Interface Configuration: Request/Command Flag 1 -->
+      
+      <State id="zreservedBit0RequestCommandFlags1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit0 Request Command Flags1</TriggerLabel>
+        <ControlPageLabel>Reserved Bit0 Request Command Flags1</ControlPageLabel>
+      </State>
+      <State id="interfaceConfigurationRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Interface Configuration Request</TriggerLabel>
+        <ControlPageLabel>Interface Configuration Request</ControlPageLabel>
+      </State>
+      <State id="zreservedBit2RequestCommandFlags1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit2 Request Command Flags1</TriggerLabel>
+        <ControlPageLabel>Reserved Bit2 Request Command Flags1</ControlPageLabel>
+      </State>
+      <State id="zoneNameRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone Name Request</TriggerLabel>
+        <ControlPageLabel>Zone Name Request</ControlPageLabel>
+      </State>
+      <State id="zoneStatusRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone Status Request</TriggerLabel>
+        <ControlPageLabel>Zone Status Request</ControlPageLabel>
+      </State>
+      <State id="zoneSnapshotRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone Snapshot Request</TriggerLabel>
+        <ControlPageLabel>Zone Snapshot Request</ControlPageLabel>
+      </State>
+      <State id="partitionStatusRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Partition Status Request</TriggerLabel>
+        <ControlPageLabel>Partition Status Request</ControlPageLabel>
+      </State>
+      <State id="partitionSnapshotRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Partition Snapshot Request</TriggerLabel>
+        <ControlPageLabel>Partition Snapshot Request</ControlPageLabel>
+      </State>
+      
+      <State id="sep3">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Interface Configuration: Request/Command Flag 2 -->
+      
+      <State id="systemStatusRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>System Status Request</TriggerLabel>
+        <ControlPageLabel>System Status Request</ControlPageLabel>
+      </State>
+      <State id="sendX10Message">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Send X10 Message</TriggerLabel>
+        <ControlPageLabel>Send X10 Message</ControlPageLabel>
+      </State>
+      <State id="logEventRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Log Event Request</TriggerLabel>
+        <ControlPageLabel>Log Event Request</ControlPageLabel>
+      </State>
+      <State id="sendKeypadTextMessage">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Send Keypad Text Message</TriggerLabel>
+        <ControlPageLabel>Send Keypad Text Message</ControlPageLabel>
+      </State>
+      <State id="keypadTerminalModeRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Keypad Terminal Mode Request</TriggerLabel>
+        <ControlPageLabel>Keypad Terminal Mode Request</ControlPageLabel>
+      </State>
+      <State id="zreservedBit5RequestCommandFlags2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit5 Request Command Flags2</TriggerLabel>
+        <ControlPageLabel>Reserved Bit5 Request Command Flags2</ControlPageLabel>
+      </State>
+      <State id="zreservedBit6RequestCommandFlags2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit6 Request Command Flags2</TriggerLabel>
+        <ControlPageLabel>Reserved Bit6 Request Command Flags2</ControlPageLabel>
+      </State>
+      <State id="zreservedBit7RequestCommandFlags2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit7 Request Command Flags2</TriggerLabel>
+        <ControlPageLabel>Reserved Bit7 Request Command Flags2</ControlPageLabel>
+      </State>
+      
+      <State id="sep4">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Interface Configuration: Request/Command Flag 3 -->
+      
+      <State id="programDataRequest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Program Data Request</TriggerLabel>
+        <ControlPageLabel>Program Data Request</ControlPageLabel>
+      </State>
+      <State id="programDataCommand">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Program Data Command</TriggerLabel>
+        <ControlPageLabel>Program Data Command</ControlPageLabel>
+      </State>
+      <State id="userInformationRequestWithPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>User Information Request With Pin</TriggerLabel>
+        <ControlPageLabel>User Information Request With Pin</ControlPageLabel>
+      </State>
+      <State id="userInformationRequestWithoutPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>User Information Request Without Pin</TriggerLabel>
+        <ControlPageLabel>User Information Request Without Pin</ControlPageLabel>
+      </State>
+      <State id="setUserCodeCommandWithPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Set User Code Command WithPin</TriggerLabel>
+        <ControlPageLabel>Set User Code Command With Pin</ControlPageLabel>
+      </State>
+      <State id="setUserCodeCommandWithoutPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Set User Code Command Without Pin</TriggerLabel>
+        <ControlPageLabel>Set User Code Command WithoutPin</ControlPageLabel>
+      </State>
+      <State id="setUserAuthorisationCommandWithPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Set User Authorisation Command With Pin</TriggerLabel>
+        <ControlPageLabel>Set User Authorisation Command With Pin</ControlPageLabel>
+      </State>
+      <State id="setUserAuthorisationCommandWithoutPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Set User Authorisation Command Without Pin</TriggerLabel>
+        <ControlPageLabel>Set User Authorisation Command Without Pin</ControlPageLabel>
+      </State>
+      
+      <State id="sep5">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Interface Configuration: Request/Command Flag 4 -->
+      
+      <State id="zreservedBit0RequestCommandFlags4">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit0 Request Command Flags4</TriggerLabel>
+        <ControlPageLabel>Reserved Bit0 Request Command Flags4</ControlPageLabel>
+      </State>
+      <State id="zreservedBit1RequestCommandFlags4">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit1 Request Command Flags4</TriggerLabel>
+        <ControlPageLabel>Reserved Bit1 Request Command Flags4</ControlPageLabel>
+      </State>
+      <State id="storeCommunicationEventCommand">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Store Communication Event Command</TriggerLabel>
+        <ControlPageLabel>Store Communication Event Command</ControlPageLabel>
+      </State>
+      <State id="setClockCalenderCommand">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Set Clock Calendar Command</TriggerLabel>
+        <ControlPageLabel>Set Clock Calendar Command</ControlPageLabel>
+      </State>
+      <State id="primaryKeypadFunctionWithPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Primary Keypad Function With Pin</TriggerLabel>
+        <ControlPageLabel>Primary Keypad Function With Pin</ControlPageLabel>
+      </State>
+      <State id="primaryKeypadFunctionWithoutPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Primary Keypad Function Without Pin</TriggerLabel>
+        <ControlPageLabel>Primary Keypad Function Without Pin</ControlPageLabel>
+      </State>
+      <State id="secondaryKeypadFunction">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Secondary Keypad Function</TriggerLabel>
+        <ControlPageLabel>Secondary Keypad Function</ControlPageLabel>
+      </State>
+      <State id="zoneBypassToggle">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone Bypass Toggle</TriggerLabel>
+        <ControlPageLabel>Zone Bypass Toggle</ControlPageLabel>
+      </State>
+    
+    </States>
+    <UiDisplayStateId>firmware</UiDisplayStateId>
+  </Device>
+  
+  
+  <!-- Define Caddx NetworX NX-8e System Status ============================================ -->
+  <Device type="custom" id="statusInfo">
+    <Name>Status Info</Name>
+    <ConfigUI>
+      <Field id="infoLabel" type="label">
+        <Label>Configuration</Label>
+      </Field>
+      
+      <Field id="sep1" type="separator"/>
+      
+      <!-- Select Panel -->
+      
+      <Field id="address" type="menu" defaultValue="4">
+        <Label>Model:</Label>
+        <List>
+          <Option value="1">NX-4</Option>
+          <Option value="2">NX-6</Option>
+          <Option value="3">NX-8</Option>
+          <Option value="4">NX-8e</Option>
+          <Option value="10">NX-6V2</Option>
+          <Option value="12">NX-8V2</Option>
+        </List>
+      </Field>
+      
+      <Field id="sep2" type="separator"/>
+    
+    </ConfigUI>
+    <States>
+      
+      <!-- System: Panel States -->
+      
+      <State id="systemNumber">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Panel ID</TriggerLabel>
+        <ControlPageLabel>Panel ID</ControlPageLabel>
+      </State>
+      <State id="model">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Model</TriggerLabel>
+        <ControlPageLabel>Model</ControlPageLabel>
+      </State>
+      
+      <State id="sep0">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 3 -->
+      
+      <State id="lineSeizure">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Line Seizure</TriggerLabel>
+        <ControlPageLabel>Line Seizure</ControlPageLabel>
+      </State>
+      <State id="offHook">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Off Hook</TriggerLabel>
+        <ControlPageLabel>Off Hook</ControlPageLabel>
+      </State>
+      <State id="initialHandshakeReceived">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Initial Handshake Received</TriggerLabel>
+        <ControlPageLabel>Initial Handshake Received</ControlPageLabel>
+      </State>
+      <State id="downloadInProgress">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Download In Progress</TriggerLabel>
+        <ControlPageLabel>Download In Progress</ControlPageLabel>
+      </State>
+      <State id="dialerDelayInProgress">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Dialer Delay In Progress</TriggerLabel>
+        <ControlPageLabel>Dialer Delay In Progress</ControlPageLabel>
+      </State>
+      <State id="usingBackupPhone">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Using Backup Phone</TriggerLabel>
+        <ControlPageLabel>Using Backup Phone</ControlPageLabel>
+      </State>
+      <State id="listenInActive">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Listen In Active</TriggerLabel>
+        <ControlPageLabel>Listen In Active</ControlPageLabel>
+      </State>
+      <State id="twoWayLockout">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Two Way Lockout</TriggerLabel>
+        <ControlPageLabel>Two Way Lockout</ControlPageLabel>
+      </State>
+      
+      <State id="sep1">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 4 -->
+      
+      <State id="groundFault">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Ground Fault</TriggerLabel>
+        <ControlPageLabel>Ground Fault</ControlPageLabel>
+      </State>
+      <State id="phoneFault">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Phone Fault</TriggerLabel>
+        <ControlPageLabel>Phone Fault</ControlPageLabel>
+      </State>
+      <State id="failToCommunicate">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Fail To Communicate</TriggerLabel>
+        <ControlPageLabel>Fail To Communicate</ControlPageLabel>
+      </State>
+      <State id="fuseFault">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Fuse Fault</TriggerLabel>
+        <ControlPageLabel>Fuse Fault</ControlPageLabel>
+      </State>
+      <State id="boxTamper">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Box Tamper</TriggerLabel>
+        <ControlPageLabel>Box Tamper</ControlPageLabel>
+      </State>
+      <State id="sirenTamper">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Siren Tamper</TriggerLabel>
+        <ControlPageLabel>Siren Tamper</ControlPageLabel>
+      </State>
+      <State id="lowBattery">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Low Battery</TriggerLabel>
+        <ControlPageLabel>Low Battery</ControlPageLabel>
+      </State>
+      <State id="acFail">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>AC Fail</TriggerLabel>
+        <ControlPageLabel>AC Fail</ControlPageLabel>
+      </State>
+      
+      <State id="sep2">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 5 -->
+      
+      <State id="expanderBoxTamper">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Expander Box Tamper</TriggerLabel>
+        <ControlPageLabel>Expander Box Tamper</ControlPageLabel>
+      </State>
+      <State id="expanderACFailure">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Expander AC Failure</TriggerLabel>
+        <ControlPageLabel>Expander AC Failure</ControlPageLabel>
+      </State>
+      <State id="expanderLowBattery">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Expander Low Battery</TriggerLabel>
+        <ControlPageLabel>Expander Low Battery</ControlPageLabel>
+      </State>
+      <State id="expanderLossOffSupervision">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Expander Loss Off Supervision</TriggerLabel>
+        <ControlPageLabel>Expander Loss Off Supervision</ControlPageLabel>
+      </State>
+      <State id="expanderAuxOverCurrent">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Expander Aux Over Current</TriggerLabel>
+        <ControlPageLabel>Expander Aux Over Current</ControlPageLabel>
+      </State>
+      <State id="auxiliaryCommChannelFailure">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Auxiliary Comm Channel Failure</TriggerLabel>
+        <ControlPageLabel>Auxiliary Comm Channel Failure</ControlPageLabel>
+      </State>
+      <State id="expanderBellFault">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Expander Bell Fault</TriggerLabel>
+        <ControlPageLabel>Expander Bell Fault</ControlPageLabel>
+      </State>
+      <State id="zreservedbit7PanelByte5">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit7 Panel Byte5</TriggerLabel>
+        <ControlPageLabel>Reserved Bit7 Panel Byte5</ControlPageLabel>
+      </State>
+      
+      <State id="sep3">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 6 -->
+      
+      <State id="enable6DigitPin">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Enable 6 Digit Pin</TriggerLabel>
+        <ControlPageLabel>Enable 6 Digit Pin</ControlPageLabel>
+      </State>
+      <State id="programmingTokenInUse">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Programming Token In Use</TriggerLabel>
+        <ControlPageLabel>Programming Token In Use</ControlPageLabel>
+      </State>
+      <State id="pinRequiredForLocalDownload">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Pin Required For Local Download</TriggerLabel>
+        <ControlPageLabel>Pin Required For Local Download</ControlPageLabel>
+      </State>
+      <State id="globalPulsingBuzzer">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Global Pulsing Buzzer</TriggerLabel>
+        <ControlPageLabel>Global Pulsing Buzzer</ControlPageLabel>
+      </State>
+      <State id="globalSirenOn">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Global Siren On</TriggerLabel>
+        <ControlPageLabel>Global Siren On</ControlPageLabel>
+      </State>
+      <State id="globalSteadySiren">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Global Steady Siren</TriggerLabel>
+        <ControlPageLabel>Global Steady Siren</ControlPageLabel>
+      </State>
+      <State id="busDeviceHasLineSeized">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Bus Device Has Line Seized</TriggerLabel>
+        <ControlPageLabel>Bus Device Has Line Seized</ControlPageLabel>
+      </State>
+      <State id="busDeviceRequestedSniffMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Bus Device Requested Sniff Mode</TriggerLabel>
+        <ControlPageLabel>Bus Device Requested Sniff Mode</ControlPageLabel>
+      </State>
+      
+      <State id="sep4">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 7 -->
+      
+      <State id="dynamicBatteryTest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Dynamic Battery Test</TriggerLabel>
+        <ControlPageLabel>Dynamic Battery Test</ControlPageLabel>
+      </State>
+      <State id="acPowerOn">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>AC Power On</TriggerLabel>
+        <ControlPageLabel>AC Power On</ControlPageLabel>
+      </State>
+      <State id="lowBatteryMemory">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Low Battery Memory</TriggerLabel>
+        <ControlPageLabel>Low Battery Memory</ControlPageLabel>
+      </State>
+      <State id="groundFaultMemory">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Ground Fault Memory</TriggerLabel>
+        <ControlPageLabel>Ground Fault Memory</ControlPageLabel>
+      </State>
+      <State id="fireAlarmVerificationBeingTimed">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Fire Alarm Verification Being Timed</TriggerLabel>
+        <ControlPageLabel>Fire Alarm Verification Being Timed</ControlPageLabel>
+      </State>
+      <State id="smokePowerReset">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Smoke Power Reset</TriggerLabel>
+        <ControlPageLabel>Smoke Power Reset</ControlPageLabel>
+      </State>
+      <State id="linePowerDetected50Hz">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Line Power Detected 50Hz</TriggerLabel>
+        <ControlPageLabel>Line Power Detected 50Hz</ControlPageLabel>
+      </State>
+      <State id="timingHighVoltageBatteryCharge">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Timing High Voltage Battery Charge</TriggerLabel>
+        <ControlPageLabel>Timing High Voltage Battery Charge</ControlPageLabel>
+      </State>
+      
+      <State id="sep5">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 8 -->
+      
+      <State id="communicationSinceLastAutoTest">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Communication Since Last Auto Test</TriggerLabel>
+        <ControlPageLabel>Communication Since Last Auto Test</ControlPageLabel>
+      </State>
+      <State id="powerUpDelayInProgress">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Power Up Delay In Progress</TriggerLabel>
+        <ControlPageLabel>Power Up Delay In Progress</ControlPageLabel>
+      </State>
+      <State id="walkTestMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Walk Test Mode</TriggerLabel>
+        <ControlPageLabel>Walk Test Mode</ControlPageLabel>
+      </State>
+      <State id="lossOfSystemTime">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Loss Of System Time</TriggerLabel>
+        <ControlPageLabel>Loss Of System Time</ControlPageLabel>
+      </State>
+      <State id="enrollRequested">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Enroll Requested</TriggerLabel>
+        <ControlPageLabel>Enroll Requested</ControlPageLabel>
+      </State>
+      <State id="testFixtureMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Test Fixture Mode</TriggerLabel>
+        <ControlPageLabel>Test Fixture Mode</ControlPageLabel>
+      </State>
+      <State id="controlShutdownMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Control Shutdown Mode</TriggerLabel>
+        <ControlPageLabel>Control Shutdown Mode</ControlPageLabel>
+      </State>
+      <State id="timingACancelWindow">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Timing A Cancel Window</TriggerLabel>
+        <ControlPageLabel>Timing A Cancel Window</ControlPageLabel>
+      </State>
+      
+      <State id="sep6">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 9 -->
+      
+      <State id="zreservedbit0PanelByte9">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit0 Panel Byte9</TriggerLabel>
+        <ControlPageLabel>Reserved Bit0 Panel Byte9</ControlPageLabel>
+      </State>
+      <State id="zreservedbit1PanelByte9">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit1 Panel Byte9</TriggerLabel>
+        <ControlPageLabel>Reserved Bit1 Panel Byte9</ControlPageLabel>
+      </State>
+      <State id="zreservedbit2PanelByte9">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit2 Panel Byte9</TriggerLabel>
+        <ControlPageLabel>Reserved Bit2 Panel Byte9</ControlPageLabel>
+      </State>
+      <State id="zreservedbit3PanelByte9">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit3 Panel Byte9</TriggerLabel>
+        <ControlPageLabel>Reserved Bit3 Panel Byte9</ControlPageLabel>
+      </State>
+      <State id="zreservedbit4PanelByte9">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit4 Panel Byte9</TriggerLabel>
+        <ControlPageLabel>Reserved Bit4 Panel Byte9</ControlPageLabel>
+      </State>
+      <State id="zreservedbit5PanelByte9">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit5 Panel Byte9</TriggerLabel>
+        <ControlPageLabel>Reserved Bit5 Panel Byte9</ControlPageLabel>
+      </State>
+      <State id="zreservedbit6PanelByte9">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit6 Panel Byte9</TriggerLabel>
+        <ControlPageLabel>Reserved Bit6 Panel Byte9</ControlPageLabel>
+      </State>
+      <State id="callBackInProgress">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Call Back In Progress</TriggerLabel>
+        <ControlPageLabel>Call Back In Progress</ControlPageLabel>
+      </State>
+      
+      <State id="sep7">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 10 -->
+      
+      <State id="phoneLineFaulted">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Phone Line Faulted</TriggerLabel>
+        <ControlPageLabel>Phone Line Faulted</ControlPageLabel>
+      </State>
+      <State id="voltagePresentInterruptActive">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Voltage Present Interrupt Active</TriggerLabel>
+        <ControlPageLabel>Voltage Present Interrupt Active</ControlPageLabel>
+      </State>
+      <State id="housePhoneOffHook">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>House Phone OffHook</TriggerLabel>
+        <ControlPageLabel>House Phone OffHook</ControlPageLabel>
+      </State>
+      <State id="phoneLineMonitorEnabled">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Phone Line Monitor Enabled</TriggerLabel>
+        <ControlPageLabel>Phone Line Monitor Enabled</ControlPageLabel>
+      </State>
+      <State id="sniffing">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Sniffing</TriggerLabel>
+        <ControlPageLabel>Sniffing</ControlPageLabel>
+      </State>
+      <State id="lastReadWasOffHook">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Last Read Was OffHook</TriggerLabel>
+        <ControlPageLabel>Last Read Was OffHook</ControlPageLabel>
+      </State>
+      <State id="listenInRequested">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Listen In Requested</TriggerLabel>
+        <ControlPageLabel>Listen In Requested</ControlPageLabel>
+      </State>
+      <State id="listenInTrigger">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Listen In Trigger</TriggerLabel>
+        <ControlPageLabel>Listen In Trigger</ControlPageLabel>
+      </State>
+      
+      <State id="sep8">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 11 -->
+      
+      <State id="validPartition1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 1</TriggerLabel>
+        <ControlPageLabel>Valid Partition 1</ControlPageLabel>
+      </State>
+      <State id="validPartition2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 2</TriggerLabel>
+        <ControlPageLabel>Valid Partition 2</ControlPageLabel>
+      </State>
+      <State id="validPartition3">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 3</TriggerLabel>
+        <ControlPageLabel>Valid Partition 3</ControlPageLabel>
+      </State>
+      <State id="validPartition4">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 4</TriggerLabel>
+        <ControlPageLabel>Valid Partition 4</ControlPageLabel>
+      </State>
+      <State id="validPartition5">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 5</TriggerLabel>
+        <ControlPageLabel>Valid Partition 5</ControlPageLabel>
+      </State>
+      <State id="validPartition6">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 6</TriggerLabel>
+        <ControlPageLabel>Valid Partition 6</ControlPageLabel>
+      </State>
+      <State id="validPartition7">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 7</TriggerLabel>
+        <ControlPageLabel>Valid Partition 7</ControlPageLabel>
+      </State>
+      <State id="validPartition8">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition 8</TriggerLabel>
+        <ControlPageLabel>Valid Partition 8</ControlPageLabel>
+      </State>
+      
+      <State id="sep9">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- System: Panel Byte 12 -->
+      
+      <State id="communicatorStackPointer">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Communicator Stack Pointer</TriggerLabel>
+        <ControlPageLabel>Communicator Stack Pointer</ControlPageLabel>
+      </State>
+    
+    </States>
+    <UiDisplayStateId>model</UiDisplayStateId>
+  </Device>
+  
+  
+  <!-- Define Caddx NetworX NX-8e Partitions ============================================ -->
+  <Device type="custom" id="partition">
+    <Name>Partition</Name>
+    <ConfigUI>
+      <Field id="infoLabel" type="label">
+        <Label>Configuration</Label>
+      </Field>
+      
+      <Field id="sep1" type="separator"/>
+      
+      <!-- Select Partitions -->
+      
+      <Field id="address" type="menu" defaultValue="1">
+        <Label>Partition:</Label>
+        <List>
+          <Option value="1">1</Option>
+          <Option value="2">2</Option>
+          <Option value="3">3</Option>
+          <Option value="4">4</Option>
+          <Option value="5">5</Option>
+          <Option value="6">6</Option>
+          <Option value="7">7</Option>
+          <Option value="8">8</Option>
+          <Option value="9">9</Option>
+          <Option value="10">10</Option>
+          <Option value="11">11</Option>
+          <Option value="12">12</Option>
+          <Option value="13">13</Option>
+          <Option value="14">14</Option>
+          <Option value="15">15</Option>
+          <Option value="16">16</Option>
+          <Option value="17">17</Option>
+          <Option value="18">18</Option>
+          <Option value="19">19</Option>
+          <Option value="20">20</Option>
+          <Option value="21">21</Option>
+          <Option value="22">22</Option>
+          <Option value="23">23</Option>
+          <Option value="24">24</Option>
+          <Option value="25">25</Option>
+          <Option value="26">26</Option>
+          <Option value="27">27</Option>
+          <Option value="28">28</Option>
+          <Option value="29">29</Option>
+          <Option value="30">30</Option>
+          <Option value="31">31</Option>
+          <Option value="32">32</Option>
+        </List>
+      </Field>
+      <Field id="associatedKeypad" type="menu" defaultValue="1">
+        <Label>Associated Keypad:</Label>
+        <List>
+          <Option value="1">1</Option>
+          <Option value="2">2</Option>
+          <Option value="3">3</Option>
+          <Option value="4">4</Option>
+          <Option value="5">5</Option>
+          <Option value="6">6</Option>
+          <Option value="7">7</Option>
+          <Option value="8">8</Option>
+          <Option value="9">9</Option>
+          <Option value="10">10</Option>
+          <Option value="11">11</Option>
+          <Option value="12">12</Option>
+          <Option value="13">13</Option>
+          <Option value="14">14</Option>
+          <Option value="15">15</Option>
+          <Option value="16">16</Option>
+          <Option value="17">17</Option>
+          <Option value="18">18</Option>
+          <Option value="19">19</Option>
+          <Option value="20">20</Option>
+          <Option value="21">21</Option>
+          <Option value="22">22</Option>
+          <Option value="23">23</Option>
+          <Option value="24">24</Option>
+          <Option value="25">25</Option>
+          <Option value="26">26</Option>
+          <Option value="27">27</Option>
+          <Option value="28">28</Option>
+          <Option value="29">29</Option>
+          <Option value="30">30</Option>
+          <Option value="31">31</Option>
+          <Option value="32">32</Option>
+        </List>
+      </Field>
+      
+      <Field id="sep2" type="separator"/>
+      
+      <!-- Partition: Object -->
+      
+      <Field type="label" id="partitionObjectLabel">
+        <Label>Partition Object</Label>
+      </Field>
+      <Field id="partitionName" type="textfield" defaultValue="">
+        <Label>Name:</Label>
+      </Field>
+      
+      <Field id="makeSpace1" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep3" type="separator"/>
+    
+    </ConfigUI>
+    <States>
+      
+      <!-- Partition: Object -->
+      
+      <State id="partitionNumber">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Partition Number</TriggerLabel>
+        <ControlPageLabel>Partition Number</ControlPageLabel>
+      </State>
+      
+      <State id="sep0">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Partition: Status -->
+      
+      <State id="lastUserNumber">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Last User Number</TriggerLabel>
+        <ControlPageLabel>Last User Number</ControlPageLabel>
+      </State>
+      <State id="partitionState">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Partition State</TriggerLabel>
+        <ControlPageLabel>Partition State</ControlPageLabel>
+      </State>
+      
+      <State id="sep1">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <State id="partitionStatus">
+        <ValueType>
+          <List>
+            <Option value="disarmed">Disarmed</Option>
+            <Option value="notReady">Not Ready</Option>
+            <Option value="armingExit">Arming (exit)</Option>
+            <Option value="armingNotReady">Arming Not Ready</Option>
+            <Option value="armedStay">Armed Stay</Option>
+            <Option value="alarmEntry">Alarm (entry)</Option>
+            <Option value="alarmIntruder">ALARM Intruder</Option>
+            <Option value="armedAway">Armed Away</Option>
+            <Option value="multipleChanges">Multiple State Changes</Option>
+          </List>
+        </ValueType>
+        <TriggerLabel>Partition status changed:</TriggerLabel>
+        <TriggerLabelPrefix>Status changed to</TriggerLabelPrefix>
+        <ControlPageLabel>Current status</ControlPageLabel>
+        <ControlPageLabelPrefix>Status is</ControlPageLabelPrefix>
+      </State>
+      
+      <State id="sep2">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Partition: States -->
+      
+      <State id="securityState">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Security State</TriggerLabel>
+        <ControlPageLabel>Security State</ControlPageLabel>
+      </State>
+      
+      <State id="sep3">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Partition: Security History -->
+      
+      <State id="lastStateChange">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Last State Change</TriggerLabel>
+        <ControlPageLabel>Last State Change</ControlPageLabel>
+      </State>
+      <State id="lastZoneTrigger">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Last Zone Trigger</TriggerLabel>
+        <ControlPageLabel>Last Zone Trigger</ControlPageLabel>
+      </State>
+      <State id="lastFunction">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Last Function</TriggerLabel>
+        <ControlPageLabel>Last Function</ControlPageLabel>
+      </State>
+      <State id="statusLastFunction">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Status Last Function</TriggerLabel>
+        <ControlPageLabel>Status Last Function</ControlPageLabel>
+      </State>
+      
+      <State id="sep4">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Partition: Snapshot -->
+      
+      <State id="validPartition">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Partition</TriggerLabel>
+        <ControlPageLabel>Valid Partition</ControlPageLabel>
+      </State>
+      <State id="securityReady">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Security Ready</TriggerLabel>
+        <ControlPageLabel>Security Ready</ControlPageLabel>
+      </State>
+      <State id="exitArm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Armed</TriggerLabel>
+        <ControlPageLabel>Armed</ControlPageLabel>
+      </State>
+      <State id="stayArm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Stay Mode</TriggerLabel>
+        <ControlPageLabel>Stay Mode</ControlPageLabel>
+      </State>
+      <State id="chimeMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Chime Mode</TriggerLabel>
+        <ControlPageLabel>Chime Mode</ControlPageLabel>
+      </State>
+      <State id="anyEntryDelay">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Any Entry Delay</TriggerLabel>
+        <ControlPageLabel>Any Entry Delay</ControlPageLabel>
+      </State>
+      <State id="anyExitDelay">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Any Exit Delay</TriggerLabel>
+        <ControlPageLabel>Any Exit Delay</ControlPageLabel>
+      </State>
+      <State id="partitionPreviousAlarm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Previous Alarm</TriggerLabel>
+        <ControlPageLabel>Previous Alarm</ControlPageLabel>
+      </State>
+      
+      <!-- Partition: Condition Level 1 -->
+      
+      <State id="bypassCodeRequired">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Bypass Code Required</TriggerLabel>
+        <ControlPageLabel>Bypass Code Required</ControlPageLabel>
+      </State>
+      <State id="fireTrouble">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Fire Trouble</TriggerLabel>
+        <ControlPageLabel>Fire Trouble</ControlPageLabel>
+      </State>
+      <State id="fire">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Fire</TriggerLabel>
+        <ControlPageLabel>Fire</ControlPageLabel>
+      </State>
+      <State id="firePulsingBuzzer">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Pulsing Buzzer</TriggerLabel>
+        <ControlPageLabel>Pulsing Buzzer</ControlPageLabel>
+      </State>
+      <State id="tLMFaultMemory">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>TLM Fault Memory</TriggerLabel>
+        <ControlPageLabel>TLM Fault Memory</ControlPageLabel>
+      </State>
+      <State id="reservedbit5ConditionFlag1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Power AC On</TriggerLabel>
+        <ControlPageLabel>Power AC On</ControlPageLabel>
+      </State>
+      <State id="armedSystem">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Armed System</TriggerLabel>
+        <ControlPageLabel>Armed System</ControlPageLabel>
+      </State>
+      <State id="instant">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Instant</TriggerLabel>
+        <ControlPageLabel>Instant</ControlPageLabel>
+      </State>
+      
+      <!-- Partition: Condition Level 2 -->
+      
+      <State id="previousAlarm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Previous Alarm</TriggerLabel>
+        <ControlPageLabel>Previous Alarm</ControlPageLabel>
+      </State>
+      <State id="sirenOn">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Siren On</TriggerLabel>
+        <ControlPageLabel>Siren On</ControlPageLabel>
+      </State>
+      <State id="steadySirenOn">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Steady Siren On</TriggerLabel>
+        <ControlPageLabel>Steady Siren On</ControlPageLabel>
+      </State>
+      <State id="alarmMemoryCondition">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Alarm Memory Condition</TriggerLabel>
+        <ControlPageLabel>Alarm Memory Condition</ControlPageLabel>
+      </State>
+      <State id="tamper">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Tamper</TriggerLabel>
+        <ControlPageLabel>Tamper</ControlPageLabel>
+      </State>
+      <State id="cancelCommandEntered">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Cancel Command Entered</TriggerLabel>
+        <ControlPageLabel>Cancel Command Entered</ControlPageLabel>
+      </State>
+      <State id="codeEntered">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Code Entered</TriggerLabel>
+        <ControlPageLabel>Code Entered</ControlPageLabel>
+      </State>
+      <State id="cancelPending">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Cancel Pending</TriggerLabel>
+        <ControlPageLabel>Cancel Pending</ControlPageLabel>
+      </State>
+      
+      <State id="sep7">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- Partition: Condition Level 3 -->
+      
+      <State id="reservedbit0ConditionFlag3">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit0 Condition Flag3</TriggerLabel>
+        <ControlPageLabel>Reserved Bit0 Condition Flag3</ControlPageLabel>
+      </State>
+      <State id="silentExitEnabled">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Silent Exit Enabled</TriggerLabel>
+        <ControlPageLabel>Silent Exit Enabled</ControlPageLabel>
+      </State>
+      <State id="entryGuardStayMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Entry Guard Stay Mode</TriggerLabel>
+        <ControlPageLabel>Entry Guard Stay Mode</ControlPageLabel>
+      </State>
+      <State id="chimeModeOn">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Chime Mode On</TriggerLabel>
+        <ControlPageLabel>Chime Mode On</ControlPageLabel>
+      </State>
+      <State id="entry">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Entry</TriggerLabel>
+        <ControlPageLabel>Entry</ControlPageLabel>
+      </State>
+      <State id="delayExpirationWarning">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Delay Expiration Warning</TriggerLabel>
+        <ControlPageLabel>Delay Expiration Warning</ControlPageLabel>
+      </State>
+      <State id="exit1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Exit (delay 1)</TriggerLabel>
+        <ControlPageLabel>Exit (delay 1)</ControlPageLabel>
+      </State>
+      <State id="exit2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Exit (delay 2)</TriggerLabel>
+        <ControlPageLabel>Exit (delay 2)</ControlPageLabel>
+      </State>
+      
+      <!-- Partition: Condition Level 4 -->
+      
+      <State id="ledExtinguish">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Led Extinguish</TriggerLabel>
+        <ControlPageLabel>Led Extinguish</ControlPageLabel>
+      </State>
+      <State id="crossTiming">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Cross Timing</TriggerLabel>
+        <ControlPageLabel>Cross Timing</ControlPageLabel>
+      </State>
+      <State id="recentClosingBeingTimed">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Recent Closing Being Timed</TriggerLabel>
+        <ControlPageLabel>Recent Closing Being Timed</ControlPageLabel>
+      </State>
+      <State id="reservedbit3ConditionFlag4">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit3 Condition Flag4</TriggerLabel>
+        <ControlPageLabel>Reserved Bit3 Condition Flag4</ControlPageLabel>
+      </State>
+      <State id="exitErrorTriggered">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Exit Error Triggered</TriggerLabel>
+        <ControlPageLabel>Exit Error Triggered</ControlPageLabel>
+      </State>
+      <State id="autoHomeInhibited">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Auto Home Inhibited</TriggerLabel>
+        <ControlPageLabel>Auto Home Inhibited</ControlPageLabel>
+      </State>
+      <State id="sensorLowBattery">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Sensor Low Battery</TriggerLabel>
+        <ControlPageLabel>Sensor Low Battery</ControlPageLabel>
+      </State>
+      <State id="sensorLostSupervision">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Sensor Lost Supervision</TriggerLabel>
+        <ControlPageLabel>Sensor Lost Supervision</ControlPageLabel>
+      </State>
+      
+      <!-- Partition: Condition Level 5 -->
+      
+      <State id="zoneBypass">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Zone Bypass</TriggerLabel>
+        <ControlPageLabel>LED Zone Bypass</ControlPageLabel>
+      </State>
+      <State id="forceArmTriggeredByAutoArm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Force Arm Triggered By Auto Arm</TriggerLabel>
+        <ControlPageLabel>Force Arm Triggered By Auto Arm</ControlPageLabel>
+      </State>
+      <State id="readyToArm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Ready To Arm</TriggerLabel>
+        <ControlPageLabel>Ready To Arm</ControlPageLabel>
+      </State>
+      <State id="readyToForceArm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Ready To Force Arm</TriggerLabel>
+        <ControlPageLabel>Ready To Force Arm</ControlPageLabel>
+      </State>
+      <State id="validPinAccepted">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Valid Pin Accepted</TriggerLabel>
+        <ControlPageLabel>Valid Pin Accepted</ControlPageLabel>
+      </State>
+      <State id="chimeOnSounding">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Chime On Sounding</TriggerLabel>
+        <ControlPageLabel>Chime On Sounding</ControlPageLabel>
+      </State>
+      <State id="errorBeepTripleBeep">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Error Beep (Triple Beep)</TriggerLabel>
+        <ControlPageLabel>Error Beep (Triple Beep)</ControlPageLabel>
+      </State>
+      <State id="toneOnActivationTone">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Tone On (Activation Tone)</TriggerLabel>
+        <ControlPageLabel>Tone On (Activation Tone)</ControlPageLabel>
+      </State>
+      
+      <!-- Partition: Condition Level 6 -->
+      
+      <State id="entry1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Entry 1</TriggerLabel>
+        <ControlPageLabel>Entry 1</ControlPageLabel>
+      </State>
+      <State id="openPeriod">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Open Period</TriggerLabel>
+        <ControlPageLabel>Open Period</ControlPageLabel>
+      </State>
+      <State id="alarmSendUsingPhoneNumber1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Alarm Send Using Phone Number 1</TriggerLabel>
+        <ControlPageLabel>Alarm Send Using PhoneNumber 1</ControlPageLabel>
+      </State>
+      <State id="alarmSendUsingPhoneNumber2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Alarm Send Using Phone Number 2</TriggerLabel>
+        <ControlPageLabel>Alarm Send Using Phone Number 2</ControlPageLabel>
+      </State>
+      <State id="alarmSendUsingPhoneNumber3">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Alarm Send Using Phone Number 3</TriggerLabel>
+        <ControlPageLabel>Alarm Send Using Phone Number 3</ControlPageLabel>
+      </State>
+      <State id="cancelReportIsInTheStack">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Cancel Report Is In The Stack</TriggerLabel>
+        <ControlPageLabel>Cancel Report Is In The Stack</ControlPageLabel>
+      </State>
+      <State id="keySwitchArmed">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Key Switch Armed</TriggerLabel>
+        <ControlPageLabel>Key Switch Armed</ControlPageLabel>
+      </State>
+      <State id="delayTripInProgressCommonZone">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Delay Trip In Progress Common Zone</TriggerLabel>
+        <ControlPageLabel>Delay Trip In Progress Common Zone</ControlPageLabel>
+      </State>
+    
+    </States>
+    <UiDisplayStateId>partitionState</UiDisplayStateId>
+  </Device>
+  
+  
+  <!-- Define Caddx NetworX NX-8e Keypads ============================================ -->
+  <Device type="custom" id="keypad">
+    <Name>Keypad</Name>
+    <ConfigUI>
+      <Field id="infoLabel" type="label">
+        <Label>Configuration</Label>
+      </Field>
+      
+      <Field id="sep1" type="separator"/>
+      
+      <!-- Select Keypads -->
+      
+      <Field id="address" type="menu" defaultValue="1">
+        <Label>Keypad Address:</Label>
+        <List>
+          <Option value="1">1</Option>
+          <Option value="2">2</Option>
+          <Option value="3">3</Option>
+          <Option value="4">4</Option>
+          <Option value="5">5</Option>
+          <Option value="6">6</Option>
+          <Option value="7">7</Option>
+          <Option value="8">8</Option>
+          <Option value="9">9</Option>
+          <Option value="10">10</Option>
+          <Option value="11">11</Option>
+          <Option value="12">12</Option>
+          <Option value="13">13</Option>
+          <Option value="14">14</Option>
+          <Option value="15">15</Option>
+          <Option value="16">16</Option>
+          <Option value="17">17</Option>
+          <Option value="18">18</Option>
+          <Option value="19">19</Option>
+          <Option value="20">20</Option>
+          <Option value="21">21</Option>
+          <Option value="22">22</Option>
+          <Option value="23">23</Option>
+          <Option value="24">24</Option>
+          <Option value="25">25</Option>
+          <Option value="26">26</Option>
+          <Option value="27">27</Option>
+          <Option value="28">28</Option>
+          <Option value="29">29</Option>
+          <Option value="30">30</Option>
+          <Option value="31">31</Option>
+          <Option value="32">32</Option>
+        </List>
+      </Field>
+      
+      <Field id="sep2" type="separator"/>
+      
+      <!-- Partition: Object -->
+      
+      <Field type="label" id="keypadObjectLabel">
+        <Label>Keypad Object</Label>
+      </Field>
+      <Field id="keypadName" type="textfield" defaultValue="">
+        <Label>Name:</Label>
+      </Field>
+      
+      <Field id="makeSpace1" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep3" type="separator"/>
+    
+    </ConfigUI>
+    <States>
+      
+      <!-- Keypad: Keypad States -->
+      
+      <State id="keypadNumber">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Keypad Number</TriggerLabel>
+        <ControlPageLabel>Keypad Number</ControlPageLabel>
+      </State>
+      
+      <State id="LCDMessageLine1">
+        <ValueType>String</ValueType>
+        <TriggerLabel>LCD Message Line 1</TriggerLabel>
+        <ControlPageLabel>LCD Message Line 1</ControlPageLabel>
+      </State>
+      <State id="LCDMessageLine2">
+        <ValueType>String</ValueType>
+        <TriggerLabel>LCD Message Line 2</TriggerLabel>
+        <ControlPageLabel>LCD Message Line 2</ControlPageLabel>
+      </State>
+      <State id="LCDMessageUp">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>LCD Message Up</TriggerLabel>
+        <ControlPageLabel>LCD Message Up</ControlPageLabel>
+      </State>
+      <State id="LCDMessageDown">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>LCD Message Down</TriggerLabel>
+        <ControlPageLabel>LCD Message Down</ControlPageLabel>
+      </State>
+      <State id="button0">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 0</TriggerLabel>
+        <ControlPageLabel>Button 0</ControlPageLabel>
+      </State>
+      <State id="button1">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 1</TriggerLabel>
+        <ControlPageLabel>Button 1</ControlPageLabel>
+      </State>
+      <State id="button2">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 2</TriggerLabel>
+        <ControlPageLabel>Button 2</ControlPageLabel>
+      </State>
+      <State id="button3">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 3</TriggerLabel>
+        <ControlPageLabel>Button 3</ControlPageLabel>
+      </State>
+      <State id="button4">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 4</TriggerLabel>
+        <ControlPageLabel>Button 4</ControlPageLabel>
+      </State>
+      <State id="button5">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 5</TriggerLabel>
+        <ControlPageLabel>Button 5</ControlPageLabel>
+      </State>
+      <State id="button6">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 6</TriggerLabel>
+        <ControlPageLabel>Button 6</ControlPageLabel>
+      </State>
+      <State id="button7">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 7</TriggerLabel>
+        <ControlPageLabel>Button 7</ControlPageLabel>
+      </State>
+      <State id="button8">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 8</TriggerLabel>
+        <ControlPageLabel>Button 8</ControlPageLabel>
+      </State>
+      <State id="button9">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button 9</TriggerLabel>
+        <ControlPageLabel>Button 9</ControlPageLabel>
+      </State>
+      <State id="buttonStar">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button Star</TriggerLabel>
+        <ControlPageLabel>Button Star</ControlPageLabel>
+      </State>
+      <State id="buttonHash">
+        <ValueType boolType="OnOff">Boolean</ValueType>
+        <TriggerLabel>Button Hash</TriggerLabel>
+        <ControlPageLabel>Button Hash</ControlPageLabel>
+      </State>
+      
+      <!-- Keypad: Keypad LEDs -->
+      
+      <State id="armedSystem">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Armed</TriggerLabel>
+        <ControlPageLabel>LED Armed</ControlPageLabel>
+      </State>
+      <State id="readyToArm">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Ready</TriggerLabel>
+        <ControlPageLabel>LED Ready</ControlPageLabel>
+      </State>
+      <State id="fire">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Fire</TriggerLabel>
+        <ControlPageLabel>LED Fire</ControlPageLabel>
+      </State>
+      <State id="acPowerOn">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED AC Power On</TriggerLabel>
+        <ControlPageLabel>LED AC Power On</ControlPageLabel>
+      </State>
+      <State id="stayMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Stay Mode</TriggerLabel>
+        <ControlPageLabel>LED Stay Mode</ControlPageLabel>
+      </State>
+      <State id="chimeMode">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Chime</TriggerLabel>
+        <ControlPageLabel>LED Chime</ControlPageLabel>
+      </State>
+      <State id="exitDelay">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Exit Delay</TriggerLabel>
+        <ControlPageLabel>LED Exit Delay</ControlPageLabel>
+      </State>
+      <State id="zoneBypass">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Bypass</TriggerLabel>
+        <ControlPageLabel>LED Bypass</ControlPageLabel>
+      </State>
+      <State id="cancelPending">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>LED Cancel</TriggerLabel>
+        <ControlPageLabel>LED Cancel</ControlPageLabel>
+      </State>
+    </States>
+    <UiDisplayStateId>keypadNumber</UiDisplayStateId>
+  </Device>
+  
+  
+  <!-- Define Caddx NetworX NX-8e Zones ============================================ -->
+  <Device type="custom" id="zone">
+    <Name>Security Zone</Name>
+    <ConfigUI>
+      <Field id="infoLabel" type="label">
+        <Label>Configuration</Label>
+      </Field>
+      
+      <Field id="sep1" type="separator"/>
+      
+      <!-- Select Zone -->
+      
+      <Field id="address" type="menu" defaultValue="">
+        <Label>Zone Number:</Label>
+        <List class="self" method="getZoneList"/>
+      </Field>
+      
+      <Field id="zoneType" type="menu" defaultValue="zoneTypeMotion">
+        <Label>Sensor Type:</Label>
+        <List>
+          <Option value="zoneTypeDoor">Door Sensor</Option>
+          <Option value="zoneTypeWindow">Window Sensor</Option>
+          <Option value="zoneTypeMotionInterior">Interior Motion Sensor</Option>
+          <Option value="zoneTypeMotionPerimeter">Perimeter Motion Sensor</Option>
+          <Option value="zoneTypeGlassBreak">Glass Break Detector</Option>
+          <Option value="zoneTypeSmoke">Smoke Detector</Option>
+          <Option value="zoneTypeFloorPressure">Floor Pressure Sensor</Option>
+          <Option value="zoneTypeGarageDoor">Garage Door</Option>
+          <Option value="zoneTypeDoorEntryExitDelay1">Door Entry/Exit (delay1)</Option>
+          <Option value="zoneTypeDoorEntryExitDelay2">Door Entry/Exit (delay2)</Option>
+          <Option value="zoneTypeDoorEntryExitChime">Door Entry/Exit (chime)</Option>
+          <Option value="zoneTypeMaintainKeyswitch">Maintained Keyswitch Arm/DisArm</Option>
+          <Option value="zoneTypeMomentaryKeyswitch">Momentary Keyswitch Arm/DisArm</Option>
+          <Option value="zoneTypeFire">Fire Alert</Option>
+          <Option value="zoneTypeMedical">Medical Alert 24 hour</Option>
+          <Option value="zoneTypeDuress">Duress Alert</Option>
+          <Option value="zoneTypeDigitalInput">Digital Input</Option>
+          <Option value="zoneTypeGasDetector">Gas Detector</Option>
+          <Option value="zoneTypeHighTemp">High Temp Sensor</Option>
+          <Option value="zoneTypeLowTemp">Low Temp Sensor</Option>
+          <Option value="zoneTypeWaterLeak">Water Leak Detector</Option>
+          <Option value="zoneTypeEntryGuard">Entry Guard</Option>
+        </List>
+      </Field>
+      
+      <Field id="sep2" type="separator"/>
+      
+      <!-- Zone: Object -->
+      
+      <Field type="label" id="zoneObjectLabel">
+        <Label>Zone Object</Label>
+      </Field>
+      <Field id="zoneName" type="textfield" defaultValue="no value assigned">
+        <Label>Name:</Label>
+      </Field>
+      <Field id="zoneDisplayName" type="textfield" defaultValue="value unassigned">
+        <Label>Display Name:</Label>
+      </Field>
+      <Field id="zoneGroupType" type="textfield" defaultValue="value unassigned">
+        <Label>Group Type:</Label>
+      </Field>
+      <Field id="zoneGroupDescription" type="textfield" defaultValue="value unassigned">
+        <Label>Group Description:</Label>
+      </Field>
+      
+      <Field id="makeSpace1" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep3" type="separator"/>
+      
+      <!-- Zone: Type Level 1 -->
+      
+      <Field type="label" id="zoneTypeLevel1Label">
+        <Label>Zone Type Level 1 --readOnly:</Label>
+      </Field>
+      <Field id="fire" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Fire:</Label>
+      </Field>
+      <Field id="in24HourFormat" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>In 24-Hour Format:</Label>
+      </Field>
+      <Field id="keySwitch" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Key Switch:</Label>
+      </Field>
+      <Field id="follower" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Follower:</Label>
+      </Field>
+      <Field id="entryExitDelay1" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Entry/Exit Delay 1:</Label>
+      </Field>
+      <Field id="entryExitDelay2" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Entry/Exit Delay 2:</Label>
+      </Field>
+      <Field id="interior" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Interior:</Label>
+      </Field>
+      <Field id="localOnly" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Local Only:</Label>
+      </Field>
+      
+      <Field id="makeSpace2" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep4" type="separator"/>
+      
+      <!-- Zone: Type Level 2 -->
+      
+      <Field type="label" id="zoneTypeLevel2Label">
+        <Label>Zone Type Level 2 --readOnly:</Label>
+      </Field>
+      <Field id="keypadSounder" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Keypad Sounder:</Label>
+      </Field>
+      <Field id="yelpingSiren" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Yelping Siren:</Label>
+      </Field>
+      <Field id="steadySiren" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Steady Siren:</Label>
+      </Field>
+      <Field id="chime" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Chime:</Label>
+      </Field>
+      <Field id="bypassableType" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Bypassable Type:</Label>
+      </Field>
+      <Field id="groupBypassable" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Group Bypassable:</Label>
+      </Field>
+      <Field id="forceArmable" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Force Armable:</Label>
+      </Field>
+      <Field id="entryGuard" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Entry Guard:</Label>
+      </Field>
+      
+      <Field id="makeSpace3" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep5" type="separator"/>
+      
+      <!-- Zone: Type Level 3 -->
+      
+      <Field type="label" id="zoneTypeLevel3Label">
+        <Label>Zone Type Level 3 --readOnly:</Label>
+      </Field>
+      <Field id="fastLoopResponse" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Fast Loop Response:</Label>
+      </Field>
+      <Field id="doubleEOLTamper" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Double End Of Line Tamper:</Label>
+      </Field>
+      <Field id="troubleZoneType" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Trouble Zone Type:</Label>
+      </Field>
+      <Field id="crossZone" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Cross Zone:</Label>
+      </Field>
+      <Field id="dialerDelay" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Dialer Delay:</Label>
+      </Field>
+      <Field id="swingerShutdown" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Swinger Shutdown:</Label>
+      </Field>
+      <Field id="restorable" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Restorable:</Label>
+      </Field>
+      <Field id="listenIn" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Listen In:</Label>
+      </Field>
+      
+      <Field id="makeSpace4" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep6" type="separator"/>
+    
+    </ConfigUI>
+    <States>
+      
+      <!-- Select Zone -->
+      
+      <State id="zoneNumber">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>Zone Number</TriggerLabel>
+        <ControlPageLabel>Zone Number</ControlPageLabel>
+      </State>
+      
+      <!-- Zone: Security State -->
+      
+      <State id="zoneState">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Zone state changed:</TriggerLabel>
+        <TriggerLabelPrefix>State changed to</TriggerLabelPrefix>
+        <ControlPageLabel>Current state</ControlPageLabel>
+        <ControlPageLabelPrefix>State is</ControlPageLabelPrefix>
+      </State>
+      
+      <State id="zoneDisplay">
+        <ValueType>String</ValueType>
+        <TriggerLabel>zoneDisplay</TriggerLabel>
+        <ControlPageLabel>zoneDisplay</ControlPageLabel>
+      </State>
+      
+      <State id="lastTriggered">
+        <ValueType>String</ValueType>
+        <TriggerLabel>lastTriggered</TriggerLabel>
+        <ControlPageLabel>lastTriggered</ControlPageLabel>
+      </State>
+      
+      <State id="lastNormal">
+        <ValueType>String</ValueType>
+        <TriggerLabel>lastNormal</TriggerLabel>
+        <ControlPageLabel>lastNormal</ControlPageLabel>
+      </State>
+      
+      <State id="faultedOrDelayedTrip">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone is (faulted or delayed trip)</TriggerLabel>
+        <ControlPageLabel>Faulted Or Delayed Trip</ControlPageLabel>
+      </State>
+      <State id="tampered">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone is (tampered)</TriggerLabel>
+        <ControlPageLabel>Tampered</ControlPageLabel>
+      </State>
+      <State id="troubleCondition">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone is (trouble condition)</TriggerLabel>
+        <ControlPageLabel>Trouble Condition</ControlPageLabel>
+      </State>
+      <State id="bypassedCondition">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone is (bypassed)</TriggerLabel>
+        <ControlPageLabel>Bypassed Condition</ControlPageLabel>
+      </State>
+      <State id="inhibitedForceArmed">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone has (inhibited force armed)</TriggerLabel>
+        <ControlPageLabel>Inhibited Force Armed</ControlPageLabel>
+      </State>
+      <State id="lowBattery">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone has (low battery)</TriggerLabel>
+        <ControlPageLabel>Low Battery</ControlPageLabel>
+      </State>
+      <State id="lossOfSupervision">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone has (loss of supervision)</TriggerLabel>
+        <ControlPageLabel>Loss Of Supervision</ControlPageLabel>
+      </State>
+      
+      <!-- Zone: Zone Condition Level 2 -->
+      
+      <State id="alarmMemoryCondition">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone has (alarm memory condition)</TriggerLabel>
+        <ControlPageLabel>Alarm Memory Condition</ControlPageLabel>
+      </State>
+      <State id="bypassMemory">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Zone has (bypass memory)</TriggerLabel>
+        <ControlPageLabel>Bypass Memory</ControlPageLabel>
+      </State>
+    </States>
+    <UiDisplayStateId>zoneDisplay</UiDisplayStateId>
+  </Device>
+  
+  
+  <!-- Define Caddx NetworX NX-8e User ============================================ -->
+  <Device type="custom" id="user">
+    <Name>User</Name>
+    <ConfigUI>
+      <Field id="infoLabel" type="label">
+        <Label>Configuration</Label>
+      </Field>
+      
+      <Field id="sep1" type="separator"/>
+      
+      <!-- Select User -->
+      
+      <Field id="address" type="menu" defaultValue="1">
+        <Label>User:</Label>
+        <List>
+          <Option value="1">1</Option>
+          <Option value="2">2</Option>
+          <Option value="3">3</Option>
+          <Option value="4">4</Option>
+          <Option value="5">5</Option>
+          <Option value="6">6</Option>
+          <Option value="7">7</Option>
+          <Option value="8">8</Option>
+          <Option value="9">9</Option>
+          <Option value="10">10</Option>
+          <Option value="11">11</Option>
+          <Option value="12">12</Option>
+          <Option value="13">13</Option>
+          <Option value="14">14</Option>
+          <Option value="15">15</Option>
+          <Option value="16">16</Option>
+          <Option value="17">17</Option>
+          <Option value="18">18</Option>
+          <Option value="19">19</Option>
+          <Option value="20">20</Option>
+          <Option value="21">21</Option>
+          <Option value="22">22</Option>
+          <Option value="23">23</Option>
+          <Option value="24">24</Option>
+          <Option value="25">25</Option>
+          <Option value="26">26</Option>
+          <Option value="27">27</Option>
+          <Option value="28">28</Option>
+          <Option value="29">29</Option>
+          <Option value="30">30</Option>
+          <Option value="31">31</Option>
+          <Option value="32">32</Option>
+          <Option value="33">33</Option>
+          <Option value="34">34</Option>
+          <Option value="35">35</Option>
+          <Option value="36">36</Option>
+          <Option value="37">37</Option>
+          <Option value="38">38</Option>
+          <Option value="39">39</Option>
+          <Option value="40">40</Option>
+        </List>
+      </Field>
+      
+      <Field id="sep2" type="separator"/>
+      
+      <!-- User: Object -->
+      
+      <Field type="label" id="userObjectLabel">
+        <Label>User Object</Label>
+      </Field>
+      
+      <Field id="userName" type="textfield" defaultValue="">
+        <Label>Name:</Label>
+      </Field>
+      <Field id="userPin" type="textfield" defaultValue="">
+        <Label>User Pin:</Label>
+      </Field>
+      
+      <Field id="makeSpace1" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep3" type="separator"/>
+      
+      <!-- User: User Authority Flag 1 -->
+      
+      <Field type="label" id="userAuthorityFlag1Label">
+        <Label>User Authority Flag 1 --readOnly:</Label>
+      </Field>
+      
+      <Field id="reservedbit0UserAuthorityFlag1" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Reserved Bit0:</Label>
+      </Field>
+      <Field id="armOnly" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Arm Only:</Label>
+      </Field>
+      <Field id="armOnlyDuringCloseWindow" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Arm Only During Close Window:</Label>
+      </Field>
+      <Field id="masterProgram" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Master Program:</Label>
+      </Field>
+      <Field id="armDisarmEnabled" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Arm Disarm Enabled:</Label>
+      </Field>
+      <Field id="bypassEnabled" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Bypass Enabled:</Label>
+      </Field>
+      <Field id="openCloseReportEnabled" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Open Close Report Enabled:</Label>
+      </Field>
+      <Field id="mustBe0" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Must Be 0:</Label>
+      </Field>
+      
+      <Field id="makeSpace2" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep4" type="separator"/>
+      
+      <!-- User: User Authority Flag 2 -->
+      
+      <Field type="label" id="userAuthorityFlag2Label">
+        <Label>User Authority Flag 2 --readOnly:</Label>
+      </Field>
+      <Field id="output1Enable" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Output 1 Enable:</Label>
+      </Field>
+      <Field id="output2Enable" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Output 2 Enable:</Label>
+      </Field>
+      <Field id="output3Enable" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Output 3 Enable:</Label>
+      </Field>
+      <Field id="output4Enable" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Output 4 Enable:</Label>
+      </Field>
+      
+      <Field id="makeSpace3" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep5" type="separator"/>
+      
+      <!-- User: User Authorised Partitions -->
+      
+      <Field type="label" id="userAuthorisedPartitionLabel">
+        <Label>User Authorised Partitions --readOnly:</Label>
+      </Field>
+      
+      <Field id="authorisedForPartition1" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 1:</Label>
+      </Field>
+      <Field id="authorisedForPartition2" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 2:</Label>
+      </Field>
+      <Field id="authorisedForPartition3" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 3:</Label>
+      </Field>
+      <Field id="authorisedForPartition4" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 4:</Label>
+      </Field>
+      <Field id="authorisedForPartition5" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 5:</Label>
+      </Field>
+      <Field id="authorisedForPartition6" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 6:</Label>
+      </Field>
+      <Field id="authorisedForPartition7" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 7:</Label>
+      </Field>
+      <Field id="authorisedForPartition8" type="checkbox" readOnly="YES" defaultValue="false">
+        <Label>Authorised For Partition 8:</Label>
+      </Field>
+      
+      <Field id="makeSpace4" type="label">
+        <Label/>
+      </Field>
+      
+      <Field id="sep6" type="separator"/>
     
     
-    <!-- Define Caddx NetworX NX-8e System Status ============================================ -->
-    <Device type="custom" id="statusInfo">
-        <Name>Status Info</Name>
-        <ConfigUI>
-            <Field id="infoLabel" type="label">
-                <Label>Configuration</Label>
-            </Field>
-            
-            <Field id="sep1" type="separator"/>
-            
-            <!-- Select Panel -->
-            
-            <Field id="address" type="menu" defaultValue="4">
-                <Label>Model:</Label>
-                    <List>
-                    <Option value="1">NX-4</Option>
-                    <Option value="2">NX-6</Option>
-                    <Option value="3">NX-8</Option>
-                    <Option value="4">NX-8e</Option>
-                    </List>
-            </Field>
-            
-            <Field id="sep2" type="separator"/>
+    </ConfigUI>
+    <States>
+      
+      <!-- Select User -->
+      
+      <State id="userNumber">
+        <ValueType>Number</ValueType>
+        <TriggerLabel>User Number</TriggerLabel>
+        <ControlPageLabel>User Number</ControlPageLabel>
+      </State>
+      <State id="userPin">
+        <ValueType>String</ValueType>
+        <TriggerLabel>User Pin</TriggerLabel>
+        <ControlPageLabel>User Pin</ControlPageLabel>
+      </State>
+      
+      <State id="sep0">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- User: User Authority Flag 1 -->
+      
+      <State id="reservedbit0UserAuthorityFlag1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Reserved Bit0</TriggerLabel>
+        <ControlPageLabel>Reserved Bit0</ControlPageLabel>
+      </State>
+      <State id="armOnly">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Arm Only</TriggerLabel>
+        <ControlPageLabel>Arm Only</ControlPageLabel>
+      </State>
+      <State id="armOnlyDuringCloseWindow">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Arm Only During Close Window</TriggerLabel>
+        <ControlPageLabel>Arm Only During Close Window</ControlPageLabel>
+      </State>
+      <State id="masterProgram">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Master Program</TriggerLabel>
+        <ControlPageLabel>Master Program</ControlPageLabel>
+      </State>
+      <State id="armDisarmEnabled">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Arm Disarm Enabled</TriggerLabel>
+        <ControlPageLabel>Arm Disarm Enabled</ControlPageLabel>
+      </State>
+      <State id="bypassEnabled">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Bypass Enabled</TriggerLabel>
+        <ControlPageLabel>Bypass Enabled</ControlPageLabel>
+      </State>
+      <State id="openCloseReportEnabled">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Open Close Report Enabled</TriggerLabel>
+        <ControlPageLabel>Open Close Report Enabled</ControlPageLabel>
+      </State>
+      <State id="mustBe0">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Must Be 0</TriggerLabel>
+        <ControlPageLabel>Must Be 0</ControlPageLabel>
+      </State>
+      
+      <State id="sep1">
+        <ValueType>Separator</ValueType>
+      </State>
+      
+      <!-- User: User Authority Flag 2 -->
+      
+      <State id="output1Enable">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Output 1 Enable</TriggerLabel>
+        <ControlPageLabel>Output 1 Enable</ControlPageLabel>
+      </State>
+      <State id="output2Enable">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Output 2 Enable</TriggerLabel>
+        <ControlPageLabel>Output 2 Enable</ControlPageLabel>
+      </State>
+      <State id="output3Enable">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Output 3 Enable</TriggerLabel>
+        <ControlPageLabel>Output 3 Enable</ControlPageLabel>
+      </State>
+      <State id="output4Enable">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Output 4 Enable</TriggerLabel>
+        <ControlPageLabel>Output 4 Enable</ControlPageLabel>
+      </State>
+      
+      <!-- User: User Authorised Partitions -->
+      
+      <State id="authorisedForPartition1">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 1</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 1</ControlPageLabel>
+      </State>
+      <State id="authorisedForPartition2">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 2</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 2</ControlPageLabel>
+      </State>
+      <State id="authorisedForPartition3">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 3</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 3</ControlPageLabel>
+      </State>
+      <State id="authorisedForPartition4">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 4</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 4</ControlPageLabel>
+      </State>
+      <State id="authorisedForPartition5">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 5</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 5</ControlPageLabel>
+      </State>
+      <State id="authorisedForPartition6">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 6</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 6</ControlPageLabel>
+      </State>
+      <State id="authorisedForPartition7">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 7</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 7</ControlPageLabel>
+      </State>
+      <State id="authorisedForPartition8">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Authorised For Partition 8</TriggerLabel>
+        <ControlPageLabel>Authorised For Partition 8</ControlPageLabel>
+      </State>
     
-        </ConfigUI>             
-        <States>
-        
-            <!-- System: Panel States -->
-            
-            <State id="systemNumber">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Panel ID</TriggerLabel>
-                <ControlPageLabel>Panel ID</ControlPageLabel>
-			</State>
-            <State id="model">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Model</TriggerLabel>
-                <ControlPageLabel>Model</ControlPageLabel>
-			</State>
-            
-            <State id="sep0">
-				<ValueType>Separator</ValueType>
-			</State>
-        
-            <!-- System: Panel Byte 3 -->
-            
-            <State id="lineSeizure">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Line Seizure</TriggerLabel>
-                <ControlPageLabel>Line Seizure</ControlPageLabel>
-			</State>
-            <State id="offHook">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Off Hook</TriggerLabel>
-				<ControlPageLabel>Off Hook</ControlPageLabel>
-			</State>
-            <State id="initialHandshakeReceived">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Initial Handshake Received</TriggerLabel>
-				<ControlPageLabel>Initial Handshake Received</ControlPageLabel>
-			</State>
-            <State id="downloadInProgress">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Download In Progress</TriggerLabel>
-				<ControlPageLabel>Download In Progress</ControlPageLabel>
-			</State>
-			<State id="dialerDelayInProgress">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Dialer Delay In Progress</TriggerLabel>
-				<ControlPageLabel>Dialer Delay In Progress</ControlPageLabel>
-            </State>
-            <State id="usingBackupPhone">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Using Backup Phone</TriggerLabel>
-				<ControlPageLabel>Using Backup Phone</ControlPageLabel>
-			</State>
-			<State id="listenInActive">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Listen In Active</TriggerLabel>
-				<ControlPageLabel>Listen In Active</ControlPageLabel>
-			</State>
-            <State id="twoWayLockout">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Two Way Lockout</TriggerLabel>
-				<ControlPageLabel>Two Way Lockout</ControlPageLabel>
-			</State>
-            
-            <State id="sep1">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 4 -->
-            
-            <State id="groundFault">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Ground Fault</TriggerLabel>
-                <ControlPageLabel>Ground Fault</ControlPageLabel>
-			</State> 
-			<State id="phoneFault">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Phone Fault</TriggerLabel>
-				<ControlPageLabel>Phone Fault</ControlPageLabel>
-			</State>
-			<State id="failToCommunicate">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Fail To Communicate</TriggerLabel>
-				<ControlPageLabel>Fail To Communicate</ControlPageLabel>
-			</State>
-            <State id="fuseFault">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Fuse Fault</TriggerLabel>
-				<ControlPageLabel>Fuse Fault</ControlPageLabel>
-			</State>
-			<State id="boxTamper">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Box Tamper</TriggerLabel>
-				<ControlPageLabel>Box Tamper</ControlPageLabel>
-            </State>
-            <State id="sirenTamper">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Siren Tamper</TriggerLabel>
-				<ControlPageLabel>Siren Tamper</ControlPageLabel>
-			</State>
-			<State id="lowBattery">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Low Battery</TriggerLabel>
-				<ControlPageLabel>Low Battery</ControlPageLabel>
-			</State>
-            <State id="acFail">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>AC Fail</TriggerLabel>
-				<ControlPageLabel>AC Fail</ControlPageLabel>
-			</State>
-            
-            <State id="sep2">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 5 -->
-            
-            <State id="expanderBoxTamper">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Expander Box Tamper</TriggerLabel>
-                <ControlPageLabel>Expander Box Tamper</ControlPageLabel>
-			</State> 
-			<State id="expanderACFailure">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Expander AC Failure</TriggerLabel>
-				<ControlPageLabel>Expander AC Failure</ControlPageLabel>
-			</State>
-			<State id="expanderLowBattery">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Expander Low Battery</TriggerLabel>
-				<ControlPageLabel>Expander Low Battery</ControlPageLabel>
-			</State>
-            <State id="expanderLossOffSupervision">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Expander Loss Off Supervision</TriggerLabel>
-				<ControlPageLabel>Expander Loss Off Supervision</ControlPageLabel>
-			</State>
-			<State id="expanderAuxOverCurrent">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Expander Aux Over Current</TriggerLabel>
-				<ControlPageLabel>Expander Aux Over Current</ControlPageLabel>
-            </State>
-            <State id="auxiliaryCommChannelFailure">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Auxiliary Comm Channel Failure</TriggerLabel>
-				<ControlPageLabel>Auxiliary Comm Channel Failure</ControlPageLabel>
-			</State>
-			<State id="expanderBellFault">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Expander Bell Fault</TriggerLabel>
-				<ControlPageLabel>Expander Bell Fault</ControlPageLabel>
-			</State>
-            <State id="zreservedbit7PanelByte5">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit7 Panel Byte5</TriggerLabel>
-				<ControlPageLabel>Reserved Bit7 Panel Byte5</ControlPageLabel>
-			</State>
-            
-            <State id="sep3">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 6 -->
-            
-            <State id="enable6DigitPin">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Enable 6 Digit Pin</TriggerLabel>
-                <ControlPageLabel>Enable 6 Digit Pin</ControlPageLabel>
-			</State> 
-			<State id="programmingTokenInUse">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Programming Token In Use</TriggerLabel>
-				<ControlPageLabel>Programming Token In Use</ControlPageLabel>
-			</State>
-			<State id="pinRequiredForLocalDownload">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Pin Required For Local Download</TriggerLabel>
-				<ControlPageLabel>Pin Required For Local Download</ControlPageLabel>
-			</State>
-            <State id="globalPulsingBuzzer">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Global Pulsing Buzzer</TriggerLabel>
-				<ControlPageLabel>Global Pulsing Buzzer</ControlPageLabel>
-			</State>
-			<State id="globalSirenOn">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Global Siren On</TriggerLabel>
-				<ControlPageLabel>Global Siren On</ControlPageLabel>
-            </State>
-            <State id="globalSteadySiren">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Global Steady Siren</TriggerLabel>
-				<ControlPageLabel>Global Steady Siren</ControlPageLabel>
-			</State>
-			<State id="busDeviceHasLineSeized">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Bus Device Has Line Seized</TriggerLabel>
-				<ControlPageLabel>Bus Device Has Line Seized</ControlPageLabel>
-			</State>
-            <State id="busDeviceRequestedSniffMode">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Bus Device Requested Sniff Mode</TriggerLabel>
-				<ControlPageLabel>Bus Device Requested Sniff Mode</ControlPageLabel>
-			</State>
-            
-            <State id="sep4">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 7 -->
-            
-            <State id="dynamicBatteryTest">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Dynamic Battery Test</TriggerLabel>
-                <ControlPageLabel>Dynamic Battery Test</ControlPageLabel>
-			</State> 
-			<State id="acPowerOn">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>AC Power On</TriggerLabel>
-				<ControlPageLabel>AC Power On</ControlPageLabel>
-			</State>
-			<State id="lowBatteryMemory">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Low Battery Memory</TriggerLabel>
-				<ControlPageLabel>Low Battery Memory</ControlPageLabel>
-			</State>
-            <State id="groundFaultMemory">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Ground Fault Memory</TriggerLabel>
-				<ControlPageLabel>Ground Fault Memory</ControlPageLabel>
-			</State>
-			<State id="fireAlarmVerificationBeingTimed">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Fire Alarm Verification Being Timed</TriggerLabel>
-				<ControlPageLabel>Fire Alarm Verification Being Timed</ControlPageLabel>
-            </State>
-            <State id="smokePowerReset">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Smoke Power Reset</TriggerLabel>
-				<ControlPageLabel>Smoke Power Reset</ControlPageLabel>
-			</State>
-			<State id="linePowerDetected50Hz">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Line Power Detected 50Hz</TriggerLabel>
-				<ControlPageLabel>Line Power Detected 50Hz</ControlPageLabel>
-			</State>
-            <State id="timingHighVoltageBatteryCharge">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Timing High Voltage Battery Charge</TriggerLabel>
-				<ControlPageLabel>Timing High Voltage Battery Charge</ControlPageLabel>
-			</State>
-            
-            <State id="sep5">
-				<ValueType>Separator</ValueType>
-			</State>
-                        
-            <!-- System: Panel Byte 8 -->
-            
-            <State id="communicationSinceLastAutoTest">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Communication Since Last Auto Test</TriggerLabel>
-                <ControlPageLabel>Communication Since Last Auto Test</ControlPageLabel>
-			</State> 
-			<State id="powerUpDelayInProgress">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Power Up Delay In Progress</TriggerLabel>
-				<ControlPageLabel>Power Up Delay In Progress</ControlPageLabel>
-			</State>
-			<State id="walkTestMode">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Walk Test Mode</TriggerLabel>
-				<ControlPageLabel>Walk Test Mode</ControlPageLabel>
-			</State>
-            <State id="lossOfSystemTime">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Loss Of System Time</TriggerLabel>
-				<ControlPageLabel>Loss Of System Time</ControlPageLabel>
-			</State>
-			<State id="enrollRequested">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Enroll Requested</TriggerLabel>
-				<ControlPageLabel>Enroll Requested</ControlPageLabel>
-            </State>
-            <State id="testFixtureMode">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Test Fixture Mode</TriggerLabel>
-				<ControlPageLabel>Test Fixture Mode</ControlPageLabel>
-			</State>
-			<State id="controlShutdownMode">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Control Shutdown Mode</TriggerLabel>
-				<ControlPageLabel>Control Shutdown Mode</ControlPageLabel>
-			</State>
-            <State id="timingACancelWindow">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Timing A Cancel Window</TriggerLabel>
-				<ControlPageLabel>Timing A Cancel Window</ControlPageLabel>
-			</State>
-            
-            <State id="sep6">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 9 -->
-            
-            <State id="zreservedbit0PanelByte9">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Reserved Bit0 Panel Byte9</TriggerLabel>
-                <ControlPageLabel>Reserved Bit0 Panel Byte9</ControlPageLabel>
-			</State> 
-			<State id="zreservedbit1PanelByte9">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit1 Panel Byte9</TriggerLabel>
-				<ControlPageLabel>Reserved Bit1 Panel Byte9</ControlPageLabel>
-			</State>
-			<State id="zreservedbit2PanelByte9">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit2 Panel Byte9</TriggerLabel>
-				<ControlPageLabel>Reserved Bit2 Panel Byte9</ControlPageLabel>
-			</State>
-            <State id="zreservedbit3PanelByte9">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit3 Panel Byte9</TriggerLabel>
-				<ControlPageLabel>Reserved Bit3 Panel Byte9</ControlPageLabel>
-			</State>
-			<State id="zreservedbit4PanelByte9">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit4 Panel Byte9</TriggerLabel>
-				<ControlPageLabel>Reserved Bit4 Panel Byte9</ControlPageLabel>
-            </State>
-            <State id="zreservedbit5PanelByte9">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit5 Panel Byte9</TriggerLabel>
-				<ControlPageLabel>Reserved Bit5 Panel Byte9</ControlPageLabel>
-			</State>
-			<State id="zreservedbit6PanelByte9">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Reserved Bit6 Panel Byte9</TriggerLabel>
-				<ControlPageLabel>Reserved Bit6 Panel Byte9</ControlPageLabel>
-			</State>
-            <State id="callBackInProgress">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Call Back In Progress</TriggerLabel>
-				<ControlPageLabel>Call Back In Progress</ControlPageLabel>
-			</State>
-            
-            <State id="sep7">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 10 -->
-            
-            <State id="phoneLineFaulted">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Phone Line Faulted</TriggerLabel>
-                <ControlPageLabel>Phone Line Faulted</ControlPageLabel>
-			</State> 
-			<State id="voltagePresentInterruptActive">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Voltage Present Interrupt Active</TriggerLabel>
-				<ControlPageLabel>Voltage Present Interrupt Active</ControlPageLabel>
-			</State>
-			<State id="housePhoneOffHook">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>House Phone OffHook</TriggerLabel>
-				<ControlPageLabel>House Phone OffHook</ControlPageLabel>
-			</State>
-            <State id="phoneLineMonitorEnabled">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Phone Line Monitor Enabled</TriggerLabel>
-				<ControlPageLabel>Phone Line Monitor Enabled</ControlPageLabel>
-			</State>
-			<State id="sniffing">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Sniffing</TriggerLabel>
-				<ControlPageLabel>Sniffing</ControlPageLabel>
-            </State>
-            <State id="lastReadWasOffHook">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Last Read Was OffHook</TriggerLabel>
-				<ControlPageLabel>Last Read Was OffHook</ControlPageLabel>
-			</State>
-			<State id="listenInRequested">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Listen In Requested</TriggerLabel>
-				<ControlPageLabel>Listen In Requested</ControlPageLabel>
-			</State>
-            <State id="listenInTrigger">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Listen In Trigger</TriggerLabel>
-				<ControlPageLabel>Listen In Trigger</ControlPageLabel>
-			</State>
-            
-            <State id="sep8">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 11 -->
-            
-            <State id="validPartition1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Valid Partition 1</TriggerLabel>
-                <ControlPageLabel>Valid Partition 1</ControlPageLabel>
-			</State> 
-			<State id="validPartition2">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Valid Partition 2</TriggerLabel>
-				<ControlPageLabel>Valid Partition 2</ControlPageLabel>
-			</State>
-			<State id="validPartition3">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Valid Partition 3</TriggerLabel>
-				<ControlPageLabel>Valid Partition 3</ControlPageLabel>
-			</State>
-            <State id="validPartition4">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Valid Partition 4</TriggerLabel>
-				<ControlPageLabel>Valid Partition 4</ControlPageLabel>
-			</State>
-			<State id="validPartition5">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Valid Partition 5</TriggerLabel>
-				<ControlPageLabel>Valid Partition 5</ControlPageLabel>
-            </State>
-            <State id="validPartition6">
-                <ValueType>Boolean</ValueType>
-				<TriggerLabel>Valid Partition 6</TriggerLabel>
-				<ControlPageLabel>Valid Partition 6</ControlPageLabel>
-			</State>
-			<State id="validPartition7">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Valid Partition 7</TriggerLabel>
-				<ControlPageLabel>Valid Partition 7</ControlPageLabel>
-			</State>
-            <State id="validPartition8">
-				<ValueType>Boolean</ValueType>
-				<TriggerLabel>Valid Partition 8</TriggerLabel>
-				<ControlPageLabel>Valid Partition 8</ControlPageLabel>
-			</State>
-            
-            <State id="sep9">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- System: Panel Byte 12 -->
-            
-            <State id="communicatorStackPointer">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Communicator Stack Pointer</TriggerLabel>
-                <ControlPageLabel>Communicator Stack Pointer</ControlPageLabel>
-            </State>
-            
-        </States>
-        <UiDisplayStateId>model</UiDisplayStateId>
-    </Device>
-    
-     
-    <!-- Define Caddx NetworX NX-8e Partitions ============================================ -->
-    <Device type="custom" id="partition">
-        <Name>Partition</Name>
-        <ConfigUI>
-            <Field id="infoLabel" type="label">
-                <Label>Configuration</Label>
-            </Field>
-            
-            <Field id="sep1" type="separator"/>
-            
-            <!-- Select Partitions -->
-            
-            <Field id="address" type="menu" defaultValue="1" >
-                <Label>Partition:</Label>
-                <List>
-                    <Option value="1">1</Option>
-                    <Option value="2">2</Option>
-                    <Option value="3">3</Option>
-                    <Option value="4">4</Option>
-                    <Option value="5">5</Option>
-                    <Option value="6">6</Option>
-                    <Option value="7">7</Option>
-                    <Option value="8">8</Option>
-                </List>
-            </Field>
-            <Field id="associatedKeypad" type="menu" defaultValue="1" >
-                <Label>Associated Keypad:</Label>
-                <List>
-                    <Option value="1">1</Option>
-                    <Option value="2">2</Option>
-                    <Option value="3">3</Option>
-                    <Option value="4">4</Option>
-                    <Option value="5">5</Option>
-                    <Option value="6">6</Option>
-                    <Option value="7">7</Option>
-                    <Option value="8">8</Option>
-                </List>
-            </Field>
+    </States>
+    <UiDisplayStateId>userNumber</UiDisplayStateId>
+  </Device>
 
-            <Field id="sep2" type="separator"/>
-    
-            <!-- Partition: Object -->
-            
-            <Field type="label" id="partitionObjectLabel">
-                <Label>Partition Object</Label>
-            </Field>
-            <Field id="partitionName" type="textfield" defaultValue="">
-                <Label>Name:</Label>
-            </Field>
-            
-            <Field id="makeSpace1" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep3" type="separator"/>
-            
-        </ConfigUI>             
-        <States>
-        
-            <!-- Partition: Object -->
-            
-            <State id="partitionNumber">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Partition Number</TriggerLabel>
-                <ControlPageLabel>Partition Number</ControlPageLabel>
-			</State>
-            
-             <State id="sep0">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-             <!-- Partition: Status -->
-             
-             <State id="lastUserNumber">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Last User Number</TriggerLabel>
-                <ControlPageLabel>Last User Number</ControlPageLabel>
-            </State>
-            <State id="partitionUser">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Partition User</TriggerLabel>
-                <ControlPageLabel>Partition User</ControlPageLabel>
-            </State>
-            <State id="partitionState">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Partition State</TriggerLabel>
-                <ControlPageLabel>Partition State</ControlPageLabel>
-            </State>
-            
-            <State id="sep1">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <State id="partitionStatus">
-				<ValueType>
-					<List>
-                        <Option value="disarmed">Disarmed</Option>
-						<Option value="notReady">Not Ready</Option>
-                        <Option value="armingExit">Arming (exit)</Option>
-                        <Option value="armingNotReady">Arming Not Ready</Option>
-                        <Option value="armedStay">Armed Stay</Option>
-                        <Option value="alarmEntry">Alarm (entry)</Option>
-						<Option value="alarmIntruder">ALARM Intruder</Option>
-						<Option value="armedAway">Armed Away</Option>
-                        <Option value="multipleChanges">Multiple State Changes</Option>						
-					</List>
-				</ValueType>
-				<TriggerLabel>Partition status changed:</TriggerLabel>
-				<TriggerLabelPrefix>Status changed to</TriggerLabelPrefix>
-				<ControlPageLabel>Current status</ControlPageLabel>
-				<ControlPageLabelPrefix>Status is</ControlPageLabelPrefix>
-			</State>
-            
-            <State id="sep2">
-				<ValueType>Separator</ValueType>
-			</State>
-                         
-            <!-- Partition: States -->
-            
-            <State id="securityState">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Security State</TriggerLabel>
-                <ControlPageLabel>Security State</ControlPageLabel>
-            </State>
-            
-            <State id="sep3">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Partition: Security History -->
-            
-            <State id="lastStateChange">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Last State Change</TriggerLabel>
-                <ControlPageLabel>Last State Change</ControlPageLabel>
-            </State>
-            <State id="lastZoneTrigger">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Last Zone Trigger</TriggerLabel>
-                <ControlPageLabel>Last Zone Trigger</ControlPageLabel>
-            </State>
-            <State id="lastFunction">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Last Function</TriggerLabel>
-                <ControlPageLabel>Last Function</ControlPageLabel>
-            </State>
-            <State id="statusLastFunction">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Status Last Function</TriggerLabel>
-                <ControlPageLabel>Status Last Function</ControlPageLabel>
-            </State>
-            
-            <State id="sep4">
-				<ValueType>Separator</ValueType>
-			</State>
-                        
-            <!-- Partition: Snapshot -->
-            
-            <State id="validPartition">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Valid Partition</TriggerLabel>
-                <ControlPageLabel>Valid Partition</ControlPageLabel>
-            </State>
-            <State id="securityReady">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Security Ready</TriggerLabel>
-                <ControlPageLabel>Security Ready</ControlPageLabel>
-            </State>
-            <State id="exitArm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Armed</TriggerLabel>
-                <ControlPageLabel>Armed</ControlPageLabel>
-            </State>
-            <State id="stayArm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Stay Mode</TriggerLabel>
-                <ControlPageLabel>Stay Mode</ControlPageLabel>
-            </State>
-            <State id="chimeMode">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Chime Mode</TriggerLabel>
-                <ControlPageLabel>Chime Mode</ControlPageLabel>
-            </State>
-            <State id="anyEntryDelay">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Any Entry Delay</TriggerLabel>
-                <ControlPageLabel>Any Entry Delay</ControlPageLabel>
-            </State>
-            <State id="anyExitDelay">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Any Exit Delay</TriggerLabel>
-                <ControlPageLabel>Any Exit Delay</ControlPageLabel>
-            </State>
-            <State id="partitionPreviousAlarm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Previous Alarm</TriggerLabel>
-                <ControlPageLabel>Previous Alarm</ControlPageLabel>
-            </State>
-            
-            <State id="sep5">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Partition: Condition Level 1 -->
-            
-            <State id="bypassCodeRequired">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Bypass Code Required</TriggerLabel>
-                <ControlPageLabel>Bypass Code Required</ControlPageLabel>
-            </State>
-            <State id="fireTrouble">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Fire Trouble</TriggerLabel>
-                <ControlPageLabel>Fire Trouble</ControlPageLabel>
-            </State>
-            <State id="fire">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Fire</TriggerLabel>
-                <ControlPageLabel>Fire</ControlPageLabel>
-            </State>
-            <State id="firePulsingBuzzer">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Pulsing Buzzer</TriggerLabel>
-                <ControlPageLabel>Pulsing Buzzer</ControlPageLabel>
-            </State>
-            <State id="tLMFaultMemory">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>TLM Fault Memory</TriggerLabel>
-                <ControlPageLabel>TLM Fault Memory</ControlPageLabel>
-            </State>
-            <State id="reservedbit5ConditionFlag1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Power AC On</TriggerLabel>
-                <ControlPageLabel>Power AC On</ControlPageLabel>
-            </State>
-            <State id="armedSystem">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Armed System</TriggerLabel>
-                <ControlPageLabel>Armed System</ControlPageLabel>
-            </State>
-            <State id="instant">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Instant</TriggerLabel>
-                <ControlPageLabel>Instant</ControlPageLabel>
-            </State>
-            
-            <State id="sep6">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Partition: Condition Level 2 -->
-            
-            <State id="previousAlarm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Previous Alarm</TriggerLabel>
-                <ControlPageLabel>Previous Alarm</ControlPageLabel>
-            </State>
-            <State id="sirenOn">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Siren On</TriggerLabel>
-                <ControlPageLabel>Siren On</ControlPageLabel>
-            </State>
-            <State id="steadySirenOn">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Steady Siren On</TriggerLabel>
-                <ControlPageLabel>Steady Siren On</ControlPageLabel>
-            </State>
-            <State id="alarmMemoryCondition">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Alarm Memory Condition</TriggerLabel>
-                <ControlPageLabel>Alarm Memory Condition</ControlPageLabel>
-            </State>
-            <State id="tamper">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Tamper</TriggerLabel>
-                <ControlPageLabel>Tamper</ControlPageLabel>
-            </State>
-            <State id="cancelCommandEntered">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Cancel Command Entered</TriggerLabel>
-                <ControlPageLabel>Cancel Command Entered</ControlPageLabel>
-            </State>
-            <State id="codeEntered">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Code Entered</TriggerLabel>
-                <ControlPageLabel>Code Entered</ControlPageLabel>
-            </State>
-            <State id="cancelPending">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Cancel Pending</TriggerLabel>
-                <ControlPageLabel>Cancel Pending</ControlPageLabel>
-            </State>
-            
-            <State id="sep7">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Partition: Condition Level 3 -->
-            
-            <State id="reservedbit0ConditionFlag3">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Reserved Bit0 Condition Flag3</TriggerLabel>
-                <ControlPageLabel>Reserved Bit0 Condition Flag3</ControlPageLabel>
-            </State>
-            <State id="silentExitEnabled">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Silent Exit Enabled</TriggerLabel>
-                <ControlPageLabel>Silent Exit Enabled</ControlPageLabel>
-            </State>
-            <State id="entryGuardStayMode">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Entry Guard Stay Mode</TriggerLabel>
-                <ControlPageLabel>Entry Guard Stay Mode</ControlPageLabel>
-            </State>
-            <State id="chimeModeOn">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Chime Mode On</TriggerLabel>
-                <ControlPageLabel>Chime Mode On</ControlPageLabel>
-            </State>
-            <State id="entry">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Entry</TriggerLabel>
-                <ControlPageLabel>Entry</ControlPageLabel>
-            </State>
-            <State id="delayExpirationWarning">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Delay Expiration Warning</TriggerLabel>
-                <ControlPageLabel>Delay Expiration Warning</ControlPageLabel>
-            </State>
-            <State id="exit1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Exit (delay 1)</TriggerLabel>
-                <ControlPageLabel>Exit (delay 1)</ControlPageLabel>
-            </State>
-            <State id="exit2">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Exit (delay 2)</TriggerLabel>
-                <ControlPageLabel>Exit (delay 2)</ControlPageLabel>
-            </State>
-            
-            <State id="sep8">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Partition: Condition Level 4 -->
-            
-            <State id="ledExtinguish">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Led Extinguish</TriggerLabel>
-                <ControlPageLabel>Led Extinguish</ControlPageLabel>
-            </State>
-            <State id="crossTiming">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Cross Timing</TriggerLabel>
-                <ControlPageLabel>Cross Timing</ControlPageLabel>
-            </State>
-            <State id="recentClosingBeingTimed">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Recent Closing Being Timed</TriggerLabel>
-                <ControlPageLabel>Recent Closing Being Timed</ControlPageLabel>
-            </State>
-            <State id="reservedbit3ConditionFlag4">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Reserved Bit3 Condition Flag4</TriggerLabel>
-                <ControlPageLabel>Reserved Bit3 Condition Flag4</ControlPageLabel>
-            </State>
-            <State id="exitErrorTriggered">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Exit Error Triggered</TriggerLabel>
-                <ControlPageLabel>Exit Error Triggered</ControlPageLabel>
-            </State>
-            <State id="autoHomeInhibited">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Auto Home Inhibited</TriggerLabel>
-                <ControlPageLabel>Auto Home Inhibited</ControlPageLabel>
-            </State>
-            <State id="sensorLowBattery">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Sensor Low Battery</TriggerLabel>
-                <ControlPageLabel>Sensor Low Battery</ControlPageLabel>
-            </State>
-            <State id="sensorLostSupervision">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Sensor Lost Supervision</TriggerLabel>
-                <ControlPageLabel>Sensor Lost Supervision</ControlPageLabel>
-            </State>
-            
-            <State id="sep9">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Partition: Condition Level 5 -->
-            
-            <State id="zoneBypass">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Zone Bypass</TriggerLabel>
-                <ControlPageLabel>LED Zone Bypass</ControlPageLabel>
-            </State>
-            <State id="forceArmTriggeredByAutoArm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Force Arm Triggered By Auto Arm</TriggerLabel>
-                <ControlPageLabel>Force Arm Triggered By Auto Arm</ControlPageLabel>
-            </State>
-            <State id="readyToArm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Ready To Arm</TriggerLabel>
-                <ControlPageLabel>Ready To Arm</ControlPageLabel>
-            </State>
-            <State id="readyToForceArm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Ready To Force Arm</TriggerLabel>
-                <ControlPageLabel>Ready To Force Arm</ControlPageLabel>
-            </State>
-            <State id="validPinAccepted">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Valid Pin Accepted</TriggerLabel>
-                <ControlPageLabel>Valid Pin Accepted</ControlPageLabel>
-            </State>
-            <State id="chimeOnSounding">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Chime On Sounding</TriggerLabel>
-                <ControlPageLabel>Chime On Sounding</ControlPageLabel>
-            </State>
-            <State id="errorBeepTripleBeep">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Error Beep (Triple Beep)</TriggerLabel>
-                <ControlPageLabel>Error Beep (Triple Beep)</ControlPageLabel>
-            </State>
-            <State id="toneOnActivationTone">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Tone On (Activation Tone)</TriggerLabel>
-                <ControlPageLabel>Tone On (Activation Tone)</ControlPageLabel>
-            </State>
-            
-            <State id="sep10">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Partition: Condition Level 6 -->
-            
-            <State id="entry1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Entry 1</TriggerLabel>
-                <ControlPageLabel>Entry 1</ControlPageLabel>
-            </State>
-            <State id="openPeriod">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Open Period</TriggerLabel>
-                <ControlPageLabel>Open Period</ControlPageLabel>
-            </State>
-            <State id="alarmSendUsingPhoneNumber1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Alarm Send Using Phone Number 1</TriggerLabel>
-                <ControlPageLabel>Alarm Send Using PhoneNumber 1</ControlPageLabel>
-            </State>
-            <State id="alarmSendUsingPhoneNumber2">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Alarm Send Using Phone Number 2</TriggerLabel>
-                <ControlPageLabel>Alarm Send Using Phone Number 2</ControlPageLabel>
-            </State>
-            <State id="alarmSendUsingPhoneNumber3">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Alarm Send Using Phone Number 3</TriggerLabel>
-                <ControlPageLabel>Alarm Send Using Phone Number 3</ControlPageLabel>
-            </State>
-            <State id="cancelReportIsInTheStack">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Cancel Report Is In The Stack</TriggerLabel>
-                <ControlPageLabel>Cancel Report Is In The Stack</ControlPageLabel>
-            </State>
-            <State id="keySwitchArmed">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Key Switch Armed</TriggerLabel>
-                <ControlPageLabel>Key Switch Armed</ControlPageLabel>
-            </State>
-            <State id="delayTripInProgressCommonZone">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Delay Trip In Progress Common Zone</TriggerLabel>
-                <ControlPageLabel>Delay Trip In Progress Common Zone</ControlPageLabel>
-            </State>
-                        
-		</States>
-        <UiDisplayStateId>partitionState</UiDisplayStateId>
-    </Device>
-    
-    
-    <!-- Define Caddx NetworX NX-8e Keypads ============================================ -->
-    <Device type="custom" id="keypad">
-        <Name>Keypad</Name>
-        <ConfigUI>
-            <Field id="infoLabel" type="label">
-                <Label>Configuration</Label>
-            </Field>
-            
-            <Field id="sep1" type="separator"/>
-            
-            <!-- Select Keypads -->
-            
-            <Field id="address" type="menu" defaultValue="1">
-                <Label>Keypad Address:</Label>
-                <List>
-                    <Option value="1">1</Option>
-                    <Option value="2">2</Option>
-                    <Option value="3">3</Option>
-                    <Option value="4">4</Option>
-                    <Option value="5">5</Option>
-                    <Option value="6">6</Option>
-                    <Option value="7">7</Option>
-                    <Option value="8">8</Option>
-                </List>               
-            </Field>
-
-            <Field id="sep2" type="separator"/>
-    
-            <!-- Partition: Object -->
-            
-            <Field type="label" id="keypadObjectLabel">
-                <Label>Keypad Object</Label>
-            </Field>
-            <Field id="keypadName" type="textfield" defaultValue="">
-                <Label>Name:</Label>
-            </Field>
-            
-            <Field id="makeSpace1" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep3" type="separator"/>
-            
-        </ConfigUI>             
-        <States>
-        
-            <!-- Keypad: Keypad States -->
-            
-            <State id="keypadNumber">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Keypad Number</TriggerLabel>
-                <ControlPageLabel>Keypad Number</ControlPageLabel>
-			</State>
-            
-             <State id="sep0">
-				<ValueType>Separator</ValueType>
-			</State>
-             
-			<State id="LCDMessageLine1">
-				<ValueType>String</ValueType>
-				<TriggerLabel>LCD Message Line 1</TriggerLabel>
-				<ControlPageLabel>LCD Message Line 1</ControlPageLabel>
-			</State>
-			<State id="LCDMessageLine2">
-				<ValueType>String</ValueType>
-				<TriggerLabel>LCD Message Line 2</TriggerLabel>
-				<ControlPageLabel>LCD Message Line 2</ControlPageLabel>
-			</State>
-            <State id="LCDMessageUp">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>LCD Message Up</TriggerLabel>
-				<ControlPageLabel>LCD Message Up</ControlPageLabel>
-			</State>
-			<State id="LCDMessageDown">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>LCD Message Down</TriggerLabel>
-				<ControlPageLabel>LCD Message Down</ControlPageLabel>
-			</State>
-			<State id="button0">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 0</TriggerLabel>
-				<ControlPageLabel>Button 0</ControlPageLabel>
-			</State>
-            <State id="button1">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 1</TriggerLabel>
-				<ControlPageLabel>Button 1</ControlPageLabel>
-			</State>
-            <State id="button2">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 2</TriggerLabel>
-				<ControlPageLabel>Button 2</ControlPageLabel>
-			</State>
-            <State id="button3">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 3</TriggerLabel>
-				<ControlPageLabel>Button 3</ControlPageLabel>
-			</State>
-            <State id="button4">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 4</TriggerLabel>
-				<ControlPageLabel>Button 4</ControlPageLabel>
-			</State>
-            <State id="button5">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 5</TriggerLabel>
-				<ControlPageLabel>Button 5</ControlPageLabel>
-			</State>
-            <State id="button6">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 6</TriggerLabel>
-				<ControlPageLabel>Button 6</ControlPageLabel>
-			</State>
-            <State id="button7">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 7</TriggerLabel>
-				<ControlPageLabel>Button 7</ControlPageLabel>
-			</State>
-            <State id="button8">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 8</TriggerLabel>
-				<ControlPageLabel>Button 8</ControlPageLabel>
-			</State>
-            <State id="button9">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button 9</TriggerLabel>
-				<ControlPageLabel>Button 9</ControlPageLabel>
-			</State>
-            <State id="buttonStar">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button Star</TriggerLabel>
-				<ControlPageLabel>Button Star</ControlPageLabel>
-			</State>
-            <State id="buttonHash">
-				<ValueType boolType="OnOff">Boolean</ValueType>
-				<TriggerLabel>Button Hash</TriggerLabel>
-				<ControlPageLabel>Button Hash</ControlPageLabel>
-			</State>
-            
-            <State id="sep1">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-             <!-- Keypad: Keypad LEDs -->
-             
-             <State id="armedSystem">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Armed</TriggerLabel>
-                <ControlPageLabel>LED Armed</ControlPageLabel>
-            </State>
-            <State id="readyToArm">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Ready</TriggerLabel>
-                <ControlPageLabel>LED Ready</ControlPageLabel>
-            </State>
-            <State id="fire">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Fire</TriggerLabel>
-                <ControlPageLabel>LED Fire</ControlPageLabel>
-            </State>
-            <State id="acPowerOn">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED AC Power On</TriggerLabel>
-                <ControlPageLabel>LED AC Power On</ControlPageLabel>
-            </State>
-            <State id="stayMode">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Stay Mode</TriggerLabel>
-                <ControlPageLabel>LED Stay Mode</ControlPageLabel>
-            </State>
-             <State id="chimeMode">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Chime</TriggerLabel>
-                <ControlPageLabel>LED Chime</ControlPageLabel>
-            </State>
-            <State id="exitDelay">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Exit Delay</TriggerLabel>
-                <ControlPageLabel>LED Exit Delay</ControlPageLabel>
-            </State>
-            <State id="zoneBypass">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Bypass</TriggerLabel>
-                <ControlPageLabel>LED Bypass</ControlPageLabel>
-            </State>
-            <State id="cancelPending">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>LED Cancel</TriggerLabel>
-                <ControlPageLabel>LED Cancel</ControlPageLabel>
-            </State>
-             
-             <State id="sep2">
-				<ValueType>Separator</ValueType>
-			</State>
-                        
-		</States>
-        <UiDisplayStateId>keypadNumber</UiDisplayStateId>
-    </Device>
-
-    
-	<!-- Define Caddx NetworX NX-8e Zones ============================================ -->
-    <Device type="sensor" id="zone">
-        <Name>Security Zone</Name>
-        <ConfigUI>
-            <Field id="infoLabel" type="label">
-                <Label>Configuration</Label>
-            </Field>
-            
-            <Field id="sep1" type="separator" />
-            
-            <!-- Select Zone -->
-            
-            <Field id="address" type="menu" defaultValue="" >
-                <Label>Zone Number:</Label>
-                <List class="self" method="getZoneList"/>
-			</Field>
-            
-            <Field id="zoneType" type="menu" defaultValue="zoneTypeMotion">
-                <Label>Sensor Type:</Label>
-                <List>
-                    <Option value="zoneTypeDoor">Door Sensor</Option>
-                    <Option value="zoneTypeWindow">Window Sensor</Option>
-                    <Option value="zoneTypeMotionInterior">Interior Motion Sensor</Option>
-                    <Option value="zoneTypeMotionPerimeter">Perimeter Motion Sensor</Option>
-                    <Option value="zoneTypeGlassBreak">Glass Break Detector</Option>
-                    <Option value="zoneTypeSmoke">Smoke Detector</Option>
-                    <Option value="zoneTypeFloorPressure">Floor Pressure Sensor</Option>
-                    <Option value="zoneTypeGarageDoor">Garage Door</Option>
-                    <Option value="zoneTypeDoorEntryExitDelay1">Door Entry/Exit (delay1)</Option>
-                    <Option value="zoneTypeDoorEntryExitDelay2">Door Entry/Exit (delay2)</Option>
-                    <Option value="zoneTypeDoorEntryExitChime">Door Entry/Exit (chime)</Option>
-                    <Option value="zoneTypeMaintainKeyswitch">Maintained Keyswitch Arm/DisArm</Option>
-                    <Option value="zoneTypeMomentaryKeyswitch">Momentary Keyswitch Arm/DisArm</Option>
-                    <Option value="zoneTypeFire">Fire Alert</Option>
-                    <Option value="zoneTypeMedical">Medical Alert 24 hour</Option>
-                    <Option value="zoneTypeDuress">Duress Alert</Option>
-                    <Option value="zoneTypeDigitalInput">Digital Input</Option>
-                    <Option value="zoneTypeGasDetector">Gas Detector</Option>
-                    <Option value="zoneTypeHighTemp">High Temp Sensor</Option>
-                    <Option value="zoneTypeLowTemp">Low Temp Sensor</Option>
-                    <Option value="zoneTypeWaterLeak">Water Leak Detector</Option>
-                    <Option value="zoneTypeEntryGuard">Entry Guard</Option>                    
-                </List>               
-            </Field>
-            
-            <Field id="sep2" type="separator" />
-    
-            <!-- Zone: Object -->
-            
-            <Field type="label" id="zoneObjectLabel">
-                <Label>Zone Object</Label>
-            </Field>
-            <Field id="zoneName" type="textfield" defaultValue="no value assigned">
-                <Label>Name:</Label>
-            </Field>
-            <Field id="zoneDisplayName" type="textfield" defaultValue="value unassigned">
-                <Label>Display Name:</Label>
-            </Field>
-            <Field id="zoneGroupType" type="textfield" defaultValue="value unassigned">
-                <Label>Group Type:</Label>
-            </Field>
-            <Field id="zoneGroupDescription" type="textfield" defaultValue="value unassigned">
-                <Label>Group Description:</Label>
-            </Field>
-            
-            <Field id="makeSpace1" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep3" type="separator" />
-    
-            <!-- Zone: Type Level 1 -->
-            
-            <Field type="label" id="zoneTypeLevel1Label">
-                <Label>Zone Type Level 1</Label>
-            </Field>
-            <Field id="fire" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Fire:</Label>
-            </Field>
-            <Field id="in24HourFormat" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>In 24-Hour Format:</Label>
-            </Field>
-            <Field id="keySwitch" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Key Switch:</Label>
-            </Field>
-            <Field id="follower" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Follower:</Label>
-            </Field>
-            <Field id="entryExitDelay1" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Entry/Exit Delay 1:</Label>
-            </Field>
-            <Field id="entryExitDelay2" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Entry/Exit Delay 2:</Label>
-            </Field>
-            <Field id="interior" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Interior:</Label>
-            </Field>
-            <Field id="localOnly" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Local Only:</Label>
-            </Field>
-            
-            <Field id="makeSpace2" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep4" type="separator" />
-    
-            <!-- Zone: Type Level 2 -->
-            
-            <Field type="label" id="zoneTypeLevel2Label">
-                <Label>Zone Type Level 2:</Label>
-            </Field>
-            <Field id="keypadSounder" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Keypad Sounder:</Label>
-            </Field>
-            <Field id="yelpingSiren" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Yelping Siren:</Label>
-            </Field>
-            <Field id="steadySiren" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Steady Siren:</Label>
-            </Field>
-            <Field id="chime" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Chime:</Label>
-            </Field>
-            <Field id="bypassableType" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Bypassable Type:</Label>
-            </Field>
-            <Field id="groupBypassable" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Group Bypassable:</Label>
-            </Field>
-            <Field id="forceArmable" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Force Armable:</Label>
-            </Field>
-            <Field id="entryGuard" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Entry Guard:</Label>
-            </Field>
-            
-            <Field id="makeSpace3" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep5" type="separator" />
-    
-            <!-- Zone: Type Level 3 -->
-            
-            <Field type="label" id="zoneTypeLevel3Label">
-                <Label>Zone Type Level 3</Label>
-            </Field>
-            <Field id="fastLoopResponse" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Fast Loop Response:</Label>
-            </Field>
-            <Field id="doubleEOLTamper" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Double End Of Line Tamper:</Label>
-            </Field>
-            <Field id="troubleZoneType" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Trouble Zone Type:</Label>
-            </Field>
-            <Field id="crossZone" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Cross Zone:</Label>
-            </Field>
-            <Field id="dialerDelay" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Dialer Delay:</Label>
-            </Field>
-            <Field id="swingerShutdown" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Swinger Shutdown:</Label>
-            </Field>
-            <Field id="restorable" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Restorable:</Label>
-            </Field>
-            <Field id="listenIn" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Listen In:</Label>
-            </Field>
-            
-            <Field id="makeSpace4" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep6" type="separator" />
-            
-        </ConfigUI>
-		<States>
-        
-            <!-- Select Zone -->
-        
-            <State id="zoneNumber">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>Zone Number</TriggerLabel>
-                <ControlPageLabel>Zone Number</ControlPageLabel>
-			</State>
-            
-            <State id="sep0">
-				<ValueType>Separator</ValueType>
-			</State>           
-             
-            <!-- Zone: Security State -->
-
-            <State id="sep1">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <State id="zoneState">
-				<ValueType>
-					<List>
-                        <Option value="normal">Normal</Option>
-						<Option value="triggered">Triggered</Option>
-                        <Option value="bypassed">Bypassed</Option>
-                        <Option value="tampered">Tampered</Option>
-                        <Option value="trouble">Trouble</Option>
-                        <Option value="inhibited">Inhibited</Option>
-						<Option value="lowBattery">Low Battery</Option>
-						<Option value="supervisionLoss">Supervision Loss</Option>
-                        <Option value="multipleChanges">Multiple Changes</Option>						
-					</List>
-				</ValueType>
-				<TriggerLabel>Zone state changed:</TriggerLabel>
-				<TriggerLabelPrefix>State changed to</TriggerLabelPrefix>
-				<ControlPageLabel>Current state</ControlPageLabel>
-				<ControlPageLabelPrefix>State is</ControlPageLabelPrefix>
-			</State>
-            
-            <State id="sep2">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-            <!-- Zone: Zone Condition Level 1 -->
-            
-            <State id="faultedOrDelayedTrip">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone is (faulted or delayed trip)</TriggerLabel>
-                <ControlPageLabel>Faulted Or Delayed Trip</ControlPageLabel>
-            </State>
-            <State id="tampered">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone is (tampered)</TriggerLabel>
-                <ControlPageLabel>Tampered</ControlPageLabel>
-            </State>
-            <State id="troubleCondition">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone is (trouble condition)</TriggerLabel>
-                <ControlPageLabel>Trouble Condition</ControlPageLabel>
-            </State>
-            <State id="bypassedCondition">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone is (bypassed)</TriggerLabel>
-                <ControlPageLabel>Bypassed Condition</ControlPageLabel>
-            </State>
-            <State id="inhibitedForceArmed">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone has (inhibited force armed)</TriggerLabel>
-                <ControlPageLabel>Inhibited Force Armed</ControlPageLabel>
-            </State>
-            <State id="lowBattery">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone has (low battery)</TriggerLabel>
-                <ControlPageLabel>Low Battery</ControlPageLabel>
-            </State>
-            <State id="lossOfSupervision">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone has (loss of supervision)</TriggerLabel>
-                <ControlPageLabel>Loss Of Supervision</ControlPageLabel>
-            </State>
-            
-            <!-- Zone: Zone Condition Level 2 -->
-            
-            <State id="alarmMemoryCondition">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone has (alarm memory condition)</TriggerLabel>
-                <ControlPageLabel>Alarm Memory Condition</ControlPageLabel>
-            </State>
-            <State id="bypassMemory">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Zone has (bypass memory)</TriggerLabel>
-                <ControlPageLabel>Bypass Memory</ControlPageLabel>
-            </State>
-                                    
-		</States>
-        <UiDisplayStateId>zoneState</UiDisplayStateId>
-    </Device>
-    
-    
-	<!-- Define Caddx NetworX NX-8e User ============================================ -->
-    <Device type="custom" id="user">
-        <Name>User</Name>
-        <ConfigUI>
-            <Field id="infoLabel" type="label">
-                <Label>Configuration</Label>
-            </Field>
-            
-            <Field id="sep1" type="separator" />
-            
-            <!-- Select User -->
-
-            <Field id="address" type="menu" defaultValue="1" >
-                <Label>User:</Label>
-                <List>
-                    <Option value="1">1</Option>
-                    <Option value="2">2</Option>
-                    <Option value="3">3</Option>
-                    <Option value="4">4</Option>
-                    <Option value="5">5</Option>
-                    <Option value="6">6</Option>
-                    <Option value="7">7</Option>
-                    <Option value="8">8</Option>
-                </List>
-            </Field>
-            
-            <Field id="sep2" type="separator" />
-                       
-            <!-- User: Object -->
-            
-            <Field type="label" id="userObjectLabel">
-                <Label>User Object</Label>
-            </Field>
-
-            <Field id="userName" type="textfield" defaultValue="">
-                <Label>Name:</Label>
-            </Field>
-            <Field id="userPin" type="textfield" defaultValue="">
-                <Label>User Pin:</Label>
-            </Field>
-            
-            <Field id="makeSpace1" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep3" type="separator" />
-    
-            <!-- User: User Authority Flag 1 -->
-            
-            <Field type="label" id="userAuthorityFlag1Label">
-                <Label>User Authority Flag 1</Label>
-            </Field>
-            
-            <Field id="reservedbit0UserAuthorityFlag1" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Reserved Bit0:</Label>
-            </Field>
-            <Field id="armOnly" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Arm Only:</Label>
-            </Field>
-            <Field id="armOnlyDuringCloseWindow" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Arm Only During Close Window:</Label>
-            </Field>
-            <Field id="masterProgram" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Master Program:</Label>
-            </Field>
-            <Field id="armDisarmEnabled" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Arm Disarm Enabled:</Label>
-            </Field>
-            <Field id="bypassEnabled" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Bypass Enabled:</Label>
-            </Field>
-            <Field id="openCloseReportEnabled" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Open Close Report Enabled:</Label>
-            </Field>
-            <Field id="mustBe0" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Must Be 0:</Label>
-            </Field>
-            
-            <Field id="makeSpace2" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep4" type="separator" />
-    
-            <!-- User: User Authority Flag 2 -->
-            
-            <Field type="label" id="userAuthorityFlag2Label">
-                <Label>User Authority Flag 2</Label>
-            </Field>
-            <Field id="output1Enable" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Output 1 Enable:</Label>
-            </Field>
-            <Field id="output2Enable" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Output 2 Enable:</Label>
-            </Field>
-            <Field id="output3Enable" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Output 3 Enable:</Label>
-            </Field>
-            <Field id="output4Enable" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Output 4 Enable:</Label>
-            </Field>
-            
-            <Field id="makeSpace3" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep5" type="separator" />
-    
-            <!-- User: User Authorised Partitions -->
-            
-            <Field type="label" id="userAuthorisedPartitionLabel">
-                <Label>User Authorised Partitions</Label>
-            </Field>
-            
-            <Field id="authorisedForPartition1" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 1:</Label>
-            </Field>
-            <Field id="authorisedForPartition2" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 2:</Label>
-            </Field>
-            <Field id="authorisedForPartition3" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 3:</Label>
-            </Field>
-            <Field id="authorisedForPartition4" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 4:</Label>
-            </Field>
-            <Field id="authorisedForPartition5" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 5:</Label>
-            </Field>
-            <Field id="authorisedForPartition6" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 6:</Label>
-            </Field>
-            <Field id="authorisedForPartition7" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 7:</Label>
-            </Field>
-            <Field id="authorisedForPartition8" type="checkbox" readOnly = "YES" defaultValue="false">
-                <Label>Authorised For Partition 8:</Label>
-            </Field>
-            
-            <Field id="makeSpace4" type="label">
-                <Label/>
-            </Field>
-            
-            <Field id="sep6" type="separator" />    
-        
-            
-        </ConfigUI>
-        <States>
-
-            <!-- Select User -->
-        
-            <State id="userNumber">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>User Number</TriggerLabel>
-                <ControlPageLabel>User Number</ControlPageLabel>
-			</State>
-            <State id="userPin">
-                <ValueType>Float</ValueType>
-                <TriggerLabel>User Pin</TriggerLabel>
-                <ControlPageLabel>User Pin</ControlPageLabel>
-			</State>
-            
-              <State id="sep0">
-				<ValueType>Separator</ValueType>
-			</State>
-        
-            <!-- User: User Authority Flag 1 -->
-            
-            <State id="reservedbit0UserAuthorityFlag1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Reserved Bit0</TriggerLabel>
-                <ControlPageLabel>Reserved Bit0</ControlPageLabel>
-			</State>
-            <State id="armOnly">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Arm Only</TriggerLabel>
-                <ControlPageLabel>Arm Only</ControlPageLabel>
-			</State>
-            <State id="armOnlyDuringCloseWindow">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Arm Only During Close Window</TriggerLabel>
-                <ControlPageLabel>Arm Only During Close Window</ControlPageLabel>
-			</State>
-            <State id="masterProgram">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Master Program</TriggerLabel>
-                <ControlPageLabel>Master Program</ControlPageLabel>
-			</State>
-            <State id="armDisarmEnabled">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Arm Disarm Enabled</TriggerLabel>
-                <ControlPageLabel>Arm Disarm Enabled</ControlPageLabel>
-			</State>
-            <State id="bypassEnabled">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Bypass Enabled</TriggerLabel>
-                <ControlPageLabel>Bypass Enabled</ControlPageLabel>
-			</State>
-            <State id="openCloseReportEnabled">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Open Close Report Enabled</TriggerLabel>
-                <ControlPageLabel>Open Close Report Enabled</ControlPageLabel>
-			</State>
-            <State id="mustBe0">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Must Be 0</TriggerLabel>
-                <ControlPageLabel>Must Be 0</ControlPageLabel>
-			</State>
-            
-            <State id="sep1">
-				<ValueType>Separator</ValueType>
-			</State>
-                            
-            <!-- User: User Authority Flag 2 -->
-            
-            <State id="output1Enable">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Output 1 Enable</TriggerLabel>
-                <ControlPageLabel>Output 1 Enable</ControlPageLabel>
-			</State>
-            <State id="output2Enable">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Output 2 Enable</TriggerLabel>
-                <ControlPageLabel>Output 2 Enable</ControlPageLabel>
-			</State>
-            <State id="output3Enable">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Output 3 Enable</TriggerLabel>
-                <ControlPageLabel>Output 3 Enable</ControlPageLabel>
-			</State>
-            <State id="output4Enable">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Output 4 Enable</TriggerLabel>
-                <ControlPageLabel>Output 4 Enable</ControlPageLabel>
-			</State>
-            
-            <State id="sep2">
-				<ValueType>Separator</ValueType>
-			</State>
-            
-             <!-- User: User Authorised Partitions -->
-            
-            <State id="authorisedForPartition1">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 1</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 1</ControlPageLabel>
-			</State>
-            <State id="authorisedForPartition2">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 2</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 2</ControlPageLabel>
-			</State>
-            <State id="authorisedForPartition3">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 3</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 3</ControlPageLabel>
-			</State>
-            <State id="authorisedForPartition4">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 4</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 4</ControlPageLabel>
-			</State>
-            <State id="authorisedForPartition5">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 5</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 5</ControlPageLabel>
-			</State>
-            <State id="authorisedForPartition6">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 6</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 6</ControlPageLabel>
-			</State>
-            <State id="authorisedForPartition7">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 7</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 7</ControlPageLabel>
-			</State>
-            <State id="authorisedForPartition8">
-                <ValueType>Boolean</ValueType>
-                <TriggerLabel>Authorised For Partition 8</TriggerLabel>
-                <ControlPageLabel>Authorised For Partition 8</ControlPageLabel>
-			</State>
-            
-        </States>
-        <UiDisplayStateId>userNumber</UiDisplayStateId>
-    </Device>
-    
 </Devices>
-
     <!-- Define Caddx NetworX NX-8e System Panel ============================================ -->

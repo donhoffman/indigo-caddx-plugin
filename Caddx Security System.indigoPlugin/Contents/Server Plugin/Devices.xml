@@ -35,12 +35,12 @@
       <!-- System: Panel States -->
       
       <State id="panelNumber">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Panel ID</TriggerLabel>
         <ControlPageLabel>Panel ID</ControlPageLabel>
       </State>
       <State id="firmware">
-        <ValueType>Float</ValueType>
+        <ValueType>String</ValueType>
         <TriggerLabel>Firmware</TriggerLabel>
         <ControlPageLabel>Firmware</ControlPageLabel>
       </State>
@@ -364,12 +364,12 @@
       <!-- System: Panel States -->
       
       <State id="systemNumber">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Panel ID</TriggerLabel>
         <ControlPageLabel>Panel ID</ControlPageLabel>
       </State>
       <State id="model">
-        <ValueType>Float</ValueType>
+        <ValueType>String</ValueType>
         <TriggerLabel>Model</TriggerLabel>
         <ControlPageLabel>Model</ControlPageLabel>
       </State>
@@ -804,7 +804,7 @@
       <!-- System: Panel Byte 12 -->
       
       <State id="communicatorStackPointer">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Communicator Stack Pointer</TriggerLabel>
         <ControlPageLabel>Communicator Stack Pointer</ControlPageLabel>
       </State>
@@ -924,7 +924,7 @@
       <!-- Partition: Object -->
       
       <State id="partitionNumber">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Partition Number</TriggerLabel>
         <ControlPageLabel>Partition Number</ControlPageLabel>
       </State>
@@ -936,17 +936,12 @@
       <!-- Partition: Status -->
       
       <State id="lastUserNumber">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Last User Number</TriggerLabel>
         <ControlPageLabel>Last User Number</ControlPageLabel>
       </State>
-      <State id="partitionUser">
-        <ValueType>Float</ValueType>
-        <TriggerLabel>Partition User</TriggerLabel>
-        <ControlPageLabel>Partition User</ControlPageLabel>
-      </State>
       <State id="partitionState">
-        <ValueType>Float</ValueType>
+        <ValueType>String</ValueType>
         <TriggerLabel>Partition State</TriggerLabel>
         <ControlPageLabel>Partition State</ControlPageLabel>
       </State>
@@ -982,7 +977,7 @@
       <!-- Partition: States -->
       
       <State id="securityState">
-        <ValueType>Float</ValueType>
+        <ValueType>String</ValueType>
         <TriggerLabel>Security State</TriggerLabel>
         <ControlPageLabel>Security State</ControlPageLabel>
       </State>
@@ -994,22 +989,22 @@
       <!-- Partition: Security History -->
       
       <State id="lastStateChange">
-        <ValueType>Float</ValueType>
+        <ValueType>String</ValueType>
         <TriggerLabel>Last State Change</TriggerLabel>
         <ControlPageLabel>Last State Change</ControlPageLabel>
       </State>
       <State id="lastZoneTrigger">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Last Zone Trigger</TriggerLabel>
         <ControlPageLabel>Last Zone Trigger</ControlPageLabel>
       </State>
       <State id="lastFunction">
-        <ValueType>Float</ValueType>
+        <ValueType>String</ValueType>
         <TriggerLabel>Last Function</TriggerLabel>
         <ControlPageLabel>Last Function</ControlPageLabel>
       </State>
       <State id="statusLastFunction">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Status Last Function</TriggerLabel>
         <ControlPageLabel>Status Last Function</ControlPageLabel>
       </State>
@@ -1401,7 +1396,7 @@
       <!-- Keypad: Keypad States -->
       
       <State id="keypadNumber">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Keypad Number</TriggerLabel>
         <ControlPageLabel>Keypad Number</ControlPageLabel>
       </State>
@@ -1724,7 +1719,7 @@
       <!-- Select Zone -->
       
       <State id="zoneNumber">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>Zone Number</TriggerLabel>
         <ControlPageLabel>Zone Number</ControlPageLabel>
       </State>
@@ -1994,12 +1989,12 @@
       <!-- Select User -->
       
       <State id="userNumber">
-        <ValueType>Float</ValueType>
+        <ValueType>Number</ValueType>
         <TriggerLabel>User Number</TriggerLabel>
         <ControlPageLabel>User Number</ControlPageLabel>
       </State>
       <State id="userPin">
-        <ValueType>Float</ValueType>
+        <ValueType>String</ValueType>
         <TriggerLabel>User Pin</TriggerLabel>
         <ControlPageLabel>User Pin</ControlPageLabel>
       </State>

@@ -49,9 +49,12 @@ class Plugin(indigo.PluginBase):
         self.initDevs = True
 
         # Todo: Understand purpose of deleted variables
+        # noinspection PyBroadException
         try:
             indigo.variable.delete(u"Caddx_receiveMessage")
             indigo.variable.delete(u"Caddx_sendingMessage")
+        except:
+            pass
         finally:
             pass
 
@@ -71,7 +74,7 @@ class Plugin(indigo.PluginBase):
             indigo.variables.folder.create(fn)
         self.pluginPrefs[u'variableFolderName'] = fn
 
-        fn = self.pluginPrefs.get(u'deviceFolderName', 'Caddx Security System')
+        fn = self.pluginPrefs.get(u'deviceFolderName', 'Alarm')
         if fn not in indigo.devices.folders:
             indigo.devices.folder.create(fn)
         self.pluginPrefs[u'deviceFolderName'] = fn
@@ -158,10 +161,12 @@ class Plugin(indigo.PluginBase):
     ########################################
     # Trigger Start and Stop methods
     ########################################
+    # Fixme:  No implementation of Caddx.triggerStart()
     def triggerStartProcessing(self, trigger):
         self.debugLog("triggerStartProcessing:        entering process %s (%d)" % (trigger.name, trigger.id))
         self.caddx.triggerStart(trigger)
 
+    # Fixme:  No implementation of Caddx.triggerStop()
     def triggerStopProcessing(self, trigger):
         self.debugLog("triggerStopProcessing:        entering process %s (%d)" % (trigger.name, trigger.id))
         self.caddx.triggerStop(trigger)
@@ -909,7 +914,6 @@ class Plugin(indigo.PluginBase):
 
             indigo.server.log(". . partition status:                     partition number: %s," % (dev.states["partitionNumber"]))
             indigo.server.log(". . partition status:                     last user number: %s," % (dev.states["lastUserNumber"]))
-            indigo.server.log(". . partition status:                       partition user: %s," % (dev.states["partitionUser"]))
             indigo.server.log(". . partition status:                      partition state: %s," % (dev.states["partitionState"]))
             indigo.server.log(". . partition status:                       security state: %s," % (dev.states["securityState"]))
             indigo.server.log(". . partition status:                      security  ready: %s," % (self._handleOnOffState(dev.states["securityReady"])))

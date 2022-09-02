@@ -108,7 +108,7 @@ class Caddx(object):
 		self.panelList = {}
 		self.systemStatusList = {}
 		
-		self.commandQueue = None
+		self.commandQueue = queue.Queue()
 		self.shutdown = ""
 		self.devicePort = None
 		self.conn = None
@@ -251,7 +251,7 @@ class Caddx(object):
 			self.sendMsgToQueue(zoneStatusRequest)
 		elif action == "Zone Status Request ALL":
 			for zz in self.zoneList.keys():
-				value = int(zz)
+				value = int(zz) - 1  # 0 = zone 1
 				zone = f"{value:02x}"
 				zoneStatusRequest = cmdZoneStatusRequest + zone
 				self.sendMsgToQueue(zoneStatusRequest)
@@ -533,10 +533,8 @@ class Caddx(object):
 			self.commStatusUp()
 			indigo.server.log("connection initialised to Caddx NetworX security devices on %s {baud: %s bps, timeout: %s seconds}." % (devicePort, baudRate, serialTimeout))
 			self.conn = conn
-			commandQueue = queue.Queue()
-			self.commandQueue = commandQueue
 			self.plugin.debugLog(f"startComm: connection: {devicePort}")
-			self.activeCommLoop(devicePort, conn, commandQueue)
+			self.activeCommLoop(devicePort, conn, self.commandQueue)
 		else:
 			self.plugin.errorLog(f"startComm: connection failure to Caddx NetworX Security device on {devicePort}")
 
@@ -547,14 +545,18 @@ class Caddx(object):
 		"""
 		self.plugin.debugLog("stopComm:        entering process")
 		self.plugin.debugLog("stopComm:        initiating stop looping communication to device %s" % self.devicePort)
-		commandQueue = self.commandQueue
 		self.commStatusDown()
 		
-		while not commandQueue.empty():
-			command = commandQueue.get()
+		while not self.commandQueue.empty():
+			command = self.commandQueue.get()
 			self.plugin.debugLog("stopComm:        command Queue contains: %s" % command)
-		commandQueue.put("stopSerialCommunication")
-		del commandQueue
+		self.commandQueue.put("stopSerialCommunication")
+		while not self.commandQueue.empty():
+			try:
+				self.commandQueue.get(False)
+			except queue.Empty:
+				continue
+			self.commandQueue.task_done()
 
 	def activeCommLoop(self, devicePort: str, conn, commandQueue: queue) -> None:
 		"""
@@ -1269,7 +1271,7 @@ class Caddx(object):
 		partition = 1
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
-			# self.addToStatesUpdateList(dev,key="partitionState", value="Connected")
+			self.addToStatesUpdateList(dev, key="partitionState", value="Connected")
 			self.addToStatesUpdateList(dev, key="securityState", value="Connected")
 			self.addToStatesUpdateList(dev, key="lastStateChange", value=f"Partition 1  Connected  ** {self.timestamp()}")
 			self.updateVariable("securityState", "Connected")
@@ -1294,7 +1296,7 @@ class Caddx(object):
 		partition = 1
 		if partition in self.partitionList.keys():
 			dev = self.partitionList[partition]
-			# self.addToStatesUpdateList(dev,key="partitionState", value="Disconnected")
+			self.addToStatesUpdateList(dev, key="partitionState", value="Disconnected")
 			self.addToStatesUpdateList(dev, key="securityState", value="Disconnected")
 			self.addToStatesUpdateList(dev, key="lastStateChange", value=f"Partition 1  Disconnected  ** {self.timestamp}")
 			self.updateVariable("securityState", "Disconnected")
@@ -1393,6 +1395,7 @@ class Caddx(object):
 				indigo.plugin.errorLog(f"decodeReceivedData: Invalid or not supported message type. Type: '{messageNumber:02x}'")
 		if ackRequested:
 			self.sendMsg(ACK)
+		self.executeUpdateStatesList()
 
 	########################################
 	# process "Interface Configuration Message"

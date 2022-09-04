@@ -552,12 +552,6 @@ class Caddx(object):
 			command = self.commandQueue.get()
 			self.plugin.debugLog("stopComm:        command Queue contains: %s" % command)
 		self.commandQueue.put("stopSerialCommunication")
-		while not self.commandQueue.empty():
-			try:
-				self.commandQueue.get(False)
-			except queue.Empty:
-				continue
-			self.commandQueue.task_done()
 
 	def activeCommLoop(self, devicePort: str, conn, commandQueue: queue) -> None:
 		"""

@@ -82,7 +82,7 @@ class Plugin(indigo.PluginBase):
         self.startupFixes_7_4_3()
 
     def startupFixes_7_4_3(self):
-        """ Change old device names.
+        """ Change old device states.
         Added by Karl after v1.3.0, and at or before v7.4.3
 
         :return: None

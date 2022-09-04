@@ -522,7 +522,7 @@ class Caddx(object):
 		
 		devicePort = self.plugin.devicePort
 		baudRate = int(self.plugin.pluginPrefs['serialBaudRate'])
-		serialTimeout = float(self.plugin.pluginPrefs['serialTimeout'])
+		serialTimeout = 3  # Hard coded to 3 seconds to reflect worst-case panel processing time for a command.
 		
 		self.devicePort = devicePort
 		indigo.server.log("initialing connection to Caddx NetworX security devices . . .")
@@ -531,7 +531,8 @@ class Caddx(object):
 		conn = self.plugin.openSerial("Caddx Security System", devicePort, baudRate, timeout=serialTimeout, writeTimeout=1)
 		if conn:
 			self.commStatusUp()
-			indigo.server.log("connection initialised to Caddx NetworX security devices on %s {baud: %s bps, timeout: %s seconds}." % (devicePort, baudRate, serialTimeout))
+			indigo.server.log(
+				f"Connection initialised to Caddx NetworX Security Panel on {devicePort} - Bit Rate: {baudRate} bps, Timeout: {serialTimeout} seconds.")
 			self.conn = conn
 			self.plugin.debugLog(f"startComm: connection: {devicePort}")
 			self.activeCommLoop(devicePort, conn, self.commandQueue)
@@ -585,7 +586,7 @@ class Caddx(object):
 				self.commContinuityCheck()
 
 				# These messages are usually async events from panel.  Request/response handled below.
-				receivedMessageDict = self.readMsg(conn)
+				receivedMessageDict = self.readMsg(conn, waitForResponse=False)
 				if receivedMessageDict:
 					self.decodeReceivedData(receivedMessageDict, 0)
 
@@ -665,10 +666,22 @@ class Caddx(object):
 	# Check to see if serial port has any incoming information.
 	#######################################
 	
-	def readMsg(self, conn) -> None | list[str]:
+	def readMsg(self, conn, waitForResponse: bool) -> None | list[str]:
+		"""
+		Read complete message from serial port.
+		**Note**:  Serial port timeout should be set to 3 seconds to reflect worst-case processing time.
+
+		:param conn: pySerial object.
+		:param waitForResponse: If True, wait up to port timeout until message received,
+			otherwise return immediately if no message.
+		:return: None if no message.   Valid message list object otherwise.
+		"""
+		if not waitForResponse and conn.in_waiting == 0:
+			return None
+
 		startCharacter = conn.read()
 		if not len(startCharacter):
-			# Nothing for us now.
+			self.plugin.errorLog("readMsg: No data when reply was expected.  Probably timeout.")
 			return None
 		if startCharacter != b'\x7e':
 			self.plugin.errorLog("readMsg: Message buffer out of sync.  Missing start character.  Flushing and discarding.")
@@ -682,8 +695,8 @@ class Caddx(object):
 		msgData = bytearray()
 		msgData.extend(msgLengthByte)
 		msgLength = int.from_bytes(msgLengthByte, "little")
-		msgLengthFull = msgLength + 3  # Full message length includes length byte and 2 byte checksum
-		for i in range(msgLength + 2):  # Message checksum included
+		msgLengthFull = msgLength + 3   # Full message length includes length byte and 2 byte checksum
+		for i in range(msgLength + 2):  # Message checksum included.  Already read length.
 			nextChar = conn.read()
 			if nextChar == b'\x7d':
 				nextChar = conn.read()
@@ -738,7 +751,7 @@ class Caddx(object):
 		# Todo: Return appropriate response status
 		result = True
 		for i in range(5):
-			responseMessage = self.readMsg(conn)
+			responseMessage = self.readMsg(conn, waitForResponse=True)
 			if responseMessage:
 				self.decodeReceivedData(responseMessage, requestMessageType)
 				break

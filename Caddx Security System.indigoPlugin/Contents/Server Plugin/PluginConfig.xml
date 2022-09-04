@@ -75,22 +75,6 @@
       <Option value="76800">76,800 bps</Option>
     </List>
   </Field>
-  <Field id="serialTimeout" type="menu" defaultValue="0.03"
-         tooltip="period of time the serial comm port remains open, to receive a data stream (default = 30 milliseconds)">
-    <Label>Timeout:</Label>
-    <List>
-      <Option value="0.01">10 milliseconds</Option>
-      <Option value="0.02">20 milliseconds</Option>
-      <Option value="0.03">30 milliseconds</Option>
-      <Option value="0.04">40 milliseconds</Option>
-      <Option value="0.05">50 milliseconds</Option>
-      <Option value="0.06">60 milliseconds</Option>
-      <Option value="0.07">70 milliseconds</Option>
-      <Option value="0.08">80 milliseconds</Option>
-      <Option value="0.09">90 milliseconds</Option>
-      <Option value="0.10">100 milliseconds</Option>
-    </List>
-  </Field>
   
   <Field id="makeSpace3" type="label">
     <Label/>

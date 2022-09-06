@@ -18,6 +18,7 @@ import datetime
 ################################################################################
 # Local Imports
 ################################################################################
+# noinspection PyUnresolvedReferences
 import indigo
 
 ################################################################################
@@ -103,13 +104,12 @@ class Caddx(object):
 		self.trippedZoneList = {}
 		self.keypadList = {}
 		self.partitionList = {}
-		self.keypadList = {}
 		self.userList = {}
 		self.panelList = {}
 		self.systemStatusList = {}
 		
 		self.commandQueue = queue.Queue()
-		self.shutdown = ""
+		self.shutdown: bool = True
 		self.devicePort = None
 		self.conn = None
 		self.systemId = 1
@@ -136,7 +136,7 @@ class Caddx(object):
 	# Primary & Secondary Keypad Commands routines
 	########################################
 
-	def actionGeneric(self, pluginAction, action):
+	def actionGeneric(self, pluginAction, action: str) -> None:
 		dev = indigo.devices[pluginAction.deviceId]
 		# noinspection PyUnusedLocal
 		partition = int(dev.pluginProps["address"])
@@ -547,11 +547,8 @@ class Caddx(object):
 		self.plugin.debugLog("stopComm:        entering process")
 		self.plugin.debugLog("stopComm:        initiating stop looping communication to device %s" % self.devicePort)
 		self.commStatusDown()
-		
-		while not self.commandQueue.empty():
-			command = self.commandQueue.get()
-			self.plugin.debugLog("stopComm:        command Queue contains: %s" % command)
-		self.commandQueue.put("stopSerialCommunication")
+		self.shutdown = True
+		self.conn.cancel_read()
 
 	def activeCommLoop(self, devicePort: str, conn, commandQueue: queue) -> None:
 		"""
@@ -574,8 +571,10 @@ class Caddx(object):
 			self.sendMsgToQueue(cmdInterfaceConfigurationRequest)
 
 			# Start active serial communication loop
-			# Todo: Exit activeCommLoop() using boolean rather than exception.
-			while True:
+			self.shutdown = False
+			while not self.shutdown:
+				time.sleep(self.plugin.sleepBetweenIdlePoll)
+
 				# trigger to periodically poll data and keep alive
 				self.commContinuityCheck()
 
@@ -584,32 +583,31 @@ class Caddx(object):
 				if receivedMessageDict:
 					self.decodeReceivedData(receivedMessageDict, 0)
 
-				while not commandQueue.empty():
-					lenQueue = commandQueue.qsize()
-					self.plugin.debugLog("activeCommLoop:        || queue has %s command(s) waiting." % str(lenQueue))
+				# Process the command queue
+				retries = 3
+				while not commandQueue.empty() and not self.shutdown:
+					self.plugin.debugLog(f"activeCommLoop: Queue has {commandQueue.qsize()} command(s) waiting.")
 					command = str(commandQueue.get())
-
-					if command == "stopSerialCommunication":
-						indigo.server.log("raising exception 'CaddxShutdown' to stop communication with panel.")
-						raise CaddxShutdown
 							
-					self.plugin.debugLog("activeCommLoop:        || processing command: %s" % command)		
-					if not self.processMessageFromQueue(conn, command):
-						self.plugin.errorLog("activeCommLoop: Message send failed.  Retrying")
-						continue
-					self.plugin.debugLog("activeCommLoop:        || command completed: %s" % command)
-					self.commandQueue.task_done()
-
-				time.sleep(self.plugin.sleepBetweenIdlePoll)
-
-		except CaddxShutdown:
-			indigo.server.log("closing connection to conn device %s (shutdown process)." % devicePort)
+					self.plugin.debugLog(f"activeCommLoop: Processing command: {command}")
+					if self.processMessageFromQueue(conn, command):
+						self.plugin.debugLog(f"activeCommLoop:Command completed: {command}")
+						self.commandQueue.task_done()
+					else:
+						self.plugin.errorLog(f"activeCommLoop: Message send failed.  Retrying '{command}'")
+						retries -= 1
+						if not retries:
+							self.plugin.errorLog("activeCommLoop: Retries exceeded.  Command failed.")
+							retries = 3
+							self.commandQueue.task_done()
 
 		finally:
-			indigo.server.log("closed connection to conn device %s (finally)." % devicePort)
-			conn.close()	
-			pass
-		self.executeUpdateStatesList()
+			while not self.commandQueue.empty():
+				command = self.commandQueue.get()
+				self.plugin.debugLog(f"activeCommLoop: Removing command '{command}' from queue.")
+				self.commandQueue.task_done()
+			conn.close()
+			indigo.server.log(f"Closed connection to conn device {devicePort} (finally).")
 
 	def compute_fletcher16(self, data: bytearray) -> int:
 		"""
@@ -655,10 +653,6 @@ class Caddx(object):
 		self.sendMsg(transmitDataHex)
 		# Todo:  Extract message type so we can check for correct reply.
 		return self.waitForResponse(conn, 0)
-
-	#######################################
-	# Check to see if serial port has any incoming information.
-	#######################################
 	
 	def readMsg(self, conn, waitForResponse: bool) -> None | list[str]:
 		"""
@@ -674,7 +668,7 @@ class Caddx(object):
 			return None
 
 		startCharacter = conn.read()
-		if not len(startCharacter):
+		if not startCharacter:
 			self.plugin.errorLog("readMsg: No data when reply was expected.  Probably timeout.")
 			return None
 		if startCharacter != b'\x7e':
@@ -717,7 +711,7 @@ class Caddx(object):
 			self.plugin.errorLog("readMsg: Checksum failed.  Discarding.")
 			return None
 
-		# Convert to the ASCII message list used by upstream parsing.
+		# Convert to the ASCII Hex message list used by upstream parsing.
 		messageList = []
 		for i in msgData:
 			messageList.append(f"{i:02x}")
@@ -730,7 +724,7 @@ class Caddx(object):
 		:param conn: pySerial object.  Used for all serial I/O
 		:return: None
 		"""
-		while len(conn.read(100)):
+		while conn.in_waiting and conn.read(100):
 			self.plugin.debugLog("flushCommPort: throwing away data.")
 		conn.reset_input_buffer()
 
@@ -740,18 +734,14 @@ class Caddx(object):
 
 		:param conn: pySerial object.  Used for all serial I/O
 		:param requestMessageType: Command/message type of original message.  Used to determine correct reply.
-		:return: True if correct reply received.  False otherwise.
+		:return: True if reply received.  False otherwise.
 		"""
-		# Todo: Return appropriate response status
-		result = True
-		for i in range(5):
-			responseMessage = self.readMsg(conn, waitForResponse=True)
-			if responseMessage:
-				self.decodeReceivedData(responseMessage, requestMessageType)
-				break
-			else:
-				time.sleep(self.plugin.sleepBetweenIdlePoll)
-		return result
+		responseMessage = self.readMsg(conn, waitForResponse=True)
+		if not responseMessage:
+			return False
+		# Todo: Ensure that response matches request.  Might not be if a random event happens while waiting.
+		self.decodeReceivedData(responseMessage, requestMessageType)
+		return True
 
 	def sendMsg(self, transmitDataHex: str) -> None:
 		"""
@@ -776,7 +766,7 @@ class Caddx(object):
 		self.conn.write(transmitMessageStuffed)
 		messageNumber = transmitDataHex[2:4]
 		alarmMessage = self.messageAlarmDict(messageNumber)
-		self.plugin.debugLog("sendMsg:           >> sent message: %s,  %s,  %r" % (messageNumber, alarmMessage, transmitMessage))
+		self.plugin.debugLog(f"sendMsg:           >> sent message: {messageNumber},  {alarmMessage},  {transmitMessage.hex()}")
 
 	def timestamp(self) -> str:
 		"""
@@ -1339,12 +1329,8 @@ class Caddx(object):
 			return		
 
 	################################################################################
-	# Routines for Received Message Processing method (decode Received messages and call update process)
+	# Routines for Received Message Processing (decode Received messages and call update process)
 	################################################################################
-	
-	########################################
-	# process received messages and call associated decode and update method
-	########################################
 
 	# noinspection PyUnusedLocal
 	def decodeReceivedData(self, messageDict: list[str], reqMessageType: int) -> None:
@@ -1403,13 +1389,14 @@ class Caddx(object):
 		if ackRequested:
 			self.sendMsg(ACK)
 		self.executeUpdateStatesList()
-
-	########################################
-	# process "Interface Configuration Message"
-	########################################
 	
-	def _interfaceConfigurationMessage(self, dataDict: list[str]):
-		# extract each ASCII word from the system status message
+	def _interfaceConfigurationMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *Interface Configuration Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
@@ -1535,11 +1522,13 @@ class Caddx(object):
 		else:
 			self.plugin.debugLog("update interface configuration:        no device state records in message dictionary for alarm panel interface configuration settings update.")
 					
-	########################################
-	# process "Zone Name Message"
-	########################################
-	
-	def _zoneNameMessage(self, dataDict: list[str]):
+	def _zoneNameMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *Zone Name Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
 
@@ -1578,13 +1567,14 @@ class Caddx(object):
 		else:
 			self.plugin.debugLog("update zone name:        no device configuration ui records in message dictionary for zone name message update.")
 		self.keypadDisplayName = displayName
-			
-	########################################
-	# process "Zone Status Message"
-	########################################
-		
-	def _zoneStatusMessage(self, dataDict: list[str]):
-		# extract each ASCII word from the system status message
+
+	def _zoneStatusMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *Zone Status Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
@@ -1693,14 +1683,15 @@ class Caddx(object):
 			else:
 				self.plugin.debugLog("update zone status:        no record in indigo database (device - state 'zoneState') for zone: %r." % dzoneNumber)
 		else:
-			self.plugin.debugLog("update zone status:        no device state records in message dictionary for zone status message update.")	
-				
-	########################################
-	# process "Zones Snapshot Message"
-	########################################
+			self.plugin.debugLog("update zone status:        no device state records in message dictionary for zone status message update.")
 	
-	def _zoneSnapshotMessage(self, dataDict: list[str]):
-		# extract each ASCII word from the system status message
+	def _zoneSnapshotMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *Zones Snapshot Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
@@ -1749,8 +1740,13 @@ class Caddx(object):
 	# process "Partition Status Message"
 	########################################
 	
-	def _partitionStatusMessage(self, dataDict: list[str]):
-		# extract each ASCII word from the partition status message
+	def _partitionStatusMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *Partition Status Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)		# convert message number to message description
@@ -1843,13 +1839,14 @@ class Caddx(object):
 				self.plugin.debugLog("update partition status:        no record in indigo database (device - state) for partition: %r." % partition)
 		else:
 			self.plugin.debugLog("update partition status:        no device state records in message dictionary for partition status message update.")
-		
-	########################################
-	# process "Partitions Snapshot Message"
-	########################################
-	
-	def _partitionSnapshotMessage(self, dataDict: list[str]):
-		# extract each ASCII word from the partition status message
+
+	def _partitionSnapshotMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *Partition Snapshot Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)							# convert message number to message description
@@ -1892,14 +1889,15 @@ class Caddx(object):
 			
 		# Update Alarm Display from received "Partition Snapshot Message"
 		if bpartitionSnapshotMessageDict is not None:
-			self.updateAlarmDisplay(partitionSnapshotList, bpartitionSnapshotMessageDict)	
-		
-	########################################
-	# process "System Status Message"
-	########################################
+			self.updateAlarmDisplay(partitionSnapshotList, bpartitionSnapshotMessageDict)
 	
-	def _systemStatusMessage(self, dataDict: list[str]):
-		# extract each ASCII word from the system status message
+	def _systemStatusMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *System Status Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		ksystemNumber = dataDict[2]
@@ -2012,12 +2010,13 @@ class Caddx(object):
 		else:
 			self.plugin.debugLog("update system status:        no device state records in message dictionary for alarm panel system status message information update.")
 	
-	########################################
-	# process "X10 Messages Received" (this method is not yet complete)
-	########################################
-	
-	def _x10MessageReceived(self, dataDict: list[str]):
-		# extract each ASCII word from the x-10 message received
+	def _x10MessageReceived(self, dataDict: list[str]) -> None:
+		"""
+		Process *X10 Messages Received*.   Implementation incomplete.  No not use.
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
@@ -2040,13 +2039,14 @@ class Caddx(object):
 		# parameter byte definition lists
 		# noinspection PyUnusedLocal
 		x10FunctionCodeDict = {"\x68": "allLightsOff", "\x58": "bright", "\x48": "dim", "\x38": "off", "\x28": "on", "\x18": "allLightsOn", "\x08": "allUnitsOff"}
-		
-	########################################
-	# process "Log Event Message"
-	########################################
-	
-	def _logEventMessage(self, dataDict: list[str]):
-		# extract each ASCII word from the log event message
+
+	def _logEventMessage(self, dataDict: list[str]) -> None:
+		"""
+		Process *Log Event Message*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
@@ -2173,13 +2173,14 @@ class Caddx(object):
 		if self.plugin.alarmEventInfo or self.plugin.debug:
 			indigo.server.log("%s" % logEventMessagePrint)
 			self.updateVariable("eventLogMessage", logEventMessagePrint)
-			
-	########################################
-	# process "Keypad Message Received"
-	########################################
-	
-	def _keypadMessageReceived(self, dataDict: list[str]):
-		# extract each ASCII word from the keypad message received
+
+	def _keypadMessageReceived(self, dataDict: list[str]) -> None:
+		"""
+		Process *Keypad Message Received*
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
@@ -2200,12 +2201,13 @@ class Caddx(object):
 		# verify binary mapping 
 		indigo.server.log("alarm keypad button pressed;  keypad: %r,  button: %s" % (kkeypadAddress, keypadValueDict[kkeypadValue]))
 		
-	########################################
-	# process "Program Data Reply"	(this method is not yet complete)
-	########################################
-		
-	def _programDataReply(self, dataDict: list[str]):
-		# extract each ASCII word from the program data reply
+	def _programDataReply(self, dataDict: list[str]) -> None:
+		"""
+		Process *Program Data Reply*.   Incomplete implementation.  Do not use.
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		# noinspection PyUnusedLocal
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
@@ -2251,13 +2253,14 @@ class Caddx(object):
 		self.plugin.debugLog("programDataReply:        decode data type byte 11: %r" % bdataTypeByte11)
 		self.plugin.debugLog("programDataReply:        decode data type byte 12: %r" % bdataTypeByte12)
 		self.plugin.debugLog("programDataReply:        decode data type byte 13: %r" % bdataTypeByte13)
-		
-	########################################
-	# process "User Information Reply"	
-	########################################
 	
-	def _userInformationReply(self, dataDict: list[str]):
-		# extract each ASCII word from the user information reply
+	def _userInformationReply(self, dataDict: list[str]) -> None:
+		"""
+		Process *User Information Reply*.
+
+		:param dataDict: Hex-encoded list of message data.
+		:return: None
+		"""
 		kmessageLength = dataDict[0]
 		kmessageNumber = dataDict[1]
 		kalarmMessage = self.messageAlarmDict(kmessageNumber)
@@ -2342,12 +2345,15 @@ class Caddx(object):
 	################################################################################
 	# Routines to Support Message Processing methods data conversion methods to support message processing
 	################################################################################
-
-	########################################
-	# convert valid message Bytes to Bit map dictionary	
-	########################################
 	
 	def convertByteDictToBinaryMap(self, msgStart: int, msgLength: int, messageDict: list[str]) -> list[str] | None:
+		"""
+		Convert range of hex-encoded ASCII bytes to a list of binary-formatted ASCII bytes.
+		:param msgStart: The start of the sub-range to convert.
+		:param msgLength: The length of the sub-range to convert.
+		:param messageDict: Hex-encoded list of message data.
+		:return:
+		"""
 		if msgLength <= len(messageDict):
 			bitmapDict = []
 			for i in range(msgStart, (msgStart + msgLength)):
@@ -2360,15 +2366,15 @@ class Caddx(object):
 	################################################################################
 	# Routines for updating Indigo Database States methods update indigo plugin preferences, device configuration ui and device states	
 	################################################################################
-	# update indigo plugin preferences, device configuration ui and device states
-	
-	########################################
-	# updates indigo variable instance var with new value varValue
-	########################################
-	
-	def updateVariable(self, varName, varValue):
-		# indigo.server.log("updateVariable(): -- variable  %s: value  %r: " % (varName,varValue))
-		# Todo:  I re-factored this a bit.  Review.
+
+	def updateVariable(self, varName: str, varValue: str | int | float) -> None:
+		"""
+		Update Indigo variable with new value.
+
+		:param varName: The name of the variable to update.
+		:param varValue: The new value.
+		:return: None
+		"""
 		if self.plugin.pluginPrefs['variableFolderName'] not in indigo.variables.folders:
 			caddxVariablesFolder = indigo.variables.folder.create(self.plugin.pluginPrefs['variableFolderName'])
 		else:
@@ -2598,7 +2604,7 @@ class Caddx(object):
 	########################################
 	# translate message number to message description
 	########################################
-	def messageAlarmDict(self, kmessageNumber):
+	def messageAlarmDict(self, kmessageNumber: str) -> str:
 		alarmDict = {
 			"01": "Interface Configuration Message",
 			"03": "Zone Name Message",
@@ -2677,7 +2683,8 @@ class Caddx(object):
 	# translate log event type number to an event description
 	########################################
 	
-	def messageLogEventDict(self, keventType):
+	def messageLogEventDict(self, keventType: int) -> str:
+		eventType = str(keventType)
 		eventDict = {
 			"0": "Alarm",
 			"1": "Alarm Restore",
@@ -2747,19 +2754,18 @@ class Caddx(object):
 			"126": "Output Trip",
 			"127": "Data Lost"
 		}
-		if keventType in eventDict:
-			event = eventDict[keventType]
+		if eventType in eventDict:
+			event = eventDict[eventType]
 		else:
 			event = "Program Error: No such event"
-		self.plugin.debugLog("messageLogEventDict:        event number \"%s\" " % keventType)
-		self.plugin.debugLog("messageLogEventDict:        event description \"%s\" " % event)
+		self.plugin.debugLog(f"messageLogEventDict:       {eventType} - {event}")
 		return event
 									
 	########################################
 	# translate log byte 5 to zone, user or device
 	########################################
 	
-	def messageLogByte5Dict(self, keventType):
+	def messageLogByte5Dict(self, keventType: int) -> str:
 		eventType = str(keventType)
 		byte5Dict = {
 			"0": "zone",
@@ -2842,7 +2848,7 @@ class Caddx(object):
 	# translate log byte 6 to reference partition or not	
 	########################################
 	
-	def messageLogByte6Dict(self, keventType):
+	def messageLogByte6Dict(self, keventType: int) -> bool:
 		eventType = str(keventType)
 		byte6Dict = {
 			"0": True,
@@ -2916,7 +2922,7 @@ class Caddx(object):
 		if eventType in byte6Dict:
 			byte6Valid = byte6Dict[eventType]
 		else:
-			byte6Valid = "Program Error: No such byte6Valid"
+			byte6Valid = False
 		self.plugin.debugLog("messageLogByte6Dict:        event number: \"%s\" " % eventType)
 		self.plugin.debugLog("messageLogByte6Dict:        partition valid: \"%s\" " % byte6Valid)		
 		return byte6Valid
@@ -2925,7 +2931,7 @@ class Caddx(object):
 	# translate log device address to a module description
 	########################################
 	
-	def messageLogDeviceAddressDict(self, kdeviceAddress):
+	def messageLogDeviceAddressDict(self, kdeviceAddress: int) -> str:
 		deviceAddress = str(kdeviceAddress)
 		deviceDict = {
 			"0": "Security Panel",

@@ -1,5 +1,10 @@
 # Caddx NetworX Security Panel  (Indigo Plugin)
 
+>[!NOTE]
+As I am no longer using Indigo and have no test environment, this repo is no longer maintained 
+and will be archived shortly.  Feel free to fork if you have a need to make changes.
+
+
 ## Overview
 
 It is a comprehensive protocol implementation of Caddx NX-584 RS-232 Gateway Interface Protocol (April 2000) spec.

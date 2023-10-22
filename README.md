@@ -1,6 +1,7 @@
 # Caddx NetworX Security Panel  (Indigo Plugin)
 
->[!NOTE]
+**NOTE:**
+
 As I am no longer using Indigo and have no test environment, this repo is no longer maintained 
 and will be archived shortly.  Feel free to fork if you have a need to make changes.
 
